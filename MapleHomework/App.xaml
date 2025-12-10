@@ -1,0 +1,55 @@
+<Application x:Class="MapleHomework.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:converters="clr-namespace:MapleHomework.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
+            </ResourceDictionary.MergedDictionaries>
+
+            <FontFamily x:Key="PretendardFont">./Fonts/#Pretendard</FontFamily>
+            
+            <!-- 대시보드용 컨버터 -->
+            <converters:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
+            <converters:TasksToTooltipConverter x:Key="TasksToTooltipConverter"/>
+
+            <Style TargetType="{x:Type Window}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+            </Style>
+
+            <Style TargetType="{x:Type CheckBox}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+            </Style>
+
+            <Style TargetType="{x:Type ToolTip}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                <Setter Property="HasDropShadow" Value="True"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Border Background="#252526" BorderBrush="#3E3E42" BorderThickness="1" 
+                                    CornerRadius="8" Padding="16,12" Margin="5">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="12" ShadowDepth="4" Opacity="0.4"/>
+                                </Border.Effect>
+                                <TextBlock Text="{TemplateBinding Content}" Foreground="#E0E0E0" FontSize="13" 
+                                           FontFamily="{StaticResource PretendardFont}" LineHeight="22"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,198 @@
+<ui:FluentWindow x:Class="MapleHomework.DashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="전체 캐릭터 현황" 
+        Height="850" Width="1140"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#3D4A5C"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica">
+
+    <Window.Resources>
+        <!-- 진행률 바 색상 -->
+        <LinearGradientBrush x:Key="DailyGradient" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#FF9500" Offset="0"/>
+            <GradientStop Color="#FFCC00" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="WeeklyGradient" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#5AC8FA" Offset="0"/>
+            <GradientStop Color="#007AFF" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BossGradient" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#AF52DE" Offset="0"/>
+            <GradientStop Color="#FF2D55" Offset="1"/>
+        </LinearGradientBrush>
+        
+        <Style x:Key="ProgressGridStyle" TargetType="Grid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Help"/>
+            <Setter Property="ToolTipService.InitialShowDelay" Value="100"/>
+            <Setter Property="ToolTipService.ShowDuration" Value="20000"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 타이틀 바 -->
+        <Border Grid.Row="0" Background="#3D4A5C" Padding="24,20" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <ui:SymbolIcon Symbol="DataBarVertical24" FontSize="28" Foreground="#5AC8FA" Margin="0,0,14,0"/>
+                    <TextBlock Text="전체 캐릭터 현황" Foreground="White" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CharacterCount, StringFormat='총 {0}개 캐릭터'}" 
+                               Foreground="#AABBCC" FontSize="16" Margin="0,0,24,0"
+                               VerticalAlignment="Center"/>
+                    
+                    <Button Click="MinimizeButton_Click" Width="44" Height="44" Padding="0"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="최소화"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                        <ui:SymbolIcon Symbol="Subtract24" FontSize="22" Foreground="#B0BEC5" Margin="0"/>
+                    </Button>
+                    <Button Click="CloseButton_Click" Width="44" Height="44" Padding="0"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="닫기"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                        <ui:SymbolIcon Symbol="Dismiss24" FontSize="22" Foreground="#B0BEC5" Margin="0"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 캐릭터 카드 그리드 -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20">
+            <ItemsControl ItemsSource="{Binding Characters}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" ItemWidth="360"/> <!-- 카드 340 + 마진 20 -->
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="340" Margin="10" CornerRadius="18" 
+                                Background="#4A5A6E" BorderBrush="#5A6A7E" BorderThickness="1"
+                                Cursor="Hand">
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" 
+                                              Command="{Binding DataContext.SelectAndCloseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              CommandParameter="{Binding}"/>
+                            </Border.InputBindings>
+                            <Grid Margin="24">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- 캐릭터 정보 헤더 -->
+                                <Grid Grid.Row="0" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- 캐릭터 이미지 (135x135) -->
+                                    <Border Width="135" Height="135" CornerRadius="67.5" Background="Transparent" ClipToBounds="True">
+                                        <Border>
+                                            <Border.Background>
+                                                <ImageBrush ImageSource="{Binding ImageUrl}" Stretch="Uniform">
+                                                    <ImageBrush.RelativeTransform>
+                                                        <ScaleTransform CenterX="0.48" CenterY="0.58" ScaleX="3.2" ScaleY="3.2"/>
+                                                    </ImageBrush.RelativeTransform>
+                                                </ImageBrush>
+                                            </Border.Background>
+                                        </Border>
+                                    </Border>
+
+                                    <!-- 캐릭터 이름/레벨 -->
+                                    <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Nickname}" Foreground="White" FontSize="22" FontWeight="Bold" TextWrapping="Wrap"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <TextBlock Text="Lv." Foreground="#5AC8FA" FontSize="16" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Level}" Foreground="White" FontSize="18" FontWeight="Bold" Margin="4,0,10,0"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding CharacterClass}" Foreground="#AABBCC" FontSize="15" Margin="0,4,0,0"/>
+                                        <Border Background="#5AC8FA" CornerRadius="4" Padding="8,4" Margin="0,8,0,0" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding WorldName}" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- 일일 진행률 -->
+                                <Grid Grid.Row="1" Margin="0,8" Style="{StaticResource ProgressGridStyle}"
+                                      ToolTip="{Binding DailyTasks, Converter={StaticResource TasksToTooltipConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="65"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="55"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="일일" Foreground="#FF9500" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="1" Height="12" CornerRadius="6" Background="#3A4A5A">
+                                        <Border CornerRadius="6" HorizontalAlignment="Left"
+                                                Width="{Binding DailyProgress, Converter={StaticResource ProgressToWidthConverter}}"
+                                                Background="{StaticResource DailyGradient}"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="2" Text="{Binding DailyProgress, StringFormat='{}{0:F0}%'}" 
+                                               Foreground="#CCDDEE" FontSize="14" FontWeight="Bold" 
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- 주간 진행률 -->
+                                <Grid Grid.Row="2" Margin="0,8" Style="{StaticResource ProgressGridStyle}"
+                                      ToolTip="{Binding WeeklyTasks, Converter={StaticResource TasksToTooltipConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="65"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="55"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="주간" Foreground="#5AC8FA" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="1" Height="12" CornerRadius="6" Background="#3A4A5A">
+                                        <Border CornerRadius="6" HorizontalAlignment="Left"
+                                                Width="{Binding WeeklyProgress, Converter={StaticResource ProgressToWidthConverter}}"
+                                                Background="{StaticResource WeeklyGradient}"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="2" Text="{Binding WeeklyProgress, StringFormat='{}{0:F0}%'}" 
+                                               Foreground="#CCDDEE" FontSize="14" FontWeight="Bold" 
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- 보스 진행률 -->
+                                <Grid Grid.Row="3" Margin="0,8" Style="{StaticResource ProgressGridStyle}"
+                                      ToolTip="{Binding BossTasks, Converter={StaticResource TasksToTooltipConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="65"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="55"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="보스" Foreground="#AF52DE" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="1" Height="12" CornerRadius="6" Background="#3A4A5A">
+                                        <Border CornerRadius="6" HorizontalAlignment="Left"
+                                                Width="{Binding BossProgress, Converter={StaticResource ProgressToWidthConverter}}"
+                                                Background="{StaticResource BossGradient}"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="2" Foreground="#CCDDEE" FontSize="14" FontWeight="Bold" 
+                                               HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0}/{1}">
+                                                <Binding Path="BossCheckedCount"/>
+                                                <Binding Path="BossActiveCount"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</ui:FluentWindow>

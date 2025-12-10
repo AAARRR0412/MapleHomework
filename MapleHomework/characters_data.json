@@ -1,0 +1,2168 @@
+{
+  "Characters": [
+    {
+      "Id": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "Nickname": "\uD0A4\uB80C",
+      "WorldName": "\uC2A4\uCE74\uB2C8\uC544",
+      "CharacterClass": "\uC5D4\uC824\uB9AD\uBC84\uC2A4\uD130",
+      "Level": 288,
+      "ImageUrl": "https://open.api.nexon.com/static/maplestory/character/look/KALKOGBNBOCOPAJBJPJOFFNKDPGAJHBNMCCBACJMPEDKGPJDPILPAJHMPOJGOJJHDHABLNFOIGENPOECIPIEOPFIDEPIPKGLJKGPBDEDKLJLGJJIBGMLOEPECPHJMPEBEKMIAKGKALBMAIMJHMFCLCJLGJEEPHHFMDKDJIEDFJIKGOFBACNKJJIMGHMDOMIIFLGLBHIDHFPJKFLBMJIHBGHGOADNLELIMDNPKHONDEMAKJMLEJIIGDDINGFJOOFM?wmotion=W00",
+      "Ocid": "8ffa33eaf29f9568805583fc7ca21b42",
+      "LastUpdatedTime": "2025-12-10T23:19:57.7461445+09:00",
+      "DailyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "2025-12-10T23:44:42.7595624+09:00"
+        },
+        {
+          "Name": "\uC18C\uBA78\uC758 \uC5EC\uB85C",
+          "Category": 0,
+          "RequiredLevel": 200,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE04\uCE04 \uC544\uC77C\uB79C\uB4DC",
+          "Category": 0,
+          "RequiredLevel": 210,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB808\uD5EC\uB978",
+          "Category": 0,
+          "RequiredLevel": 220,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uCE74\uB098",
+          "Category": 0,
+          "RequiredLevel": 225,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBAA8\uB77C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 230,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uC2A4\uD398\uB77C",
+          "Category": 0,
+          "RequiredLevel": 235,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB38\uBE0C\uB9BF\uC9C0",
+          "Category": 0,
+          "RequiredLevel": 245,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uACE0\uD1B5\uC758 \uBBF8\uAD81",
+          "Category": 0,
+          "RequiredLevel": 250,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9AC\uBA58",
+          "Category": 0,
+          "RequiredLevel": 255,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC138\uB974\uB2C8\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 260,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD638\uD154 \uC544\uB974\uD06C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 265,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC624\uB514\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 270,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB3C4\uC6D0\uACBD",
+          "Category": 0,
+          "RequiredLevel": 275,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uD14C\uB9AC\uC544",
+          "Category": 0,
+          "RequiredLevel": 280,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB974\uC2DC\uC628",
+          "Category": 0,
+          "RequiredLevel": 285,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C8\uB77C\uD558\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 290,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uC77C\uB9AC \uAE30\uD504\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "WeeklyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C \uC775\uC2A4\uD2B8\uB9BC",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uC988\uBAA8\uC2A4 \uD611\uACE1",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uD558\uC774\uB9C8\uC6B4\uD2F4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC575\uAE00\uB7EC \uCEF4\uD37C\uB2C8",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC545\uBABD \uC120\uACBD",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB34\uB989\uB3C4\uC7A5",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uC9C0\uD558\uC218\uB85C",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uD50C\uB798\uADF8 \uB808\uC774\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC8FC\uAC04 \uD018\uC2A4\uD2B8 (\uC5EC\uB85C~\uC5D0\uC2A4\uD398\uB77C)",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD06C\uB9AC\uD2F0\uC544\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C0\uB77D\uD55C \uC138\uACC4\uC218",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD5E4\uC774\uBE10",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC720\uB2C8\uC628 \uC8FC\uAC04 \uB4DC\uB798\uACE4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "BossTasks": [
+        {
+          "Name": "\uC790\uCFF0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9E4\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD30C\uD480\uB77C\uD22C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD53C\uC5D0\uB974",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC18\uBC18",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBE14\uB7EC\uB514\uD038",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBCA8\uB8F8",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD551\uD06C\uBE48",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2DC\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            0,
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2A4\uC6B0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uBBF8\uC548",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC00\uB514\uC5B8 \uC5D4\uC824 \uC2AC\uB77C\uC784",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB8E8\uC2DC\uB4DC",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC70C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB354\uC2A4\uD06C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC9C4 \uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB4C4\uCF08",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC120\uD0DD\uBC1B\uC740 \uC138\uB80C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC10\uC2DC\uC790 \uCE7C\uB85C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCD5C\uCD08\uC758 \uB300\uC801\uC790",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB9C1",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9BC\uBCF4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC1C\uB4DC\uB9AD\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "MonthlyTasks": [
+        {
+          "Name": "\uAC80\uC740 \uB9C8\uBC95\uC0AC",
+          "Category": 3,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "DailyProgress": 0,
+      "WeeklyProgress": 0,
+      "BossProgress": 0,
+      "BossCheckedCount": 0,
+      "BossActiveCount": 12
+    },
+    {
+      "Id": "3f5b041b-3357-47a5-8d74-e81a6c6071c4",
+      "Nickname": "Anro",
+      "WorldName": "\uC2A4\uCE74\uB2C8\uC544",
+      "CharacterClass": "\uC81C\uB85C",
+      "Level": 277,
+      "ImageUrl": "https://open.api.nexon.com/static/maplestory/character/look/EDIOMNCINKHPCFKAFCCLPHBPBEOAINDABNBCODDCGABJMDJCMBBHFDFKJBFADMKIICICHNCLFKHMCOJLOKCNIPJJAFFDEIKLBCPMGLAOKILMNPNELMIHGBCJAOAHKIFAMBLCLKDJNFECPLFACBNDAGGEJMCALBNEFKKPGFLMHLLODBJACINLGAEIPPJPAKLANDEKMHNAIOMCHPIAAJPMKDAJNDEIODOKEJDNGJAJNBPPKBIFCKCFCJMOKAMJFGOM?wmotion=W00",
+      "Ocid": "6ea1588bbfbe90b2e15e099de121803e",
+      "LastUpdatedTime": "2025-12-10T23:08:28.5173694+09:00",
+      "DailyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": true,
+          "LastCheckedTime": "2025-12-10T22:51:53.153982+09:00"
+        },
+        {
+          "Name": "\uC18C\uBA78\uC758 \uC5EC\uB85C",
+          "Category": 0,
+          "RequiredLevel": 200,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE04\uCE04 \uC544\uC77C\uB79C\uB4DC",
+          "Category": 0,
+          "RequiredLevel": 210,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB808\uD5EC\uB978",
+          "Category": 0,
+          "RequiredLevel": 220,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uCE74\uB098",
+          "Category": 0,
+          "RequiredLevel": 225,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBAA8\uB77C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 230,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uC2A4\uD398\uB77C",
+          "Category": 0,
+          "RequiredLevel": 235,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB38\uBE0C\uB9BF\uC9C0",
+          "Category": 0,
+          "RequiredLevel": 245,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": true,
+          "LastCheckedTime": "2025-12-10T22:51:56.9156011+09:00"
+        },
+        {
+          "Name": "\uACE0\uD1B5\uC758 \uBBF8\uAD81",
+          "Category": 0,
+          "RequiredLevel": 250,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": true,
+          "LastCheckedTime": "2025-12-10T22:51:54.9819482+09:00"
+        },
+        {
+          "Name": "\uB9AC\uBA58",
+          "Category": 0,
+          "RequiredLevel": 255,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC138\uB974\uB2C8\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 260,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD638\uD154 \uC544\uB974\uD06C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 265,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC624\uB514\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 270,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB3C4\uC6D0\uACBD",
+          "Category": 0,
+          "RequiredLevel": 275,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uD14C\uB9AC\uC544",
+          "Category": 0,
+          "RequiredLevel": 280,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB974\uC2DC\uC628",
+          "Category": 0,
+          "RequiredLevel": 285,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C8\uB77C\uD558\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 290,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uC77C\uB9AC \uAE30\uD504\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "WeeklyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C \uC775\uC2A4\uD2B8\uB9BC",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uC988\uBAA8\uC2A4 \uD611\uACE1",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uD558\uC774\uB9C8\uC6B4\uD2F4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC575\uAE00\uB7EC \uCEF4\uD37C\uB2C8",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC545\uBABD \uC120\uACBD",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB34\uB989\uB3C4\uC7A5",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uC9C0\uD558\uC218\uB85C",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uD50C\uB798\uADF8 \uB808\uC774\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC8FC\uAC04 \uD018\uC2A4\uD2B8 (\uC5EC\uB85C~\uC5D0\uC2A4\uD398\uB77C)",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD06C\uB9AC\uD2F0\uC544\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C0\uB77D\uD55C \uC138\uACC4\uC218",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD5E4\uC774\uBE10",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC720\uB2C8\uC628 \uC8FC\uAC04 \uB4DC\uB798\uACE4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "BossTasks": [
+        {
+          "Name": "\uC790\uCFF0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9E4\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD30C\uD480\uB77C\uD22C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD53C\uC5D0\uB974",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC18\uBC18",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBE14\uB7EC\uB514\uD038",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBCA8\uB8F8",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD551\uD06C\uBE48",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2DC\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            0,
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2A4\uC6B0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uBBF8\uC548",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC00\uB514\uC5B8 \uC5D4\uC824 \uC2AC\uB77C\uC784",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB8E8\uC2DC\uB4DC",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC70C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB354\uC2A4\uD06C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC9C4 \uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB4C4\uCF08",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC120\uD0DD\uBC1B\uC740 \uC138\uB80C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC10\uC2DC\uC790 \uCE7C\uB85C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCD5C\uCD08\uC758 \uB300\uC801\uC790",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB9C1",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9BC\uBCF4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC1C\uB4DC\uB9AD\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "MonthlyTasks": [
+        {
+          "Name": "\uAC80\uC740 \uB9C8\uBC95\uC0AC",
+          "Category": 3,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "DailyProgress": 33.33333333333333,
+      "WeeklyProgress": 0,
+      "BossProgress": 0,
+      "BossCheckedCount": 0,
+      "BossActiveCount": 12
+    },
+    {
+      "Id": "7170fe7d-5c45-4554-8bc8-b704379836d9",
+      "Nickname": "\uC73C\uCC60\uBD07",
+      "WorldName": "\uC2A4\uCE74\uB2C8\uC544",
+      "CharacterClass": "\uD32C\uD140",
+      "Level": 276,
+      "ImageUrl": "https://open.api.nexon.com/static/maplestory/character/look/JBLKDFPGAFCFHGKMFLCBILINOPFILAKEJOPLJLEEHBDJJMHNHEKOKDGJCBLPLMMIIIIMKMJMFDBLIHOPIIKONPBLCPEAPCBKFFGOEOHALIDOPLKCCBONADLKFKOJALANOJEDLKNLJNLDPKKDKAHHALEKLCEKEKHIOLMMKNCECIBDKCDHOIOLFEGGFANMDEAFLGMLLENIFMOKEPFDJADDADGGHPJMLBIDNIHACOOHBJNKIHMNHAPLABMDHPALKJIC?wmotion=W00",
+      "Ocid": "f862ff8e18311fab85665d2b90d585d7",
+      "LastUpdatedTime": "2025-12-10T23:03:30.4314244+09:00",
+      "DailyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC18C\uBA78\uC758 \uC5EC\uB85C",
+          "Category": 0,
+          "RequiredLevel": 200,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE04\uCE04 \uC544\uC77C\uB79C\uB4DC",
+          "Category": 0,
+          "RequiredLevel": 210,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB808\uD5EC\uB978",
+          "Category": 0,
+          "RequiredLevel": 220,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uCE74\uB098",
+          "Category": 0,
+          "RequiredLevel": 225,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBAA8\uB77C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 230,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uC2A4\uD398\uB77C",
+          "Category": 0,
+          "RequiredLevel": 235,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB38\uBE0C\uB9BF\uC9C0",
+          "Category": 0,
+          "RequiredLevel": 245,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uACE0\uD1B5\uC758 \uBBF8\uAD81",
+          "Category": 0,
+          "RequiredLevel": 250,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9AC\uBA58",
+          "Category": 0,
+          "RequiredLevel": 255,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC138\uB974\uB2C8\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 260,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD638\uD154 \uC544\uB974\uD06C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 265,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC624\uB514\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 270,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB3C4\uC6D0\uACBD",
+          "Category": 0,
+          "RequiredLevel": 275,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uD14C\uB9AC\uC544",
+          "Category": 0,
+          "RequiredLevel": 280,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB974\uC2DC\uC628",
+          "Category": 0,
+          "RequiredLevel": 285,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C8\uB77C\uD558\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 290,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uC77C\uB9AC \uAE30\uD504\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "WeeklyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C \uC775\uC2A4\uD2B8\uB9BC",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uC988\uBAA8\uC2A4 \uD611\uACE1",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uD558\uC774\uB9C8\uC6B4\uD2F4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC575\uAE00\uB7EC \uCEF4\uD37C\uB2C8",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC545\uBABD \uC120\uACBD",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB34\uB989\uB3C4\uC7A5",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uC9C0\uD558\uC218\uB85C",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uD50C\uB798\uADF8 \uB808\uC774\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC8FC\uAC04 \uD018\uC2A4\uD2B8 (\uC5EC\uB85C~\uC5D0\uC2A4\uD398\uB77C)",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD06C\uB9AC\uD2F0\uC544\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C0\uB77D\uD55C \uC138\uACC4\uC218",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD5E4\uC774\uBE10",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC720\uB2C8\uC628 \uC8FC\uAC04 \uB4DC\uB798\uACE4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "BossTasks": [
+        {
+          "Name": "\uC790\uCFF0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9E4\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD30C\uD480\uB77C\uD22C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD53C\uC5D0\uB974",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC18\uBC18",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBE14\uB7EC\uB514\uD038",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBCA8\uB8F8",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD551\uD06C\uBE48",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2DC\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            0,
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2A4\uC6B0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uBBF8\uC548",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC00\uB514\uC5B8 \uC5D4\uC824 \uC2AC\uB77C\uC784",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB8E8\uC2DC\uB4DC",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC70C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB354\uC2A4\uD06C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC9C4 \uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB4C4\uCF08",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC120\uD0DD\uBC1B\uC740 \uC138\uB80C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC10\uC2DC\uC790 \uCE7C\uB85C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCD5C\uCD08\uC758 \uB300\uC801\uC790",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB9C1",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9BC\uBCF4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC1C\uB4DC\uB9AD\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "MonthlyTasks": [
+        {
+          "Name": "\uAC80\uC740 \uB9C8\uBC95\uC0AC",
+          "Category": 3,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "DailyProgress": 0,
+      "WeeklyProgress": 0,
+      "BossProgress": 0,
+      "BossCheckedCount": 0,
+      "BossActiveCount": 12
+    }
+  ],
+  "SelectedCharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+  "ApiKey": "test_503bf08ecb8e95d486ee6871a5c2f600f4960ff73e84ae09ee5200f971058612154879837185450f9848c5494b6e2d2e",
+  "IsDarkTheme": false,
+  "AutoStartEnabled": true
+}

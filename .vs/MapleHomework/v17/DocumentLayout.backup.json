@@ -1,0 +1,272 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\converters\\difficultycolorconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\converters\\difficultycolorconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\services\\gamedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\services\\gamedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\models\\homeworktask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\models\\homeworktask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\maplehomework.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\maplehomework.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\models\\appconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\models\\appconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\services\\mapleapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\services\\mapleapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\models\\nexonapimodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\models\\nexonapimodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\settingswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\settingswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\settingswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\settingswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|c:\\users\\qkr94\\source\\repos\\maplehomework\\maplehomework\\services\\taskrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5C7A7B8-11A0-4F09-9A4E-652B01005487}|MapleHomework\\MapleHomework.csproj|solutionrelative:maplehomework\\services\\taskrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 10,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DifficultyColorConverter.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Converters\\DifficultyColorConverter.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\Converters\\DifficultyColorConverter.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Converters\\DifficultyColorConverter.cs",
+              "RelativeToolTip": "MapleHomework\\Converters\\DifficultyColorConverter.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAwwCAAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T08:38:35.991Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GameData.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Services\\GameData.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\Services\\GameData.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Services\\GameData.cs",
+              "RelativeToolTip": "MapleHomework\\Services\\GameData.cs",
+              "ViewState": "AgIAADgAAAAAAAAAAAAAwEgAAABiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T08:31:10.287Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "TaskRepository.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Services\\TaskRepository.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\Services\\TaskRepository.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Services\\TaskRepository.cs",
+              "RelativeToolTip": "MapleHomework\\Services\\TaskRepository.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAcwDAAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T07:11:40.528Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "HomeworkTask.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Models\\HomeworkTask.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\Models\\HomeworkTask.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Models\\HomeworkTask.cs",
+              "RelativeToolTip": "MapleHomework\\Models\\HomeworkTask.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAmwDsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T07:04:19.144Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "SettingsWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\SettingsWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\SettingsWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\SettingsWindow.xaml.cs",
+              "RelativeToolTip": "MapleHomework\\SettingsWindow.xaml.cs",
+              "ViewState": "AgIAACUAAAAAAAAAAAAkwBYAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T07:00:48.877Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "SettingsWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\SettingsWindow.xaml",
+              "RelativeDocumentMoniker": "MapleHomework\\SettingsWindow.xaml",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\SettingsWindow.xaml",
+              "RelativeToolTip": "MapleHomework\\SettingsWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-12-10T07:00:18.398Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AppConfig.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Models\\AppConfig.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\Models\\AppConfig.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Models\\AppConfig.cs",
+              "RelativeToolTip": "MapleHomework\\Models\\AppConfig.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAcwCgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T07:00:05.587Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\App.xaml.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\App.xaml.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\App.xaml.cs",
+              "RelativeToolTip": "MapleHomework\\App.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T06:57:08.253Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\App.xaml",
+              "RelativeDocumentMoniker": "MapleHomework\\App.xaml",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\App.xaml",
+              "RelativeToolTip": "MapleHomework\\App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-12-10T06:56:47.205Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MapleHomework\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T06:53:51.642Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MapleHomework\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MainWindow.xaml*",
+              "RelativeToolTip": "MapleHomework\\MainWindow.xaml*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-12-10T06:53:35.423Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\ViewModels\\MainViewModel.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\ViewModels\\MainViewModel.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\ViewModels\\MainViewModel.cs*",
+              "RelativeToolTip": "MapleHomework\\ViewModels\\MainViewModel.cs*",
+              "ViewState": "AgIAADIBAAAAAAAAAAAgwEkBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T06:40:30.131Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MapleApiService.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Services\\MapleApiService.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\Services\\MapleApiService.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Services\\MapleApiService.cs",
+              "RelativeToolTip": "MapleHomework\\Services\\MapleApiService.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAowCwAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T06:40:07.639Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "NexonApiModels.cs",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Models\\NexonApiModels.cs",
+              "RelativeDocumentMoniker": "MapleHomework\\Models\\NexonApiModels.cs",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\Models\\NexonApiModels.cs",
+              "RelativeToolTip": "MapleHomework\\Models\\NexonApiModels.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAYwBsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-10T06:39:38.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MapleHomework",
+              "DocumentMoniker": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MapleHomework.csproj",
+              "RelativeDocumentMoniker": "MapleHomework\\MapleHomework.csproj",
+              "ToolTip": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MapleHomework.csproj",
+              "RelativeToolTip": "MapleHomework\\MapleHomework.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-10T06:38:04.207Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
