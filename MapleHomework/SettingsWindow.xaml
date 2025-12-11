@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Settings" Height="420" Width="400"
+        Title="Settings" Height="850" Width="480"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Topmost="True">
+
     <Border CornerRadius="20" Margin="15">
         <Border.Background>
             <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
@@ -51,7 +52,11 @@
                 </Button>
             </Grid>
 
-            <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="5,0">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+                <StackPanel Margin="5,0">
+                    <!-- API 설정 섹션 -->
+                    <TextBlock Text="API 설정" Foreground="#5AC8FA" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
+                    
                 <TextBlock Text="NEXON API Key" Foreground="#AAAAAA" Margin="0,0,0,6" FontSize="12" FontWeight="SemiBold"/>
                 <ui:TextBox x:Name="TxtApiKey" PlaceholderText="api.nexon.com에서 발급받은 키 입력" 
                             Margin="0,0,0,15" Padding="10"/>
@@ -59,11 +64,30 @@
                 <TextBlock Text="대표 캐릭터 닉네임" Foreground="#AAAAAA" Margin="0,0,0,6" FontSize="12" FontWeight="SemiBold"/>
                 <ui:TextBox x:Name="TxtNickname" PlaceholderText="캐릭터 닉네임 입력" Padding="10"/>
 
+                <!-- API / 닉네임 저장 버튼 -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,18">
+                    <Button Content="저장" Padding="16,8" Click="SaveButton_Click"
+                            Background="#5AC8FA" Foreground="White" BorderThickness="0"
+                            MinWidth="80" Cursor="Hand"/>
+                </StackPanel>
+
                 <!-- 구분선 -->
                 <Border Height="1" Background="#33FFFFFF" Margin="0,18,0,15"/>
 
+                    <!-- 테마 설정 섹션 -->
+                    <TextBlock Text="테마 설정" Foreground="#4CD964" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
+                    
+                    <TextBlock Text="테마 모드" Foreground="#AAAAAA" Margin="0,0,0,6" FontSize="12" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="ThemeModeCombo" Margin="0,0,0,12" SelectionChanged="ThemeModeCombo_SelectionChanged"/>
+
+                    <!-- 구분선 -->
+                    <Border Height="1" Background="#33FFFFFF" Margin="0,8,0,15"/>
+
+                    <!-- 일반 설정 섹션 -->
+                    <TextBlock Text="일반 설정" Foreground="#5AC8FA" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
+
                 <!-- 자동 시작 설정 -->
-                <Grid Margin="0,0,0,8">
+                    <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -76,11 +100,208 @@
                                      Checked="AutoStartToggle_Changed" Unchecked="AutoStartToggle_Changed"/>
                 </Grid>
 
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Opacity="0.7">
+                    <!-- 구분선 -->
+                    <Border Height="1" Background="#33FFFFFF" Margin="0,8,0,15"/>
+
+                    <!-- 알림 설정 섹션 -->
+                    <TextBlock Text="알림 설정" Foreground="#FF9500" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
+
+                    <!-- 알림 활성화 -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="숙제 알림 활성화" Foreground="White" FontSize="13" FontWeight="Medium"/>
+                            <TextBlock Text="설정된 시간에 미완료 숙제를 알려줍니다" Foreground="#888888" FontSize="11" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <ui:ToggleSwitch x:Name="NotificationToggle" Grid.Column="1" VerticalAlignment="Center"
+                                         Checked="NotificationToggle_Changed" Unchecked="NotificationToggle_Changed"/>
+                    </Grid>
+
+                    <!-- 알림 상세 설정 패널 -->
+                    <StackPanel x:Name="NotificationDetailPanel" Margin="0,0,0,8">
+                        <!-- 일일 알림 설정 -->
+                        <Border Background="#22FFFFFF" CornerRadius="8" Padding="12,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="NotifyDailyCheck" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="일일 퀘스트" Foreground="#5AC8FA" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Text="자정 전 알림" Foreground="#888888" FontSize="10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ComboBox x:Name="DailyHoursCombo" Width="70" FontSize="12"/>
+                                    <TextBlock Text="시간 전" Foreground="#AAAAAA" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- 주간 알림 설정 -->
+                        <Border Background="#22FFFFFF" CornerRadius="8" Padding="12,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="NotifyWeeklyCheck" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="주간 퀘스트" Foreground="#FF9500" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Text="목요일 전 알림" Foreground="#888888" FontSize="10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ComboBox x:Name="WeeklyDaysCombo" Width="70" FontSize="12"/>
+                                    <TextBlock Text="일 전" Foreground="#AAAAAA" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- 보스 알림 설정 -->
+                        <Border Background="#22FFFFFF" CornerRadius="8" Padding="12,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="NotifyBossCheck" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="주간 보스" Foreground="#FF3B30" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Text="목요일 전 알림" Foreground="#888888" FontSize="10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ComboBox x:Name="BossDaysCombo" Width="70" FontSize="12"/>
+                                    <TextBlock Text="일 전" Foreground="#AAAAAA" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- 월간 알림 설정 -->
+                        <Border Background="#22FFFFFF" CornerRadius="8" Padding="12,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="NotifyMonthlyCheck" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="월간 보스" Foreground="#AF52DE" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Text="월초 전 알림" Foreground="#888888" FontSize="10"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ComboBox x:Name="MonthlyDaysCombo" Width="70" FontSize="12"/>
+                                    <TextBlock Text="일 전" Foreground="#AAAAAA" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- 시작 시 팝업 설정 -->
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="시작 시 팝업 알림" Foreground="White" FontSize="13" FontWeight="Medium"/>
+                            <TextBlock Text="프로그램 시작 시 미완료 숙제를 팝업으로 표시" Foreground="#888888" FontSize="10" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ui:ToggleSwitch x:Name="StartupPopupToggle" Grid.Column="1" VerticalAlignment="Center"
+                                         Checked="StartupPopupToggle_Changed" Unchecked="StartupPopupToggle_Changed"/>
+                    </Grid>
+
+                    <!-- 구분선 -->
+                    <Border Height="1" Background="#33FFFFFF" Margin="0,8,0,15"/>
+
+                    <!-- 오버레이 설정 섹션 -->
+                    <TextBlock Text="오버레이 설정" Foreground="#AF52DE" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
+
+                    <!-- 오버레이 활성화 -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="게임 오버레이 활성화" Foreground="White" FontSize="13" FontWeight="Medium"/>
+                            <TextBlock Text="MapleStory 실행 중 미완료 숙제를 표시합니다" Foreground="#888888" FontSize="11" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <ui:ToggleSwitch x:Name="OverlayToggle" Grid.Column="1" VerticalAlignment="Center"
+                                         Checked="OverlayToggle_Changed" Unchecked="OverlayToggle_Changed"/>
+                    </Grid>
+
+                    <!-- 즐겨찾기만 표시 -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="즐겨찾기만 표시" Foreground="White" FontSize="13" FontWeight="Medium"/>
+                            <TextBlock Text="즐겨찾기 설정된 숙제만 오버레이에 표시합니다" Foreground="#888888" FontSize="11" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <ui:ToggleSwitch x:Name="ShowOnlyFavoritesToggle" Grid.Column="1" VerticalAlignment="Center"
+                                         Checked="ShowOnlyFavoritesToggle_Changed" Unchecked="ShowOnlyFavoritesToggle_Changed"/>
+                    </Grid>
+
+                    <!-- 프로세스 이름 설정 -->
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="감지할 프로세스 이름" Foreground="White" FontSize="13" FontWeight="Medium"/>
+                        <TextBlock Text="오버레이를 표시할 프로세스 이름 (확장자 제외)" Foreground="#888888" FontSize="10" Margin="0,3,0,6"/>
+                        <ui:TextBox x:Name="OverlayProcessNameBox" PlaceholderText="MapleStory" Padding="10,8"/>
+                    </StackPanel>
+
+                    <!-- 오버레이 투명도 설정 -->
+                    <StackPanel Margin="0,0,0,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="오버레이 투명도" Foreground="White" FontSize="13" FontWeight="Medium"/>
+                            <TextBlock x:Name="OpacityValueText" Text="80%" Foreground="#5AC8FA" FontSize="13" FontWeight="Medium" Grid.Column="1"/>
+                        </Grid>
+                        <TextBlock Text="오버레이의 투명도를 조절합니다" Foreground="#888888" FontSize="10" Margin="0,3,0,8"/>
+                        <Slider x:Name="OverlayOpacitySlider" Minimum="20" Maximum="100" Value="80" 
+                                TickFrequency="5" IsSnapToTickEnabled="True"
+                                ValueChanged="OverlayOpacitySlider_ValueChanged"/>
+                    </StackPanel>
+
+                    <!-- 구분선 -->
+                    <Border Height="1" Background="#33FFFFFF" Margin="0,8,0,15"/>
+
+                    <!-- 데이터 관리 섹션 -->
+                    <TextBlock Text="데이터 관리" Foreground="#34C759" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
+
+                    <Grid Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:Button Grid.Column="0" Content="백업 생성" Icon="ArrowDownload24" 
+                                   Appearance="Secondary" HorizontalAlignment="Stretch"
+                                   Click="BackupButton_Click" Height="36"/>
+                        
+                        <ui:Button Grid.Column="2" Content="백업 복원" Icon="ArrowUpload24" 
+                                   Appearance="Secondary" HorizontalAlignment="Stretch"
+                                   Click="RestoreButton_Click" Height="36"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Opacity="0.7">
                     <ui:SymbolIcon Symbol="Info16" FontSize="12" Foreground="#888888" Margin="0,0,5,0"/>
                     <TextBlock Text="입력 후 저장을 누르면 정보가 갱신됩니다." Foreground="#888888" FontSize="11"/>
                 </StackPanel>
             </StackPanel>
+            </ScrollViewer>
 
             <ui:Button Grid.Row="2" Content="저장하고 불러오기" Icon="Save24" Appearance="Primary" 
                        HorizontalAlignment="Stretch" Click="SaveButton_Click" Height="40"

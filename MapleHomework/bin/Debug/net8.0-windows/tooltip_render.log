@@ -1,0 +1,124 @@
+[2025-12-11 20:25:45] Render start: 오션 글로우 이어링
+[2025-12-11 20:25:45] Render success via MapleTooltipRenderer: 오션 글로우 이어링
+[2025-12-11 20:25:46] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:25:46] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크
+[2025-12-11 20:25:47] Render start: 마력이 깃든 안대
+[2025-12-11 20:25:47] Render success via MapleTooltipRenderer: 마력이 깃든 안대
+[2025-12-11 20:25:51] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:25:51] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크
+[2025-12-11 20:25:51] Render start: 마력이 깃든 안대
+[2025-12-11 20:25:51] Render success via MapleTooltipRenderer: 마력이 깃든 안대
+[2025-12-11 20:25:52] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:25:52] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크
+[2025-12-11 20:25:52] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:25:52] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크
+[2025-12-11 20:26:18] Render start: 거대한 공포
+[2025-12-11 20:26:18] Render success via MapleTooltipRenderer: 거대한 공포
+[2025-12-11 20:26:18] Render start: 오션 글로우 이어링
+[2025-12-11 20:26:18] Render success via MapleTooltipRenderer: 오션 글로우 이어링
+[2025-12-11 20:26:18] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:26:18] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크
+[2025-12-11 20:26:18] Render start: 마력이 깃든 안대
+[2025-12-11 20:26:18] Render success via MapleTooltipRenderer: 마력이 깃든 안대
+[2025-12-11 20:26:19] Render start: 마력이 깃든 안대
+[2025-12-11 20:26:19] Render success via MapleTooltipRenderer: 마력이 깃든 안대
+[2025-12-11 20:26:20] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:26:20] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크
+[2025-12-11 20:28:16] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:28:16] Saved debug png: C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\bin\Debug\net8.0-windows\tooltip_debug\20251211_202816_921_루즈 컨트롤 머신 마크.png
+[2025-12-11 20:28:16] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 20:28:16] Render start: 마력이 깃든 안대
+[2025-12-11 20:28:17] Saved debug png: C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\bin\Debug\net8.0-windows\tooltip_debug\20251211_202817_014_마력이 깃든 안대.png
+[2025-12-11 20:28:17] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 20:28:17] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 20:28:17] Saved debug png: C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\bin\Debug\net8.0-windows\tooltip_debug\20251211_202817_509_루즈 컨트롤 머신 마크.png
+[2025-12-11 20:28:17] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 20:28:18] Render start: 마력이 깃든 안대
+[2025-12-11 20:28:19] Saved debug png: C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\bin\Debug\net8.0-windows\tooltip_debug\20251211_202819_018_마력이 깃든 안대.png
+[2025-12-11 20:28:19] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 21:40:20] Render exception | EX: The JSON value could not be converted to System.String. Path: $.item_total_option.equipment_level_decrease | LineNumber: 0 | BytePositionInLine: 705.
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, Utf8JsonReader& reader, Exception ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at MapleHomework.Converters.ItemTooltipImageConverter.Convert(Object value, Type targetType, Object parameter, CultureInfo culture) in C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\Converters\ItemTooltipImageConverter.cs:line 40
+[2025-12-11 21:43:23] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 21:43:23] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 21:43:27] Render start: 마력이 깃든 안대
+[2025-12-11 21:43:27] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 21:43:41] Render start: 오션 글로우 이어링
+[2025-12-11 21:43:41] Render success via MapleTooltipRenderer: 오션 글로우 이어링 (size 324x461)
+[2025-12-11 21:45:59] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 21:45:59] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 21:46:03] Render start: 마력이 깃든 안대
+[2025-12-11 21:46:03] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 21:49:16] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 21:49:16] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 21:49:21] Render start: 마력이 깃든 안대
+[2025-12-11 21:49:21] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 21:49:22] Render start: 오션 글로우 이어링
+[2025-12-11 21:49:22] Render success via MapleTooltipRenderer: 오션 글로우 이어링 (size 324x461)
+[2025-12-11 22:01:56] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 22:01:56] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 22:01:58] Render start: 마력이 깃든 안대
+[2025-12-11 22:01:58] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 22:02:00] Render start: 오션 글로우 이어링
+[2025-12-11 22:02:00] Render success via MapleTooltipRenderer: 오션 글로우 이어링 (size 324x461)
+[2025-12-11 22:04:51] Render start: 거대한 공포
+[2025-12-11 22:04:51] Render success via MapleTooltipRenderer: 거대한 공포 (size 324x461)
+[2025-12-11 22:13:15] Render start: 마력이 깃든 안대
+[2025-12-11 22:13:15] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 22:13:20] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 22:13:20] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 22:19:24] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 22:19:25] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x431)
+[2025-12-11 22:19:27] Render start: 마력이 깃든 안대
+[2025-12-11 22:19:27] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x446)
+[2025-12-11 22:19:28] Render start: 오션 글로우 이어링
+[2025-12-11 22:19:28] Render success via MapleTooltipRenderer: 오션 글로우 이어링 (size 324x461)
+[2025-12-11 22:24:12] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 22:24:12] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x445)
+[2025-12-11 22:24:19] Render start: 마력이 깃든 안대
+[2025-12-11 22:24:19] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x460)
+[2025-12-11 22:24:21] Render start: 오션 글로우 이어링
+[2025-12-11 22:24:21] Render success via MapleTooltipRenderer: 오션 글로우 이어링 (size 324x475)
+[2025-12-11 22:43:34] Render start: 마력이 깃든 안대
+[2025-12-11 22:43:34] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x387)
+[2025-12-11 22:43:36] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 22:43:36] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x387)
+[2025-12-11 22:53:25] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 22:53:25] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x499)
+[2025-12-11 22:53:30] Render start: 마력이 깃든 안대
+[2025-12-11 22:53:30] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x515)
+[2025-12-11 22:53:32] Render start: 오션 글로우 이어링
+[2025-12-11 22:53:32] Render success via MapleTooltipRenderer: 오션 글로우 이어링 (size 324x531)
+[2025-12-11 22:53:36] Render start: 거대한 공포
+[2025-12-11 22:53:36] Render success via MapleTooltipRenderer: 거대한 공포 (size 324x515)
+[2025-12-11 22:53:37] Render start: 여명의 가디언 엔젤 링
+[2025-12-11 22:53:37] Render success via MapleTooltipRenderer: 여명의 가디언 엔젤 링 (size 324x515)
+[2025-12-11 22:59:24] Render start: 마력이 깃든 안대
+[2025-12-11 22:59:24] Render success via MapleTooltipRenderer: 마력이 깃든 안대 (size 324x515)
+[2025-12-11 22:59:26] Render start: 루즈 컨트롤 머신 마크
+[2025-12-11 22:59:26] Render success via MapleTooltipRenderer: 루즈 컨트롤 머신 마크 (size 324x499)
+[2025-12-11 22:59:29] Render start: 오션 글로우 이어링
+[2025-12-11 22:59:29] Render success via MapleTooltipRenderer: 오션 글로우 이어링 (size 324x531)
+[2025-12-11 22:59:38] Render start: 웨폰퍼프 - D링
+[2025-12-11 22:59:38] Render success via MapleTooltipRenderer: 웨폰퍼프 - D링 (size 324x291)
+[2025-12-11 22:59:39] Render start: 마이스터링
+[2025-12-11 22:59:39] Render success via MapleTooltipRenderer: 마이스터링 (size 324x515)
+[2025-12-11 22:59:41] Render start: 고통의 근원
+[2025-12-11 22:59:41] Render success via MapleTooltipRenderer: 고통의 근원 (size 324x515)
+[2025-12-11 22:59:46] Render start: 리스트레인트 링
+[2025-12-11 22:59:46] Render success via MapleTooltipRenderer: 리스트레인트 링 (size 324x291)
+[2025-12-11 22:59:50] Render start: 칠요의 몬스터파커
+[2025-12-11 22:59:50] Render success via MapleTooltipRenderer: 칠요의 몬스터파커 (size 324x307)
+[2025-12-11 22:59:51] Render start: 정령의 펜던트
+[2025-12-11 22:59:51] Render success via MapleTooltipRenderer: 정령의 펜던트 (size 324x195)
+[2025-12-11 22:59:57] Render start: 하프 이어링
+[2025-12-11 22:59:57] Render success via MapleTooltipRenderer: 하프 이어링 (size 324x451)
+[2025-12-11 22:59:58] Render start: 테네브리스 원정대 반지
+[2025-12-11 22:59:58] Render success via MapleTooltipRenderer: 테네브리스 원정대 반지 (size 324x389)
+[2025-12-11 23:00:01] Render start: 마이스터링
+[2025-12-11 23:00:01] Render success via MapleTooltipRenderer: 마이스터링 (size 324x515)
+[2025-12-11 23:00:09] Render start: 글로리온 링 : 슈프림
+[2025-12-11 23:00:09] Render success via MapleTooltipRenderer: 글로리온 링 : 슈프림 (size 324x389)

@@ -30,4 +30,17 @@
 	  <Resource Include="Fonts\Pretendard-SemiBold.ttf" />
 	</ItemGroup>
 
+	<!-- CharaSimResource 이미지 리소스 (출력 폴더에 복사) -->
+	<ItemGroup>
+	  <Content Include="CharaSimResource\Resources\**\*.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="CharaSimResource\Resources\**\*.bmp">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="CharaSimResource\Resources\**\*.ttf">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
 </Project>

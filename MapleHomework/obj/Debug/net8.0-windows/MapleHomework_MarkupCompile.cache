@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\App.xaml
-3-1327700417
-
-221207382115
+71950611783
+682-1852684503
+54917879721
 209-91331079
-DashboardWindow.xaml;MainWindow.xaml;SettingsWindow.xaml;
+BossRewardWindow.xaml;DashboardWindow.xaml;MainWindow.xaml;OverlayWindow.xaml;ReportWindow.xaml;SettingsWindow.xaml;StartupPopupWindow.xaml;
 
-True
+False
 

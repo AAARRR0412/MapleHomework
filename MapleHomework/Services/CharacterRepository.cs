@@ -42,11 +42,57 @@ namespace MapleHomework.Services
             try
             {
                 string json = File.ReadAllText(FilePath);
-                return JsonSerializer.Deserialize<AppData>(json) ?? new AppData();
+                var appData = JsonSerializer.Deserialize<AppData>(json) ?? new AppData();
+                
+                // 각 캐릭터의 보스 난이도를 GameData에서 동기화
+                SyncBossDifficulties(appData);
+                
+                return appData;
             }
             catch
             {
                 return new AppData();
+            }
+        }
+
+        /// <summary>
+        /// 보스 태스크의 AvailableDifficulties를 GameData에서 동기화
+        /// </summary>
+        private static void SyncBossDifficulties(AppData appData)
+        {
+            foreach (var character in appData.Characters)
+            {
+                // 주간 보스 동기화
+                foreach (var task in character.BossTasks)
+                {
+                    var bossInfo = GameData.GetBossInfo(task.Name, isMonthly: false);
+                    if (bossInfo != null)
+                    {
+                        task.AvailableDifficulties = new List<BossDifficulty>(bossInfo.AvailableDifficulties);
+                        
+                        // 현재 설정된 난이도가 사용 가능한 난이도에 없으면 기본값으로 설정
+                        if (!task.AvailableDifficulties.Contains(task.Difficulty))
+                        {
+                            task.Difficulty = bossInfo.DefaultDifficulty;
+                        }
+                    }
+                }
+
+                // 월간 보스 동기화
+                foreach (var task in character.MonthlyTasks)
+                {
+                    var bossInfo = GameData.GetBossInfo(task.Name, isMonthly: true);
+                    if (bossInfo != null)
+                    {
+                        task.AvailableDifficulties = new List<BossDifficulty>(bossInfo.AvailableDifficulties);
+                        
+                        // 현재 설정된 난이도가 사용 가능한 난이도에 없으면 기본값으로 설정
+                        if (!task.AvailableDifficulties.Contains(task.Difficulty))
+                        {
+                            task.Difficulty = bossInfo.DefaultDifficulty;
+                        }
+                    }
+                }
             }
         }
 
@@ -151,25 +197,29 @@ namespace MapleHomework.Services
                 });
             }
 
-            foreach (var task in GameData.Bosses)
+            // 주간 보스 - GameData.WeeklyBosses에서 정보 가져오기
+            foreach (var bossInfo in GameData.WeeklyBosses)
             {
                 character.BossTasks.Add(new HomeworkTask
                 {
-                    Name = task.Name,
-                    Category = task.Category,
-                    Difficulty = task.Difficulty,
-                    AvailableDifficulties = new List<BossDifficulty>(task.AvailableDifficulties),
-                    IsActive = task.IsActive
+                    Name = bossInfo.Name,
+                    Category = bossInfo.Category,
+                    Difficulty = bossInfo.DefaultDifficulty,
+                    AvailableDifficulties = new List<BossDifficulty>(bossInfo.AvailableDifficulties),
+                    IsActive = bossInfo.IsActiveByDefault
                 });
             }
 
-            foreach (var task in GameData.Monthlies)
+            // 월간 보스 - GameData.MonthlyBosses에서 정보 가져오기
+            foreach (var bossInfo in GameData.MonthlyBosses)
             {
                 character.MonthlyTasks.Add(new HomeworkTask
                 {
-                    Name = task.Name,
-                    Category = task.Category,
-                    IsActive = task.IsActive
+                    Name = bossInfo.Name,
+                    Category = bossInfo.Category,
+                    Difficulty = bossInfo.DefaultDifficulty,
+                    AvailableDifficulties = new List<BossDifficulty>(bossInfo.AvailableDifficulties),
+                    IsActive = bossInfo.IsActiveByDefault
                 });
             }
 
@@ -197,4 +247,3 @@ namespace MapleHomework.Services
         }
     }
 }
-

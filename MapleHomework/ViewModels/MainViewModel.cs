@@ -36,6 +36,22 @@ namespace MapleHomework.ViewModels
         private DispatcherTimer _timer;
         private AppData _appData;
 
+        // 대시보드 윈도우 인스턴스 (중복 열림 방지)
+        private DashboardWindow? _dashboardWindow;
+        // 보스 수익 계산기 윈도우 인스턴스
+        private BossRewardWindow? _bossRewardWindow;
+
+        // 테마 변경 이벤트 (다른 윈도우들에게 알림)
+        public event Action? ThemeChanged;
+        
+        /// <summary>
+        /// 테마 변경 이벤트 발생
+        /// </summary>
+        public void NotifyThemeChanged()
+        {
+            ThemeChanged?.Invoke();
+        }
+
         // 캐릭터 리스트
         public ObservableCollection<CharacterProfile> Characters { get; set; } = new();
 
@@ -87,21 +103,6 @@ namespace MapleHomework.ViewModels
             set { _newCharacterName = value; OnPropertyChanged(); }
         }
 
-        // 캐릭터 추가 UI 상태
-        private bool _isAddingCharacter = false;
-        public bool IsAddingCharacter
-        {
-            get => _isAddingCharacter;
-            set { _isAddingCharacter = value; OnPropertyChanged(); }
-        }
-
-        private string _newCharacterName = "";
-        public string NewCharacterName
-        {
-            get => _newCharacterName;
-            set { _newCharacterName = value; OnPropertyChanged(); }
-        }
-
         // 원본 데이터
         public ObservableCollection<HomeworkTask> DailyList { get; set; } = new();
         public ObservableCollection<HomeworkTask> WeeklyList { get; set; } = new();
@@ -128,6 +129,14 @@ namespace MapleHomework.ViewModels
                 OnPropertyChanged();
                 RefreshAllViews();
             }
+        }
+
+        // 반응형 열 개수 (창 크기에 따라 변경)
+        private int _taskColumnCount = 3;
+        public int TaskColumnCount
+        {
+            get => _taskColumnCount;
+            set { _taskColumnCount = value; OnPropertyChanged(); }
         }
 
         // 진행률 & 카운트
@@ -209,6 +218,9 @@ namespace MapleHomework.ViewModels
         }
 
         public IEnumerable<BossDifficulty> DifficultyOptions => Enum.GetValues(typeof(BossDifficulty)).Cast<BossDifficulty>();
+        
+        // 파티원 수 옵션 (1~6인)
+        public IEnumerable<int> PartySizeOptions => new[] { 1, 2, 3, 4, 5, 6 };
 
         // 캐릭터 정보 (UI 바인딩용)
         private string _characterName = "캐릭터 추가";
@@ -222,9 +234,15 @@ namespace MapleHomework.ViewModels
         public string CharacterClass { get => _characterClass; set { _characterClass = value; OnPropertyChanged(); } }
         public string CharacterLevel { get => _characterLevel; set { _characterLevel = value; OnPropertyChanged(); } }
 
+        // 카테고리별 즐겨찾기 상태 (UI 바인딩용)
+        public bool IsDailyFavorite => SelectedCharacter?.IsDailyFavorite ?? false;
+        public bool IsWeeklyFavorite => SelectedCharacter?.IsWeeklyFavorite ?? false;
+        public bool IsBossFavorite => SelectedCharacter?.IsBossFavorite ?? false;
+        public bool IsMonthlyFavorite => SelectedCharacter?.IsMonthlyFavorite ?? false;
+
         // 테마
-        public bool IsDarkTheme { get; set; } = true;
-        public string ThemeIcon { get; set; } = "WeatherMoon24";
+        public bool IsDarkTheme { get; set; } = false;
+        public string ThemeIcon { get; set; } = "WeatherSunny24";
 
         private Brush _background = Brushes.Transparent;
         private Brush _surface = Brushes.Transparent;
@@ -256,6 +274,15 @@ namespace MapleHomework.ViewModels
         public ICommand RemoveCharacterCommand { get; }
         public ICommand ToggleCharacterSelectorCommand { get; }
         public ICommand OpenDashboardCommand { get; }
+        public ICommand OpenBossRewardCommand { get; }
+        public ICommand CancelEditCommand { get; }
+        public ICommand SaveEditCommand { get; }
+        public ICommand ToggleFavoriteCommand { get; }
+        public ICommand ToggleDailyFavoriteCommand { get; }
+        public ICommand ToggleWeeklyFavoriteCommand { get; }
+        public ICommand ToggleBossFavoriteCommand { get; }
+        public ICommand ToggleMonthlyFavoriteCommand { get; }
+        public ICommand OpenReportCommand { get; }
 
         public MainViewModel()
         {
@@ -281,6 +308,28 @@ namespace MapleHomework.ViewModels
                 UpdateThemeColors();
                 OnPropertyChanged(nameof(IsDarkTheme));
                 OnPropertyChanged(nameof(ThemeIcon));
+                
+                // 다른 창들에도 테마 적용
+                NotifyThemeChanged();
+            });
+            
+            // 편집 취소 (변경사항 버리고 편집모드 종료)
+            CancelEditCommand = new RelayCommand(_ =>
+            {
+                // 저장하지 않고 기존 데이터 다시 로드
+                if (SelectedCharacter != null)
+                {
+                    LoadCharacterTasks(SelectedCharacter);
+                }
+                IsEditMode = false;
+            });
+            
+            // 편집 저장 (변경사항 저장하고 편집모드 종료)
+            SaveEditCommand = new RelayCommand(_ =>
+            {
+                SaveData();
+                IsEditMode = false;
+                RefreshAllViews();
             });
 
             ToggleTaskCommand = new RelayCommand(async param =>
@@ -373,8 +422,102 @@ namespace MapleHomework.ViewModels
 
             OpenDashboardCommand = new RelayCommand(_ =>
             {
-                var dashboard = new DashboardWindow(_appData, this);
-                dashboard.ShowDialog();
+                // 이미 열려 있는 창이 있는지 확인
+                if (_dashboardWindow != null && _dashboardWindow.IsLoaded)
+                {
+                    // 최소화되어 있으면 복원
+                    if (_dashboardWindow.WindowState == System.Windows.WindowState.Minimized)
+                    {
+                        _dashboardWindow.WindowState = System.Windows.WindowState.Normal;
+                    }
+                    // 창을 활성화하고 최상위로 가져오기
+                    _dashboardWindow.Activate();
+                    _dashboardWindow.Focus();
+                }
+                else
+                {
+                    // 새 창 생성
+                    _dashboardWindow = new DashboardWindow(_appData, this);
+                    _dashboardWindow.Closed += (s, e) => _dashboardWindow = null; // 닫히면 참조 해제
+                    _dashboardWindow.Show();
+                }
+            });
+
+            OpenBossRewardCommand = new RelayCommand(_ =>
+            {
+                // 이미 열려 있는 창이 있는지 확인
+                if (_bossRewardWindow != null && _bossRewardWindow.IsLoaded)
+                {
+                    if (_bossRewardWindow.WindowState == System.Windows.WindowState.Minimized)
+                    {
+                        _bossRewardWindow.WindowState = System.Windows.WindowState.Normal;
+                    }
+                    _bossRewardWindow.Activate();
+                    _bossRewardWindow.Focus();
+                }
+                else
+                {
+                    _bossRewardWindow = new BossRewardWindow(_appData);
+                    _bossRewardWindow.Closed += (s, e) => _bossRewardWindow = null;
+                    _bossRewardWindow.Show();
+                }
+            });
+
+            ToggleFavoriteCommand = new RelayCommand(param =>
+            {
+                if (param is HomeworkTask task)
+                {
+                    task.IsFavorite = !task.IsFavorite;
+                    SaveData();
+                }
+            });
+
+            // 카테고리별 즐겨찾기 토글 커맨드
+            ToggleDailyFavoriteCommand = new RelayCommand(_ =>
+            {
+                if (SelectedCharacter != null)
+                {
+                    SelectedCharacter.IsDailyFavorite = !SelectedCharacter.IsDailyFavorite;
+                    SaveData();
+                    OnPropertyChanged(nameof(IsDailyFavorite));
+                }
+            });
+
+            ToggleWeeklyFavoriteCommand = new RelayCommand(_ =>
+            {
+                if (SelectedCharacter != null)
+                {
+                    SelectedCharacter.IsWeeklyFavorite = !SelectedCharacter.IsWeeklyFavorite;
+                    SaveData();
+                    OnPropertyChanged(nameof(IsWeeklyFavorite));
+                }
+            });
+
+            ToggleBossFavoriteCommand = new RelayCommand(_ =>
+            {
+                if (SelectedCharacter != null)
+                {
+                    SelectedCharacter.IsBossFavorite = !SelectedCharacter.IsBossFavorite;
+                    SaveData();
+                    OnPropertyChanged(nameof(IsBossFavorite));
+                }
+            });
+
+            ToggleMonthlyFavoriteCommand = new RelayCommand(_ =>
+            {
+                if (SelectedCharacter != null)
+                {
+                    SelectedCharacter.IsMonthlyFavorite = !SelectedCharacter.IsMonthlyFavorite;
+                    SaveData();
+                    OnPropertyChanged(nameof(IsMonthlyFavorite));
+                }
+            });
+
+            // 리포트 창 열기
+            OpenReportCommand = new RelayCommand(_ =>
+            {
+                var reportWindow = new ReportWindow(this);
+                reportWindow.Show();
             });
 
             UpdateThemeColors();
@@ -494,6 +637,12 @@ namespace MapleHomework.ViewModels
 
             _characterLevelInt = character.Level;
 
+            // 카테고리별 즐겨찾기 상태 업데이트
+            OnPropertyChanged(nameof(IsDailyFavorite));
+            OnPropertyChanged(nameof(IsWeeklyFavorite));
+            OnPropertyChanged(nameof(IsBossFavorite));
+            OnPropertyChanged(nameof(IsMonthlyFavorite));
+
             RefreshAllViews();
             
             _ = CheckAndUpdateCharacterInfo(character);
@@ -549,6 +698,30 @@ namespace MapleHomework.ViewModels
             UpdateCompletedList();
             SaveData();
             UpdateProgress();
+            
+            // 선택된 캐릭터의 진행률/수익 갱신
+            SelectedCharacter?.NotifyProgressChanged();
+            
+            // 열려있는 다른 창들 갱신
+            RefreshExternalWindows();
+        }
+
+        /// <summary>
+        /// 열려있는 외부 창들(Dashboard, BossReward) 갱신
+        /// </summary>
+        public void RefreshExternalWindows()
+        {
+            // 대시보드 창 갱신
+            if (_dashboardWindow != null && _dashboardWindow.IsLoaded)
+            {
+                _dashboardWindow.RefreshData();
+            }
+            
+            // 보스 수익 계산기 창 갱신
+            if (_bossRewardWindow != null && _bossRewardWindow.IsLoaded)
+            {
+                _bossRewardWindow.RefreshData();
+            }
         }
 
         public async Task LoadCharacterDataFromApi(string apiKey, string nickname)
@@ -569,6 +742,9 @@ namespace MapleHomework.ViewModels
                 return; 
             }
 
+            try
+            {
+                // 1. 기본 정보 (이미지, 레벨 등)
             var basicInfo = await _apiService.GetCharacterInfoAsync(apiKey, ocid);
             if (basicInfo != null)
             {
@@ -592,13 +768,35 @@ namespace MapleHomework.ViewModels
                     ApplyLevelRestrictions(basicInfo.CharacterLevel);
                     await LoadSymbolDataAndAutoDisable(apiKey, ocid);
                 }
+                }
 
-                await SyncUnionChampions(apiKey, ocid);
+                // 2. 유니온 정보 (GetUnionInfoAsync 사용)
+                var unionInfo = await _apiService.GetUnionInfoAsync(apiKey, ocid);
+                if (unionInfo != null)
+                {
+                    SelectedCharacter.UnionLevel = unionInfo.UnionLevel;
+                    SelectedCharacter.UnionGrade = unionInfo.UnionGrade;
+                }
+
+                // 3. 전투력 정보
+                var statInfo = await _apiService.GetCharacterStatAsync(apiKey, ocid);
+                if (statInfo?.FinalStat != null)
+                {
+                    // 전투력 정보는 현재 사용되지 않으므로 제거
+                }
+
+                // await SyncUnionChampions(apiKey, ocid); // 이 기능은 현재 API로 구현 불가하여 비활성화
                 
                 CharacterRepository.Save(_appData);
             }
+            catch (Exception ex)
+            {
+                // 오류 발생 시 로그 출력 또는 사용자에게 알림
+                Console.WriteLine($"Error loading character data: {ex.Message}");
+            }
         }
 
+        /*
         private async Task SyncUnionChampions(string apiKey, string ocid)
         {
             var unionData = await _apiService.GetUnionChampionAsync(apiKey, ocid);
@@ -675,6 +873,7 @@ namespace MapleHomework.ViewModels
 
             CharacterRepository.Save(_appData);
         }
+        */
 
         public async Task LoadCharacterData(string apiKey, string nickname)
         {
@@ -789,6 +988,44 @@ namespace MapleHomework.ViewModels
             SelectedCharacter.MonthlyTasks = new List<HomeworkTask>(MonthlyList);
 
             CharacterRepository.Save(_appData);
+        }
+
+        /// <summary>
+        /// API 키와 자동 시작 설정을 ViewModel의 AppData와 함께 동기화
+        /// (설정 창에서 저장 시 in-memory 데이터가 덮어써지는 문제 방지)
+        /// </summary>
+        public void UpdateApiKeyAndAutoStart(string apiKey, bool autoStartEnabled)
+        {
+            _appData.ApiKey = apiKey;
+            _appData.AutoStartEnabled = autoStartEnabled;
+            CharacterRepository.Save(_appData);
+        }
+
+        /// <summary>
+        /// 프로그램 종료 시 모든 데이터 저장
+        /// </summary>
+        public void SaveAllData()
+        {
+            // 현재 캐릭터의 숙제 데이터 저장
+            if (SelectedCharacter != null)
+            {
+                SelectedCharacter.DailyTasks = new List<HomeworkTask>(DailyList);
+                SelectedCharacter.WeeklyTasks = new List<HomeworkTask>(WeeklyList);
+                SelectedCharacter.BossTasks = new List<HomeworkTask>(BossList);
+                SelectedCharacter.MonthlyTasks = new List<HomeworkTask>(MonthlyList);
+                _appData.SelectedCharacterId = SelectedCharacter.Id;
+            }
+
+            // 테마 설정 저장
+            _appData.IsDarkTheme = IsDarkTheme;
+
+            // 캐릭터 데이터 저장
+            CharacterRepository.Save(_appData);
+
+            // config.json에도 테마 저장 (호환성)
+            var settings = ConfigManager.Load();
+            settings.IsDarkTheme = IsDarkTheme;
+            ConfigManager.Save(settings);
         }
 
         private void OnTaskChanged(object? s, PropertyChangedEventArgs e)

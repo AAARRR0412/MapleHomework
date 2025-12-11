@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
 
@@ -45,6 +45,57 @@
                                 <TextBlock Text="{TemplateBinding Content}" Foreground="#E0E0E0" FontSize="13" 
                                            FontFamily="{StaticResource PretendardFont}" LineHeight="22"/>
                             </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- 투명 스크롤바 스타일 (전역) -->
+            <Style x:Key="TransparentScrollBarThumb" TargetType="Thumb">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Thumb">
+                            <Border Background="#44FFFFFF" CornerRadius="4"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="TransparentScrollBar" TargetType="ScrollBar">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Width" Value="8"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid Background="Transparent">
+                                <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource TransparentScrollBarThumb}"/>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="TransparentScrollViewer" TargetType="ScrollViewer">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollViewer">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ScrollContentPresenter/>
+                                <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="1"
+                                           Style="{StaticResource TransparentScrollBar}"
+                                           Value="{TemplateBinding VerticalOffset}"
+                                           Maximum="{TemplateBinding ScrollableHeight}"
+                                           ViewportSize="{TemplateBinding ViewportHeight}"
+                                           Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                            </Grid>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
