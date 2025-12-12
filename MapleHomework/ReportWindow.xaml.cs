@@ -83,8 +83,12 @@ namespace MapleHomework
 
             InitializeSelectors();
 
+            // 팝업 위치 갱신: 창 이동/크기 변경 시 따라가도록
+            this.LocationChanged += (_, __) => UpdatePopupPosition();
+            this.SizeChanged += (_, __) => UpdatePopupPosition();
+
             _isInitializing = false; // 초기화 완료 플래그 해제
-            LoadReport(); // 초기 리포트 로드
+            LoadDashboard(); // 초기 리포트 로드
         }
 
         private void OnThemeChanged()
@@ -130,27 +134,12 @@ namespace MapleHomework
 
         public ObservableCollection<DayOfWeekStatItem> DayOfWeekStats { get; set; } = new();
         public ObservableCollection<DailyRecordItem> DailyRecordItems { get; set; } = new();
-        public ObservableCollection<GuideLineItem> UnionGuideLines { get; set; } = new();
         public ObservableCollection<HexaSkillSummary> HexaSkillSummaries { get; set; } = new();
 
         #endregion
 
         private void InitializeSelectors()
         {
-            // 리포트 유형 콤보박스 (기본값을 성장 리포트로)
-            ReportTypeCombo.SelectedIndex = 2;
-
-            // 주차 선택 콤보박스
-            for (int i = 0; i < 10; i++)
-            {
-                var weekStart = DateTime.Today.AddDays(-7 * i - (int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Thursday);
-                if (weekStart > DateTime.Today) weekStart = weekStart.AddDays(-7);
-                
-                string label = i == 0 ? "이번 주" : i == 1 ? "지난 주" : $"{i}주 전";
-                WeekCombo.Items.Add(new ComboBoxItem { Content = $"{label} ({weekStart:MM/dd}~)", Tag = weekStart });
-            }
-            WeekCombo.SelectedIndex = 0;
-
             // 캐릭터 필터: 현재 ViewModel의 캐릭터 목록 사용
             CharacterFilterCombo.Items.Clear();
             CharacterFilterCombo.Items.Add(new ComboBoxItem { Content = "전체 캐릭터", Tag = null });
@@ -185,108 +174,14 @@ namespace MapleHomework
             }
         }
 
-        private void LoadReport()
+        private void LoadDashboard()
         {
-            // 초기화 중이거나 UI 요소가 아직 준비되지 않은 경우 무시
-            if (_isInitializing || ReportTypeCombo == null || BasicReportSection == null || GrowthReportSection == null || NoDataPanel == null)
+            if (_isInitializing || GrowthReportSection == null || NoDataPanel == null)
                 return;
 
-            int reportType = ReportTypeCombo.SelectedIndex;
+            LoadGrowthReport();
 
-            // 모든 섹션 숨기기
-            BasicReportSection.Visibility = Visibility.Collapsed;
-            GrowthReportSection.Visibility = Visibility.Collapsed;
-            NoDataPanel.Visibility = Visibility.Collapsed;
-
-            if (reportType == 2) // 성장 리포트
-            {
-                LoadGrowthReport();
-                GrowthReportSection.Visibility = Visibility.Visible;
-            }
-            else // 주간 또는 월간 리포트
-            {
-                LoadBasicReport(reportType);
-                BasicReportSection.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void LoadWeeklyReport()
-        {
-            if (WeekCombo.SelectedItem is not ComboBoxItem selectedWeek) return;
-            if (selectedWeek.Tag is not DateTime weekStart) return;
-
-            var report = StatisticsService.GetWeeklyReport(weekStart);
-
-            // 캐릭터 필터 적용
-            string? characterId = GetSelectedCharacterId();
-
-            var filteredRecords = string.IsNullOrEmpty(characterId) 
-                ? report.DailyRecords 
-                : report.DailyRecords.Where(r => r.CharacterId == characterId).ToList();
-
-            // 요약 업데이트
-            AverageCompletionRate = filteredRecords.Any() ? filteredRecords.Average(r => r.OverallCompletionRate) : 0;
-            ActiveDays = filteredRecords.Select(r => r.Date.Date).Distinct().Count();
-            TotalRewardText = BossRewardData.FormatMeso(filteredRecords.Sum(r => r.BossRewardEarned));
-
-            // 요일별 통계
-            UpdateDayOfWeekStats(filteredRecords);
-
-            // 일일 기록
-            UpdateDailyRecords(filteredRecords);
-
-            // 데이터 없음 패널
-            if (NoDataPanel != null)
-            {
-                NoDataPanel.Visibility = !filteredRecords.Any() ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        private void LoadMonthlyReport()
-        {
-            if (YearCombo.SelectedItem is not int year) return;
-            if (MonthCombo.SelectedItem is not int month) return;
-
-            var report = StatisticsService.GetMonthlyReport(year, month);
-
-            // 캐릭터 필터 적용
-            string? characterId = GetSelectedCharacterId();
-
-            var filteredRecords = string.IsNullOrEmpty(characterId) 
-                ? report.DailyRecords 
-                : report.DailyRecords.Where(r => r.CharacterId == characterId).ToList();
-
-            // 요약 업데이트
-            AverageCompletionRate = filteredRecords.Any() ? filteredRecords.Average(r => r.OverallCompletionRate) : 0;
-            ActiveDays = filteredRecords.Select(r => r.Date.Date).Distinct().Count();
-            TotalRewardText = BossRewardData.FormatMeso(filteredRecords.Sum(r => r.BossRewardEarned));
-            
-            // 최다 활동 요일
-            var completionByDay = filteredRecords
-                .GroupBy(r => r.Date.DayOfWeek)
-                .ToDictionary(g => g.Key, g => g.Average(r => r.OverallCompletionRate));
-            
-            if (completionByDay.Any())
-            {
-                var mostProductive = completionByDay.OrderByDescending(x => x.Value).First().Key;
-                MostProductiveDayText = GetKoreanDayName(mostProductive);
-            }
-            else
-            {
-                MostProductiveDayText = "-";
-            }
-
-            // 요일별 통계
-            UpdateDayOfWeekStats(filteredRecords);
-
-            // 일일 기록
-            UpdateDailyRecords(filteredRecords);
-
-            // 데이터 없음 패널
-            if (NoDataPanel != null)
-            {
-                NoDataPanel.Visibility = !filteredRecords.Any() ? Visibility.Visible : Visibility.Collapsed;
-            }
+            GrowthReportSection.Visibility = Visibility.Visible;
         }
 
         private void LoadGrowthReport()
@@ -323,26 +218,6 @@ namespace MapleHomework
             // 레벨업 예상 날짜
             EstimatedLevelUpText.Text = StatisticsService.GetEstimatedLevelUpDateFormatted(characterId);
             
-            // 유니온
-            var unionGrowth = StatisticsService.GetUnionGrowth(characterId, days);
-            UnionGrowthList.ItemsSource = unionGrowth;
-            NoUnionDataText.Visibility = unionGrowth.Any() ? Visibility.Collapsed : Visibility.Visible;
-            // 유니온 가이드라인 (500 단위)
-            UnionGuideLines.Clear();
-            if (unionGrowth.Any())
-            {
-                int maxLevel = unionGrowth.Max(u => u.NewLevel);
-                int guideStep = 500;
-                for (int level = guideStep; level <= Math.Max(maxLevel, guideStep); level += guideStep)
-                {
-                    UnionGuideLines.Add(new GuideLineItem
-                    {
-                        Label = level.ToString(),
-                        Rate = maxLevel > 0 ? (double)level / maxLevel : 0
-                    });
-                }
-            }
-
             // 전투력
             var combatPowerGrowth = StatisticsService.GetCombatPowerGrowth(characterId, days);
             CombatPowerList.ItemsSource = combatPowerGrowth;
@@ -407,7 +282,6 @@ namespace MapleHomework
         private void ClearGrowthReportData()
         {
             ExpGrowthList.ItemsSource = null;
-            UnionGrowthList.ItemsSource = null;
             CombatPowerList.ItemsSource = null;
             HexaSkillList.ItemsSource = null;
             ItemChangeList.ItemsSource = null;
@@ -415,25 +289,9 @@ namespace MapleHomework
             WeeklyExpGrowthText.Text = "-";
             EstimatedLevelUpText.Text = "-";
 
-            NoUnionDataText.Visibility = Visibility.Visible;
             NoCombatPowerDataText.Visibility = Visibility.Visible;
             NoHexaSkillDataText.Visibility = Visibility.Visible;
             NoItemChangeDataText.Visibility = Visibility.Visible;
-        }
-
-        private void LoadBasicReport(int reportType)
-        {
-            var characterId = (CharacterFilterCombo.SelectedItem as ComboBoxItem)?.Tag as string;
-
-            switch (reportType)
-            {
-                case 0: // 주간 리포트
-                    LoadWeeklyReport();
-                    break;
-                case 1: // 월간 리포트
-                    LoadMonthlyReport();
-                    break;
-            }
         }
 
         private string? GetSelectedCharacterId()
@@ -443,51 +301,6 @@ namespace MapleHomework
                 return charItem.Tag as string;
             }
             return null;
-        }
-
-        private void UpdateDayOfWeekStats(System.Collections.Generic.List<DailyRecord> records)
-        {
-            DayOfWeekStats.Clear();
-
-            var dayOrder = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, 
-                                   DayOfWeek.Thursday, DayOfWeek.Friday, DayOfWeek.Saturday, DayOfWeek.Sunday };
-
-            foreach (var day in dayOrder)
-            {
-                var dayRecords = records.Where(r => r.Date.DayOfWeek == day).ToList();
-                double avgRate = dayRecords.Any() ? dayRecords.Average(r => r.OverallCompletionRate) : 0;
-
-                DayOfWeekStats.Add(new DayOfWeekStatItem
-                {
-                    DayName = GetKoreanDayName(day),
-                    Percentage = avgRate
-                });
-            }
-
-            // 최다 활동 요일 업데이트
-            var mostProductive = DayOfWeekStats.OrderByDescending(s => s.Percentage).FirstOrDefault();
-            MostProductiveDayText = mostProductive?.Percentage > 0 ? mostProductive.DayName : "-";
-        }
-
-        private void UpdateDailyRecords(System.Collections.Generic.List<DailyRecord> records)
-        {
-            DailyRecordItems.Clear();
-
-            var sortedRecords = records.OrderByDescending(r => r.Date).Take(50);
-
-            foreach (var record in sortedRecords)
-            {
-                int total = record.DailyTotal + record.WeeklyTotal + record.BossTotal + record.MonthlyTotal;
-                int completed = record.DailyCompleted + record.WeeklyCompleted + record.BossCompleted + record.MonthlyCompleted;
-
-                DailyRecordItems.Add(new DailyRecordItem
-                {
-                    DateText = record.Date.ToString("MM/dd"),
-                    CharacterName = record.CharacterName,
-                    CompletionText = $"{completed}/{total}",
-                    CompletionRate = record.OverallCompletionRate
-                });
-            }
         }
 
         private string GetKoreanDayName(DayOfWeek day)
@@ -531,41 +344,15 @@ namespace MapleHomework
             this.Close();
         }
 
-        private void ReportTypeCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (_isInitializing) return;
-
-            int index = ReportTypeCombo.SelectedIndex;
-            WeekSelector.Visibility = index == 0 ? Visibility.Visible : Visibility.Collapsed;
-            MonthSelector.Visibility = index == 1 ? Visibility.Visible : Visibility.Collapsed;
-            
-            // 성장 리포트일 때는 캐릭터 필터만 활성화
-            CharacterFilterCombo.IsEnabled = true;
-
-            LoadReport();
-        }
-
-        private void WeekCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (_isInitializing) return;
-            LoadReport();
-        }
-
-        private void DateSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (_isInitializing) return;
-            LoadReport();
-        }
-
         private void CharacterFilterCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (_isInitializing) return;
-            LoadReport();
+            LoadDashboard();
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            LoadReport();
+            LoadDashboard();
             MessageBox.Show("데이터가 새로고침되었습니다.", "알림", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -595,7 +382,7 @@ namespace MapleHomework
             if (confirm != MessageBoxResult.Yes) return;
 
             StatisticsService.ClearGrowthData();
-            LoadReport();
+            LoadDashboard();
             MessageBox.Show("성장 리포트 캐시가 삭제되었습니다.", "완료", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -603,7 +390,7 @@ namespace MapleHomework
         {
             var appData = CharacterRepository.Load();
             string? apiKey = appData.ApiKey;
-            string? characterId = (CharacterFilterCombo.SelectedItem as ComboBoxItem)?.Tag as string;
+            string? characterId = (CharacterFilterCombo.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Tag as string;
 
             // config.json과 characters_data.json의 API 키가 다를 경우 최신 설정값으로 동기화
             var settings = ConfigManager.Load();
@@ -621,7 +408,7 @@ namespace MapleHomework
             }
 
             int days = 30; // 기본값
-            if (HistoryDaysCombo.SelectedItem is ComboBoxItem selectedDaysItem)
+            if (HistoryDaysCombo.SelectedItem is System.Windows.Controls.ComboBoxItem selectedDaysItem)
             {
                 if (selectedDaysItem.Tag != null && int.TryParse(selectedDaysItem.Tag.ToString(), out int parsedDays))
                 {
@@ -637,7 +424,11 @@ namespace MapleHomework
             }
 
             CollectHistoryButton.IsEnabled = false;
+            var oldButtonContent = CollectHistoryButton.Content;
+            CollectHistoryButton.Content = "수집 중...";
             CollectProgressBar.Visibility = Visibility.Visible;
+            CollectProgressBar.IsIndeterminate = true;
+            CollectProgressBar.Value = 0;
             CollectStatusText.Text = "데이터 수집 중...";
 
             try
@@ -663,7 +454,9 @@ namespace MapleHomework
             finally
             {
                 CollectHistoryButton.IsEnabled = true;
+                CollectHistoryButton.Content = oldButtonContent;
                 CollectProgressBar.Visibility = Visibility.Collapsed;
+                CollectProgressBar.IsIndeterminate = false;
                 CollectStatusText.Text = "";
             }
         }
@@ -674,16 +467,28 @@ namespace MapleHomework
             if (_itemTooltipPopup == null) return;
             if (sender is not Border border) return;
 
-            // 팝업 위치를 윈도우 기준 절대 좌표로 계산해 정확히 맞춤
-            var origin = border.TransformToAncestor(this).Transform(new System.Windows.Point(0, 0));
+            // 팝업을 창 외곽 오른쪽 상단에 고정, 사라지지 않음
             _itemTooltipPopup.IsOpen = false;
             _itemTooltipPopup.DataContext = border.DataContext;
-            _itemTooltipPopup.PlacementTarget = this; // 윈도우 기준 상대 배치
-            _itemTooltipPopup.Placement = PlacementMode.Relative;
-            _itemTooltipPopup.HorizontalOffset = origin.X + border.ActualWidth + 12;
-            _itemTooltipPopup.VerticalOffset = origin.Y - 4;
+            _itemTooltipPopup.Placement = PlacementMode.Absolute;
+            _itemTooltipPopup.PlacementTarget = null; // 절대 좌표 사용
+            _itemTooltipPopup.StaysOpen = true;
+
+            UpdatePopupPosition();
             _itemTooltipPopup.IsOpen = true;
             e.Handled = true;
+        }
+
+        private void UpdatePopupPosition()
+        {
+            if (_itemTooltipPopup == null) return;
+
+            // 창의 스크린 좌표 기준으로 우측 상단에 붙여 배치
+            double offsetX = this.Left + this.ActualWidth + 8; // 창 오른쪽에서 약간 띄움
+            double offsetY = this.Top + 16;                     // 상단에서 약간 띄움
+
+            _itemTooltipPopup.HorizontalOffset = offsetX;
+            _itemTooltipPopup.VerticalOffset = offsetY;
         }
 
         #endregion
@@ -704,7 +509,6 @@ namespace MapleHomework
             var settings = ConfigManager.Load();
             bool isDark = ThemeService.ShouldUseDarkTheme(settings);
 
-            // StaticResource를 사용한 요소도 런타임 테마 전환 시 반영되도록 브러시 색상만 갱신
             void SetBrush(string key, Color color)
             {
                 if (Resources[key] is SolidColorBrush existing)
@@ -727,37 +531,50 @@ namespace MapleHomework
             if (isDark)
             {
                 // 다크 모드
-                SetBrush("WindowBackground", Color.FromRgb(30, 34, 51));
-                SetBrush("CardBackground", Color.FromRgb(42, 49, 66));
-                SetBrush("CardBackgroundHover", Color.FromRgb(52, 61, 82));
+                SetBrush("WindowBackground", Color.FromRgb(24, 28, 40));
+                SetBrush("CardBackground", Color.FromRgb(38, 44, 58));
+                SetBrush("CardBackgroundHover", Color.FromRgb(48, 56, 72));
                 SetBrush("TextPrimary", Colors.White);
-                SetBrush("TextSecondary", Color.FromRgb(156, 163, 180));
-                SetBrush("TextMuted", Color.FromRgb(107, 114, 128));
-                SetBrush("DividerColor", Color.FromRgb(61, 70, 87));
+                SetBrush("TextSecondary", Color.FromRgb(169, 178, 195));
+                SetBrush("TextMuted", Color.FromRgb(120, 128, 145));
+                SetBrush("DividerColor", Color.FromRgb(55, 64, 78));
+                SetBrush("ChartTextPrimary", Color.FromRgb(232, 237, 247));
+                SetBrush("ChartTextSecondary", Color.FromRgb(174, 183, 200));
+                SetBrush("ApiCardBackground", Color.FromRgb(42, 48, 62));
+                SetBrush("ApiCardBorder", Color.FromRgb(64, 72, 90));
                 MainGrid.Background = (Brush)Resources["WindowBackground"];
             }
             else
             {
-                // 라이트 모드
-                // 더 높은 대비의 라이트 모드 팔레트
-                SetBrush("WindowBackground", Color.FromRgb(240, 243, 248)); // 약간 어두운 배경으로 대비 강화
+                // 라이트 모드 (밝은 톤으로 전체 카드/배경 정리)
+                SetBrush("WindowBackground", Color.FromRgb(245, 247, 251));
                 SetBrush("CardBackground", Colors.White);
-                SetBrush("CardBackgroundHover", Color.FromRgb(226, 232, 240)); // Hover 시 명확한 음영
-                SetBrush("TextPrimary", Color.FromRgb(12, 17, 32)); // 더 짙은 본문색
-                SetBrush("TextSecondary", Color.FromRgb(32, 41, 58)); // 제목/서브
-                SetBrush("TextMuted", Color.FromRgb(58, 69, 88)); // 안내/라벨
-                SetBrush("DividerColor", Color.FromRgb(203, 213, 225));
+                SetBrush("CardBackgroundHover", Color.FromRgb(234, 238, 244));
+                SetBrush("TextPrimary", Color.FromRgb(15, 23, 42));
+                SetBrush("TextSecondary", Color.FromRgb(71, 85, 105));
+                SetBrush("TextMuted", Color.FromRgb(100, 116, 139));
+                SetBrush("DividerColor", Color.FromRgb(226, 232, 240));
+                SetBrush("ChartTextPrimary", Color.FromRgb(15, 23, 42));
+                SetBrush("ChartTextSecondary", Color.FromRgb(71, 85, 105));
+                SetBrush("ApiCardBackground", Color.FromRgb(255, 246, 236));
+                SetBrush("ApiCardBorder", Color.FromRgb(255, 227, 194));
                 MainGrid.Background = (Brush)Resources["WindowBackground"];
             }
         }
 
         #endregion
+
+        #region Scroll Handling
+        private void InnerScroll_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (MainScrollViewer == null) return;
+
+            // 부모 스크롤뷰로 휠 이벤트 전달
+            e.Handled = true;
+            double offset = MainScrollViewer.VerticalOffset - e.Delta;
+            MainScrollViewer.ScrollToVerticalOffset(offset);
+        }
+        #endregion
     }
 
-    public class ComboBoxItem
-    {
-        public string Content { get; set; } = "";
-        public object? Tag { get; set; }
-        public override string ToString() => Content;
-    }
 }

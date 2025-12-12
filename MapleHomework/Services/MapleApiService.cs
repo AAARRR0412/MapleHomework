@@ -71,26 +71,55 @@ namespace MapleHomework.Services
         // 공통 GET + 로깅
         private async Task<T?> GetJsonAsync<T>(string url, string apiKey, string context, string? ocid = null, string? date = null)
         {
+            // 재시도 로직: 429/400에서 최대 3회 (0.4s, 0.6s) 백오프, 기본 딜레이 0.2s
+            const int maxRetry = 3;
+            for (int attempt = 1; attempt <= maxRetry; attempt++)
+            {
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 request.Headers.Add("x-nxopen-api-key", apiKey);
 
-                var response = await _httpClient.SendAsync(request);
-                if (!response.IsSuccessStatusCode)
+                    var response = await _httpClient.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
                 {
-                    string body = await response.Content.ReadAsStringAsync();
-                    Log($"[HTTP {context}] status={(int)response.StatusCode} ocid={ocid} date={date} body={body}");
-                    return default;
-                }
+                        var result = await response.Content.ReadFromJsonAsync<T>();
+                        await Task.Delay(200); // 요청 간 0.2초 지연
+                        return result;
+                    }
 
-                return await response.Content.ReadFromJsonAsync<T>();
+                    string body = await response.Content.ReadAsStringAsync();
+                    var status = (int)response.StatusCode;
+                    bool shouldRetry = status == 429 || status == 400;
+
+                    Log($"[HTTP {context}] status={status} ocid={ocid} date={date} body={body} attempt={attempt}");
+
+                    if (!shouldRetry || attempt == maxRetry)
+                    {
+                        await Task.Delay(200);
+                        return default;
+                    }
+
+                    // 백오프 (0.4s, 0.6s, 0.8s)
+                    int delayMs = attempt == 1 ? 400 : attempt == 2 ? 600 : 800;
+                    await Task.Delay(delayMs);
+                    continue;
             }
             catch (Exception ex)
             {
-                Log($"[HTTP {context}] EX ocid={ocid} date={date} msg={ex.Message}");
-                return default;
+                    Log($"[HTTP {context}] EX ocid={ocid} date={date} msg={ex.Message} attempt={attempt}");
+                    if (attempt == maxRetry)
+                    {
+                        await Task.Delay(200);
+                        return default;
+                    }
+                    int delayMs = attempt == 1 ? 400 : attempt == 2 ? 600 : 800;
+                    await Task.Delay(delayMs);
+                }
             }
+
+            await Task.Delay(200);
+            return default;
         }
 
         // 2. 캐릭터 정보 조회
@@ -180,165 +209,181 @@ namespace MapleHomework.Services
 
             Log($"[START] CollectGrowthHistory days={daysBack} id={characterId} name={characterName}");
 
-            // 이전 상태 저장용
-            Dictionary<string, int>? prevSkills = null; // 스킬명 -> 레벨
-            Dictionary<string, string>? prevSkillIcons = null; // 스킬명 -> 아이콘
-            Dictionary<string, ItemEquipmentInfo>? prevItems = null; // 슬롯 -> 장비정보
+            // 대상 날짜 목록 (과거 -> 현재)
+            var dateList = Enumerable.Range(1, daysBack)
+                .Select(i => DateTime.Now.AddDays(-i))
+                .OrderBy(d => d)
+                .ToList();
 
-            // 과거 -> 현재 순으로 순회
-            for (int i = daysBack; i >= 1; i--)
+            // 1) 경험치/전투력/유니온 (basic/union/stat) 전체 수집
+            foreach (var targetDate in dateList)
             {
+                string dateStr = targetDate.ToString("yyyy-MM-dd");
                 try
                 {
-                    var targetDate = DateTime.Now.AddDays(-i);
-                    string dateStr = targetDate.ToString("yyyy-MM-dd");
-
-                    // 1. 캐릭터 기본 정보
                     var charInfo = await GetCharacterInfoAsync(apiKey, ocid, dateStr);
-                    
-                    // 2. 유니온 정보
                     var unionInfo = await GetUnionInfoAsync(apiKey, ocid, dateStr);
-                    
-                    // 3. 스탯 정보
                     var statInfo = await GetCharacterStatAsync(apiKey, ocid, dateStr);
 
-                    // 4. 6차 스킬 정보 (skill 엔드포인트 사용)
-                    var skillInfo = await GetCharacterSkillAsync(apiKey, ocid, dateStr, "6");
-
-                    // 5. 장비 정보
-                    var itemInfo = await GetItemEquipmentAsync(apiKey, ocid, dateStr);
-
-                    if (charInfo != null)
-                    {
-                        // 경험치 및 전투력 파싱
-                        double expRate = 0;
-                        if (!string.IsNullOrEmpty(charInfo.CharacterExpRate))
-                            double.TryParse(charInfo.CharacterExpRate.Replace("%", ""), out expRate);
-
-                        long combatPower = 0;
-                        if (statInfo?.FinalStat != null)
-                        {
-                            var cpStat = statInfo.FinalStat.Find(s => s.StatName == "전투력");
-                            if (cpStat != null) long.TryParse(cpStat.StatValue, out combatPower);
-                        }
-
-                        int unionLevel = unionInfo?.UnionLevel ?? 0;
-                        long unionPower = unionInfo?.UnionArtifactLevel ?? 0;
-
-                        // 성장 기록
-                        StatisticsService.RecordCharacterGrowthForDate(
-                            targetDate, characterId, characterName,
-                            charInfo.CharacterLevel, 0, expRate,
-                            combatPower, unionLevel, unionPower
-                        );
-                        recordsAdded++;
-                        Log($"[{dateStr}] OK basic/union/stat lv={charInfo.CharacterLevel} exp={expRate}% cp={combatPower} union={unionLevel}");
-
-                        // 6차 스킬 비교 및 기록
-                        if (skillInfo?.CharacterSkill != null)
-                        {
-                            var currentSkills = skillInfo.CharacterSkill
-                                .Where(s => !string.IsNullOrEmpty(s.SkillName))
-                                .ToDictionary(s => s.SkillName!, s => s.SkillLevel);
-                            
-                            var currentIcons = skillInfo.CharacterSkill
-                                .Where(s => !string.IsNullOrEmpty(s.SkillName))
-                                .ToDictionary(s => s.SkillName!, s => s.SkillIcon ?? "");
-
-                            if (prevSkills != null)
-                            {
-                                foreach (var skill in currentSkills)
-                                {
-                                    if (prevSkills.TryGetValue(skill.Key, out int oldLevel))
-                                    {
-                                        if (skill.Value > oldLevel)
-                                        {
-                                            string icon = currentIcons.ContainsKey(skill.Key) ? currentIcons[skill.Key] : "";
-                                            RecordHexaSkillChangeForDate(targetDate, characterId, characterName, skill.Key, oldLevel, skill.Value, icon);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // 신규 스킬 (0 -> Level)
-                                        string icon = currentIcons.ContainsKey(skill.Key) ? currentIcons[skill.Key] : "";
-                                        RecordHexaSkillChangeForDate(targetDate, characterId, characterName, skill.Key, 0, skill.Value, icon);
-                                    }
-                                }
-                            }
-                            prevSkills = currentSkills;
-                            prevSkillIcons = currentIcons;
-                        }
-                        else
-                        {
-                            Log($"[{dateStr}] WARN skillInfo null");
-                        }
-
-                        // 장비 변경 비교 및 기록
-                        if (itemInfo?.ItemEquipment != null)
-                        {
-                            var currentItems = itemInfo.ItemEquipment
-                                .Where(item => !string.IsNullOrEmpty(item.ItemEquipmentSlot) && !string.IsNullOrEmpty(item.ItemName))
-                                .ToDictionary(item => item.ItemEquipmentSlot!, item => item);
-
-                            if (prevItems != null)
-                            {
-                                foreach (var itemPair in currentItems)
-                                {
-                                    var newItem = itemPair.Value;
-                                    string slot = itemPair.Key;
-
-                                    if (prevItems.TryGetValue(slot, out var oldItem))
-                                    {
-                                        // 이름이 다르거나, 상세 옵션이 다른 경우
-                                        if (oldItem.ItemName != newItem.ItemName)
-                                        {
-                                            string json = JsonSerializer.Serialize(newItem);
-                                            RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json);
-                                        }
-                                        else if (IsItemOptionChanged(oldItem, newItem))
-                                        {
-                                            string json = JsonSerializer.Serialize(newItem);
-                                            RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // 신규 장착
-                                        string json = JsonSerializer.Serialize(newItem);
-                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json);
-                                    }
-                                }
-                            }
-                            prevItems = currentItems;
-                        }
-                        else
-                        {
-                            Log($"[{dateStr}] WARN itemInfo null");
-                        }
-                    }
-                    else
+                    if (charInfo == null)
                     {
                         Log($"[{dateStr}] FAIL charInfo null");
+                        continue;
                     }
 
-                    int processedCount = daysBack - i + 1;
-                    progress?.Report((int)((double)processedCount / daysBack * 100));
+                    double expRate = 0;
+                    if (!string.IsNullOrEmpty(charInfo.CharacterExpRate))
+                        double.TryParse(charInfo.CharacterExpRate.Replace("%", ""), out expRate);
 
-                    // 레이트 리밋 완화
-                    await Task.Delay(300);
-                }
-                catch (HttpRequestException httpEx)
-                {
-                    var code = httpEx.StatusCode.HasValue ? ((int)httpEx.StatusCode.Value).ToString() : "unknown";
-                    Log($"[HTTP ERROR] status={code} message={httpEx.Message}");
-                    await Task.Delay(500);
-                    continue;
+                    long combatPower = 0;
+                    if (statInfo?.FinalStat != null)
+                    {
+                        var cpStat = statInfo.FinalStat.Find(s => s.StatName == "전투력");
+                        if (cpStat != null) long.TryParse(cpStat.StatValue, out combatPower);
+                    }
+
+                    int unionLevel = unionInfo?.UnionLevel ?? 0;
+                    long unionPower = unionInfo?.UnionArtifactLevel ?? 0;
+
+                    StatisticsService.RecordCharacterGrowthForDate(
+                        targetDate, characterId, characterName,
+                        charInfo.CharacterLevel, 0, expRate,
+                        combatPower, unionLevel, unionPower
+                    );
+                    recordsAdded++;
+                    Log($"[{dateStr}] OK basic/union/stat lv={charInfo.CharacterLevel} exp={expRate}% cp={combatPower} union={unionLevel}");
                 }
                 catch (Exception ex)
                 {
-                    Log($"[ERROR] {ex.Message}");
-                    await Task.Delay(300);
-                    continue;
+                    Log($"[{dateStr}] ERR basic/union/stat {ex.Message}");
+                }
+            }
+
+            // 2) 6차 스킬 전체 수집 (날짜 순차)
+            Dictionary<string, int>? prevSkills = null;
+            Dictionary<string, string>? prevSkillIcons = null;
+            foreach (var targetDate in dateList)
+            {
+                string dateStr = targetDate.ToString("yyyy-MM-dd");
+                try
+                {
+                    var skillInfo = await GetCharacterSkillAsync(apiKey, ocid, dateStr, "6");
+                    if (skillInfo?.CharacterSkill != null)
+                    {
+                        var currentSkills = skillInfo.CharacterSkill
+                            .Where(s => !string.IsNullOrEmpty(s.SkillName))
+                            .ToDictionary(s => s.SkillName!, s => s.SkillLevel);
+
+                        var currentIcons = skillInfo.CharacterSkill
+                            .Where(s => !string.IsNullOrEmpty(s.SkillName))
+                            .ToDictionary(s => s.SkillName!, s => s.SkillIcon ?? "");
+
+                        if (prevSkills != null)
+                        {
+                            foreach (var skill in currentSkills)
+                            {
+                                if (prevSkills.TryGetValue(skill.Key, out int oldLevel))
+                                {
+                                    if (skill.Value > oldLevel)
+                                    {
+                                        string icon = currentIcons.ContainsKey(skill.Key) ? currentIcons[skill.Key] : "";
+                                        RecordHexaSkillChangeForDate(targetDate, characterId, characterName, skill.Key, oldLevel, skill.Value, icon);
+                                    }
+                                }
+                                else
+                                {
+                                    string icon = currentIcons.ContainsKey(skill.Key) ? currentIcons[skill.Key] : "";
+                                    RecordHexaSkillChangeForDate(targetDate, characterId, characterName, skill.Key, 0, skill.Value, icon);
+                                }
+                            }
+                        }
+                        prevSkills = currentSkills;
+                        prevSkillIcons = currentIcons;
+                    }
+                    else
+                    {
+                        Log($"[{dateStr}] WARN skillInfo null");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log($"[{dateStr}] ERR skill {ex.Message}");
+                }
+            }
+
+            // 3) 장비 변경 전체 수집 (날짜 순차)
+            Dictionary<string, ItemEquipmentInfo>? prevItems = null;
+            HashSet<string> prevPresetNames = new();
+            foreach (var targetDate in dateList)
+            {
+                string dateStr = targetDate.ToString("yyyy-MM-dd");
+                try
+                {
+                    var itemInfo = await GetItemEquipmentAsync(apiKey, ocid, dateStr);
+                    if (itemInfo?.ItemEquipment != null)
+                    {
+                        // 슬롯 중복 방지: 같은 슬롯이 여러 번 올 경우 첫 번째만 사용
+                        var currentItems = itemInfo.ItemEquipment
+                            .Where(item => !string.IsNullOrEmpty(item.ItemEquipmentSlot) && !string.IsNullOrEmpty(item.ItemName))
+                            .GroupBy(item => item.ItemEquipmentSlot!)
+                            .ToDictionary(g => g.Key, g => g.First());
+
+                        // 프리셋에 포함된 아이템 이름 집합
+                        var currentPresetNames = CollectPresetNames(itemInfo);
+
+                        if (prevItems != null)
+                        {
+                            foreach (var itemPair in currentItems)
+                            {
+                                var newItem = itemPair.Value;
+                                string slot = itemPair.Key;
+
+                                if (prevItems.TryGetValue(slot, out var oldItem))
+                                {
+                                    if (oldItem.ItemName != newItem.ItemName)
+                                    {
+                                        // 프리셋 전환만으로 인한 교체면 스킵
+                                        if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(oldItem.ItemName ?? ""))
+                                            continue;
+                                        // 정령의 펜던트는 스킵
+                                        if (IsSpiritPendant(newItem.ItemName) || IsSpiritPendant(oldItem.ItemName))
+                                            continue;
+
+                                        string json = JsonSerializer.Serialize(newItem);
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json);
+                                        Log($"[{dateStr}] ITEM slot={slot} replace {oldItem.ItemName} -> {newItem.ItemName}");
+                                    }
+                                    else if (IsItemOptionChanged(oldItem, newItem))
+                                    {
+                                        if (IsSpiritPendant(newItem.ItemName)) continue;
+                                        string json = JsonSerializer.Serialize(newItem);
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json);
+                                        Log($"[{dateStr}] ITEM slot={slot} option-change {newItem.ItemName}");
+                                    }
+                                }
+                                else
+                                {
+                                    string json = JsonSerializer.Serialize(newItem);
+                                    // 프리셋에 이미 존재하는 아이템이면 신규 장착으로 보지 않음
+                                    if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(newItem.ItemName ?? ""))
+                                        continue;
+                                    if (IsSpiritPendant(newItem.ItemName)) continue;
+                                    RecordItemChangeForDate(targetDate, characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json);
+                                    Log($"[{dateStr}] ITEM slot={slot} equip {newItem.ItemName}");
+                                }
+                            }
+                        }
+                        prevItems = currentItems;
+                        prevPresetNames = currentPresetNames;
+                    }
+                    else
+                    {
+                        Log($"[{dateStr}] WARN itemInfo null");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log($"[{dateStr}] ITEM error {ex.Message}");
                 }
             }
 
@@ -373,8 +418,36 @@ namespace MapleHomework.Services
             // 추옵 비교 (ItemTotalOption - ItemBaseOption)으로 계산하거나 TotalOption 자체를 비교
             // 여기서는 TotalOption 객체 전체 비교 (참조 비교가 아닌 값 비교 필요)
             if (!AreOptionsEqual(oldItem.ItemTotalOption, newItem.ItemTotalOption)) return true;
+            if (!AreOptionsEqual(oldItem.ItemBaseOption, newItem.ItemBaseOption)) return true;
+            if (!AreOptionsEqual(oldItem.ItemAddOption, newItem.ItemAddOption)) return true;
+            if (!AreOptionsEqual(oldItem.ItemEtcOption, newItem.ItemEtcOption)) return true;
+            if (!AreOptionsEqual(oldItem.ItemStarforceOption, newItem.ItemStarforceOption)) return true;
 
             return false;
+        }
+
+        private static HashSet<string> CollectPresetNames(ItemEquipmentResponse info)
+        {
+            var set = new HashSet<string>();
+            void AddRange(List<ItemEquipmentInfo>? list)
+            {
+                if (list == null) return;
+                foreach (var it in list)
+                {
+                    if (!string.IsNullOrEmpty(it.ItemName))
+                        set.Add(it.ItemName);
+                }
+            }
+            AddRange(info.ItemEquipmentPreset1);
+            AddRange(info.ItemEquipmentPreset2);
+            AddRange(info.ItemEquipmentPreset3);
+            return set;
+        }
+
+        private static bool IsSpiritPendant(string? name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            return name.Contains("정령의 펜던트");
         }
 
         private bool AreOptionsEqual(ItemOptionInfo? opt1, ItemOptionInfo? opt2)
@@ -386,11 +459,21 @@ namespace MapleHomework.Services
                    opt1.Dex == opt2.Dex &&
                    opt1.Int == opt2.Int &&
                    opt1.Luk == opt2.Luk &&
+                   opt1.MaxHp == opt2.MaxHp &&
+                   opt1.MaxMp == opt2.MaxMp &&
                    opt1.AttackPower == opt2.AttackPower &&
                    opt1.MagicPower == opt2.MagicPower &&
-                   opt1.AllStat == opt2.AllStat &&
+                   opt1.Armor == opt2.Armor &&
+                   opt1.Speed == opt2.Speed &&
+                   opt1.Jump == opt2.Jump &&
                    opt1.BossDamage == opt2.BossDamage &&
-                   opt1.IgnoreMonsterArmor == opt2.IgnoreMonsterArmor;
+                   opt1.IgnoreMonsterArmor == opt2.IgnoreMonsterArmor &&
+                   opt1.AllStat == opt2.AllStat &&
+                   opt1.Damage == opt2.Damage &&
+                   opt1.EquipmentLevelDecrease.ToString() == opt2.EquipmentLevelDecrease.ToString() &&
+                   opt1.MaxHpRate == opt2.MaxHpRate &&
+                   opt1.MaxMpRate == opt2.MaxMpRate &&
+                   opt1.BaseEquipmentLevel.ToString() == opt2.BaseEquipmentLevel.ToString();
         }
 
         private void RecordHexaSkillChangeForDate(DateTime date, string characterId, string characterName, string skillName, int oldLevel, int newLevel, string icon)

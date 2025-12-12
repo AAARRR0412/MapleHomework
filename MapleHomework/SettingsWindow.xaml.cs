@@ -63,7 +63,7 @@ namespace MapleHomework
             if (dailyIndex >= 0 && dailyIndex < 12)
                 DailyHoursCombo.SelectedIndex = dailyIndex;
             
-            // 주간/보스/월간 알림 (n일 전)
+            // 주간/보스 알림 (n일 전)
             NotifyWeeklyCheck.IsChecked = settings.NotifyWeeklyTasks;
             int weeklyIndex = settings.WeeklyNotifyDaysBefore - 1;
             if (weeklyIndex >= 0 && weeklyIndex < 6)
@@ -73,11 +73,6 @@ namespace MapleHomework
             int bossIndex = settings.BossNotifyDaysBefore - 1;
             if (bossIndex >= 0 && bossIndex < 6)
                 BossDaysCombo.SelectedIndex = bossIndex;
-            
-            NotifyMonthlyCheck.IsChecked = settings.NotifyMonthlyTasks;
-            int monthlyIndex = settings.MonthlyNotifyDaysBefore - 1;
-            if (monthlyIndex >= 0 && monthlyIndex < 10)
-                MonthlyDaysCombo.SelectedIndex = monthlyIndex;
 
             // 시작 시 팝업 설정
             StartupPopupToggle.IsChecked = settings.ShowStartupPopup;
@@ -111,8 +106,6 @@ namespace MapleHomework
             WeeklyDaysCombo.ItemsSource = Enumerable.Range(1, 6).ToList();
             BossDaysCombo.ItemsSource = Enumerable.Range(1, 6).ToList();
             
-            // 월간: 1~10일 전
-            MonthlyDaysCombo.ItemsSource = Enumerable.Range(1, 10).ToList();
         }
 
         private void UpdateNotificationDetailPanel()
@@ -276,7 +269,7 @@ namespace MapleHomework
                 };
             }
             
-            // 레거시 필드 동기화
+            // 레거시 필드 동기화 + ViewModel에 즉시 적용
             settings.IsDarkTheme = ThemeService.ShouldUseDarkTheme(settings);
 
             // 알림 설정
@@ -296,11 +289,6 @@ namespace MapleHomework
             settings.NotifyBossTasks = NotifyBossCheck.IsChecked == true;
             if (BossDaysCombo.SelectedItem is int bossDays)
                 settings.BossNotifyDaysBefore = bossDays;
-            
-            // 월간 알림 (n일 전)
-            settings.NotifyMonthlyTasks = NotifyMonthlyCheck.IsChecked == true;
-            if (MonthlyDaysCombo.SelectedItem is int monthlyDays)
-                settings.MonthlyNotifyDaysBefore = monthlyDays;
 
             // 시작 시 팝업
             settings.ShowStartupPopup = StartupPopupToggle.IsChecked == true;
@@ -321,8 +309,8 @@ namespace MapleHomework
 
             ConfigManager.Save(settings);
             
-            // 테마 변경 알림 (다른 윈도우들 업데이트)
-            _viewModel.NotifyThemeChanged();
+            // ViewModel 상태를 설정값에 맞춰 반영 + 전체 창 알림
+            _viewModel.ApplyThemeAndPersist(settings.IsDarkTheme);
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)

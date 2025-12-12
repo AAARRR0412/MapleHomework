@@ -9,6 +9,7 @@
         xmlns:converters="clr-namespace:MapleHomework.Converters"
         mc:Ignorable="d"
         Title="Maple Scheduler"
+        Icon="icon.png"
         Height="950" Width="560"
         WindowStyle="None"
         AllowsTransparency="True" 

@@ -317,7 +317,8 @@ namespace MapleHomework.Services
         public static void RecordItemChange(string characterId, string characterName,
             string itemSlot, string oldItemName, string newItemName, string changeType, string itemInfoJson = "", DateTime? date = null)
         {
-            if (oldItemName == newItemName) return;
+            // 이름이 같더라도 옵션 변경은 기록해야 한다.
+            if (oldItemName == newItemName && changeType != "옵션 변경") return;
 
             var recordDate = date ?? DateTime.Now;
             var data = Load();
@@ -325,7 +326,8 @@ namespace MapleHomework.Services
             if (data.ItemChangeRecords.Any(r => r.Date.Date == recordDate.Date && 
                                                 r.CharacterId == characterId && 
                                                 r.ItemSlot == itemSlot && 
-                                                r.NewItemName == newItemName))
+                                                r.NewItemName == newItemName &&
+                                                r.ChangeType == changeType))
             {
                 return;
             }

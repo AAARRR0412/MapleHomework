@@ -182,25 +182,6 @@
                             </Grid>
                         </Border>
 
-                        <!-- 월간 알림 설정 -->
-                        <Border Background="#22FFFFFF" CornerRadius="8" Padding="12,10" Margin="0,0,0,8">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <CheckBox x:Name="NotifyMonthlyCheck" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="월간 보스" Foreground="#AF52DE" FontSize="13" FontWeight="SemiBold"/>
-                                    <TextBlock Text="월초 전 알림" Foreground="#888888" FontSize="10"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <ComboBox x:Name="MonthlyDaysCombo" Width="70" FontSize="12"/>
-                                    <TextBlock Text="일 전" Foreground="#AAAAAA" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
                     </StackPanel>
 
                     <!-- 시작 시 팝업 설정 -->

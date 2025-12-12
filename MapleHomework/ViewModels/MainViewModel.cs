@@ -283,6 +283,7 @@ namespace MapleHomework.ViewModels
         public ICommand ToggleBossFavoriteCommand { get; }
         public ICommand ToggleMonthlyFavoriteCommand { get; }
         public ICommand OpenReportCommand { get; }
+        private ReportWindow? _reportWindow;
 
         public MainViewModel()
         {
@@ -302,15 +303,8 @@ namespace MapleHomework.ViewModels
             // Commands 초기화
             ToggleThemeCommand = new RelayCommand(_ =>
             {
-                IsDarkTheme = !IsDarkTheme;
-                _appData.IsDarkTheme = IsDarkTheme;
-                CharacterRepository.Save(_appData);
-                UpdateThemeColors();
-                OnPropertyChanged(nameof(IsDarkTheme));
-                OnPropertyChanged(nameof(ThemeIcon));
-                
-                // 다른 창들에도 테마 적용
-                NotifyThemeChanged();
+                // 하단바 토글 → 설정/메모리/AppData 동기화 후 전체 창에 알림
+                ApplyThemeAndPersist(!IsDarkTheme);
             });
             
             // 편집 취소 (변경사항 버리고 편집모드 종료)
@@ -457,7 +451,7 @@ namespace MapleHomework.ViewModels
                 }
                 else
                 {
-                    _bossRewardWindow = new BossRewardWindow(_appData);
+                    _bossRewardWindow = new BossRewardWindow(_appData, this);
                     _bossRewardWindow.Closed += (s, e) => _bossRewardWindow = null;
                     _bossRewardWindow.Show();
                 }
@@ -516,8 +510,26 @@ namespace MapleHomework.ViewModels
             // 리포트 창 열기
             OpenReportCommand = new RelayCommand(_ =>
             {
-                var reportWindow = new ReportWindow(this);
-                reportWindow.Show();
+                if (_reportWindow != null && _reportWindow.IsLoaded)
+                {
+                    if (_reportWindow.WindowState == System.Windows.WindowState.Minimized)
+                        _reportWindow.WindowState = System.Windows.WindowState.Normal;
+                    _reportWindow.Activate();
+                    _reportWindow.Topmost = true;
+                    _reportWindow.Topmost = false;
+                    _reportWindow.Focus();
+                }
+                else
+                {
+                    _reportWindow = new ReportWindow(this)
+                    {
+                        Owner = System.Windows.Application.Current.MainWindow,
+                        WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
+                    };
+                    _reportWindow.Closed += (s, e) => _reportWindow = null;
+                    _reportWindow.Show();
+                    _reportWindow.Activate();
+                }
             });
 
             UpdateThemeColors();
@@ -1060,6 +1072,32 @@ namespace MapleHomework.ViewModels
                 UpdateProgress();
                 if (e.PropertyName == nameof(HomeworkTask.Difficulty)) BossView.Refresh();
             }
+        }
+
+        /// <summary>
+        /// 테마를 토글 버튼/설정창 모두에서 공용으로 적용하고 저장
+        /// </summary>
+        public void ApplyThemeAndPersist(bool isDark)
+        {
+            IsDarkTheme = isDark;
+            _appData.IsDarkTheme = isDark;
+
+            // in-memory → 저장소 동기화
+            CharacterRepository.Save(_appData);
+
+            // config.json에도 저장 (설정 창과 동기화)
+            var settings = ConfigManager.Load();
+            settings.IsDarkTheme = isDark;
+            settings.ThemeMode = isDark ? ThemeMode.Dark : ThemeMode.Light;
+            ConfigManager.Save(settings);
+
+            // UI 리소스 갱신
+            UpdateThemeColors();
+            OnPropertyChanged(nameof(IsDarkTheme));
+            OnPropertyChanged(nameof(ThemeIcon));
+
+            // 열려 있는 모든 창 갱신
+            NotifyThemeChanged();
         }
 
         private void UpdateProgress()

@@ -19,7 +19,6 @@ namespace MapleHomework.Services
         private DateTime _lastDailyNotification = DateTime.MinValue;
         private DateTime _lastWeeklyNotification = DateTime.MinValue;
         private DateTime _lastBossNotification = DateTime.MinValue;
-        private DateTime _lastMonthlyNotification = DateTime.MinValue;
 
         public NotificationService(Forms.NotifyIcon notifyIcon)
         {
@@ -82,16 +81,6 @@ namespace MapleHomework.Services
                 }
             }
 
-            // 월간 알림 체크 (월초 n일 전)
-            if (settings.NotifyMonthlyTasks && ShouldNotifyMonthly(now, settings))
-            {
-                pendingTasks.AddRange(GetMonthlyPendingTasks(appData));
-                if (pendingTasks.Any(t => t.Category == TaskCategory.Monthly))
-                {
-                    _lastMonthlyNotification = now;
-                }
-            }
-
             if (pendingTasks.Any())
             {
                 ShowNotification(pendingTasks);
@@ -145,24 +134,6 @@ namespace MapleHomework.Services
             return false;
         }
 
-        /// <summary>
-        /// 월간 알림 조건: 월초 n일 전이고, 해당 월에 아직 알림 안 보냄
-        /// </summary>
-        private bool ShouldNotifyMonthly(DateTime now, AppSettings settings)
-        {
-            // 다음 달 1일 계산
-            var nextMonthFirst = new DateTime(now.Year, now.Month, 1).AddMonths(1);
-            var notifyDate = nextMonthFirst.AddDays(-settings.MonthlyNotifyDaysBefore);
-
-            // 알림 날짜가 지났고, 이번 달에 아직 알림 안 보냄
-            if (now.Date >= notifyDate.Date)
-            {
-                var thisMonthFirst = new DateTime(now.Year, now.Month, 1);
-                return _lastMonthlyNotification < thisMonthFirst;
-            }
-            return false;
-        }
-
         private DateTime GetNextThursday(DateTime from)
         {
             var date = from.Date;
@@ -212,19 +183,6 @@ namespace MapleHomework.Services
             return result;
         }
 
-        private List<(string CharacterName, string TaskName, TaskCategory Category)> GetMonthlyPendingTasks(AppData appData)
-        {
-            var result = new List<(string, string, TaskCategory)>();
-            foreach (var character in appData.Characters)
-            {
-                foreach (var task in character.MonthlyTasks.Where(t => t.IsActive && !t.IsChecked && t.IsFavorite))
-                {
-                    result.Add((character.Nickname, task.Name, TaskCategory.Monthly));
-                }
-            }
-            return result;
-        }
-
         private void ShowNotification(List<(string CharacterName, string TaskName, TaskCategory Category)> pendingTasks)
         {
             if (pendingTasks.Count == 0) return;
@@ -233,7 +191,6 @@ namespace MapleHomework.Services
             var dailyCount = pendingTasks.Count(t => t.Category == TaskCategory.Daily);
             var weeklyCount = pendingTasks.Count(t => t.Category == TaskCategory.Weekly);
             var bossCount = pendingTasks.Count(t => t.Category == TaskCategory.Boss);
-            var monthlyCount = pendingTasks.Count(t => t.Category == TaskCategory.Monthly);
 
             string title = "📋 메이플 숙제 알림";
             string message = "";
@@ -241,7 +198,6 @@ namespace MapleHomework.Services
             if (dailyCount > 0) message += $"🌅 일일: {dailyCount}개\n";
             if (weeklyCount > 0) message += $"📅 주간: {weeklyCount}개\n";
             if (bossCount > 0) message += $"👹 보스: {bossCount}개\n";
-            if (monthlyCount > 0) message += $"🗓️ 월간: {monthlyCount}개\n";
 
             message += $"\n총 {pendingTasks.Count}개의 숙제가 남아있습니다!";
 
@@ -259,7 +215,6 @@ namespace MapleHomework.Services
             pendingTasks.AddRange(GetDailyPendingTasks(appData));
             pendingTasks.AddRange(GetWeeklyPendingTasks(appData));
             pendingTasks.AddRange(GetBossPendingTasks(appData));
-            pendingTasks.AddRange(GetMonthlyPendingTasks(appData));
 
             if (pendingTasks.Any())
             {

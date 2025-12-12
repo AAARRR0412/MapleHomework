@@ -235,6 +235,16 @@ namespace MapleHomework.Models
 
         [JsonPropertyName("item_equipment")]
         public List<ItemEquipmentInfo>? ItemEquipment { get; set; }
+
+        // 프리셋별 장비 목록 (신규)
+        [JsonPropertyName("item_equipment_preset_1")]
+        public List<ItemEquipmentInfo>? ItemEquipmentPreset1 { get; set; }
+
+        [JsonPropertyName("item_equipment_preset_2")]
+        public List<ItemEquipmentInfo>? ItemEquipmentPreset2 { get; set; }
+
+        [JsonPropertyName("item_equipment_preset_3")]
+        public List<ItemEquipmentInfo>? ItemEquipmentPreset3 { get; set; }
     }
 
     public class ItemEquipmentInfo
@@ -323,8 +333,9 @@ namespace MapleHomework.Models
         [JsonPropertyName("starforce_scroll_flag")]
         public string? StarforceScrollFlag { get; set; }
 
+        // API에서 숫자/문자 혼용으로 내려와 파싱 에러가 발생할 수 있으므로 유연 타입 사용
         [JsonPropertyName("special_ring_level")]
-        public string? SpecialRingLevel { get; set; }
+        public System.Text.Json.JsonElement? SpecialRingLevel { get; set; }
 
         [JsonPropertyName("soul_name")]
         public string? SoulName { get; set; }

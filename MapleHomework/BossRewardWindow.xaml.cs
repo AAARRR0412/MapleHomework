@@ -75,14 +75,17 @@ namespace MapleHomework
     public partial class BossRewardWindow : FluentWindow
     {
         private readonly AppData _appData;
+        private readonly MapleHomework.ViewModels.MainViewModel _viewModel;
         private CharacterProfile? _selectedCharacter;
         
-        public BossRewardWindow(AppData appData)
+        public BossRewardWindow(AppData appData, MapleHomework.ViewModels.MainViewModel viewModel)
         {
             InitializeComponent();
             _appData = appData;
+            _viewModel = viewModel;
             
             ApplyThemeResources();
+            _viewModel.ThemeChanged += OnThemeChanged;
             
             CmbCharacter.ItemsSource = appData.Characters;
             if (appData.Characters.Any())
@@ -92,6 +95,17 @@ namespace MapleHomework
             
             TxtTotalCharacters.Text = $"총 {appData.Characters.Count}개 캐릭터";
             CalculateTotalRewards();
+        }
+
+        private void OnThemeChanged()
+        {
+            ApplyThemeResources();
+        }
+
+        protected override void OnClosed(System.EventArgs e)
+        {
+            _viewModel.ThemeChanged -= OnThemeChanged;
+            base.OnClosed(e);
         }
         
         /// <summary>
@@ -118,10 +132,13 @@ namespace MapleHomework
                 // 라이트 모드
                 MainGrid.Background = new SolidColorBrush(Color.FromRgb(245, 247, 250));
                 TitleBarBorder.Background = new SolidColorBrush(Color.FromRgb(90, 103, 120));
-                LeftPanelBorder.Background = new SolidColorBrush(Colors.White);
-                CharacterSelectBorder.Background = new SolidColorBrush(Colors.White);
-                WeeklyRewardBorder.Background = new SolidColorBrush(Colors.White);
-                MonthlyRewardBorder.Background = new SolidColorBrush(Colors.White);
+                // 카드 톤 통일 (밝은 그레이/화이트 믹스)
+                var lightPanel = Color.FromRgb(240, 244, 249);   // 좌측 리스트
+                var lightCard = Colors.White;                    // 우측 카드
+                LeftPanelBorder.Background = new SolidColorBrush(lightPanel);
+                CharacterSelectBorder.Background = new SolidColorBrush(lightCard);
+                WeeklyRewardBorder.Background = new SolidColorBrush(lightCard);
+                MonthlyRewardBorder.Background = new SolidColorBrush(lightCard);
                 CharacterSelectLabel.Foreground = new SolidColorBrush(Color.FromRgb(80, 90, 100));
             }
         }

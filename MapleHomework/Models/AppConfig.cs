@@ -30,17 +30,6 @@ namespace MapleHomework.Models
         public string SecondaryTextColor { get; set; } = "#888888";
     }
 
-    /// <summary>
-    /// 모바일 알림 설정
-    /// </summary>
-    public class MobileNotificationSettings
-    {
-        public bool Enabled { get; set; } = false;
-        public string Provider { get; set; } = ""; // "pushover", "telegram", "discord"
-        public string ApiToken { get; set; } = "";
-        public string UserId { get; set; } = ""; // Pushover User Key, Telegram Chat ID, Discord Webhook URL
-    }
-
     // 1. 저장할 데이터의 형태 정의
     public class AppSettings
     {
@@ -68,10 +57,6 @@ namespace MapleHomework.Models
         public bool NotifyBossTasks { get; set; } = true;
         public int BossNotifyDaysBefore { get; set; } = 1; // 기본값: 1일 전 (수요일)
         
-        // 월간 알림: n일 전 (월초 기준)
-        public bool NotifyMonthlyTasks { get; set; } = true;
-        public int MonthlyNotifyDaysBefore { get; set; } = 3; // 기본값: 3일 전
-
         // 시작 시 팝업 표시
         public bool ShowStartupPopup { get; set; } = true;
 
@@ -84,9 +69,6 @@ namespace MapleHomework.Models
         // 커스텀 테마 설정
         public CustomTheme? CurrentCustomTheme { get; set; }
         public List<CustomTheme> SavedThemes { get; set; } = new();
-
-        // 모바일 알림 설정
-        public MobileNotificationSettings MobileNotification { get; set; } = new();
 
         // 위젯 모드 설정
         public bool WidgetModeEnabled { get; set; } = false;

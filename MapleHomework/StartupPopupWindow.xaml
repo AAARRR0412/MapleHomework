@@ -40,7 +40,7 @@
                         <ui:SymbolIcon Symbol="Alert24" FontSize="28" Foreground="#FFD700" Margin="0,0,12,0"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="📋 오늘의 숙제 알림" Foreground="White" FontSize="20" FontWeight="Bold"/>
-                            <TextBlock Text="완료하지 않은 주간/보스/월간 숙제가 있습니다" Foreground="#AABBCC" FontSize="12" Margin="0,4,0,0"/>
+                            <TextBlock Text="완료하지 않은 일일/주간/보스 숙제가 있습니다" Foreground="#AABBCC" FontSize="12" Margin="0,4,0,0"/>
                         </StackPanel>
                     </StackPanel>
                     <Button HorizontalAlignment="Right" VerticalAlignment="Top" 

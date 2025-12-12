@@ -20,7 +20,10 @@ namespace MapleHomework.CharaSimResource
 
         // 리소스 캐시
         private static readonly Dictionary<string, Bitmap> _resourceCache = new Dictionary<string, Bitmap>();
-        private static readonly Dictionary<string, TextureBrush> _brushCache = new Dictionary<string, TextureBrush>();
+        private static readonly Dictionary<string, Bitmap> _iconCache = new Dictionary<string, Bitmap>(); // 아이템 아이콘 캐시
+        private static readonly Dictionary<string, TextureBrush> _flexBrushCache = new Dictionary<string, TextureBrush>(); // flexible frame
+        private static readonly Dictionary<string, TextureBrush> _fixedBrushCache = new Dictionary<string, TextureBrush>(); // fixed frame
+        private static readonly HttpClient _httpClient = new HttpClient();
         private static readonly string _resourcePath;
 
         // 폰트
@@ -80,7 +83,24 @@ namespace MapleHomework.CharaSimResource
                 if (bmp != null)
                 {
                     WrapMode mode = (dir == "n" || dir == "s" || dir == "e" || dir == "w" || dir == "c") ? WrapMode.Tile : WrapMode.Clamp;
-                    _brushCache[dir] = new TextureBrush(bmp, mode);
+                    _flexBrushCache[dir] = new TextureBrush(bmp, mode);
+                }
+            }
+
+            // 고정 프레임 (top/mid/line/btm)
+            var fixedMap = new (string key, string res, WrapMode mode)[]
+            {
+                ("top",  "UIToolTipNew.img.Item.Common.frame.fixed.top.png",  WrapMode.Clamp),
+                ("mid",  "UIToolTipNew.img.Item.Common.frame.fixed.mid.png",  WrapMode.Tile),
+                ("line", "UIToolTipNew.img.Item.Common.frame.fixed.line.png", WrapMode.Clamp),
+                ("btm",  "UIToolTipNew.img.Item.Common.frame.fixed.btm.png",  WrapMode.Clamp),
+            };
+            foreach (var (key, res, mode) in fixedMap)
+            {
+                var bmp = LoadResource(res);
+                if (bmp != null)
+                {
+                    _fixedBrushCache[key] = new TextureBrush(bmp, mode);
                 }
             }
         }
@@ -100,6 +120,27 @@ namespace MapleHomework.CharaSimResource
             }
             catch { }
             return null;
+        }
+
+        // 넥슨 API 아이콘 URL을 비트맵으로 로드 (동기 + 캐시)
+        private static Bitmap? LoadIconFromUrl(string? url)
+        {
+            if (string.IsNullOrWhiteSpace(url)) return null;
+            if (_iconCache.TryGetValue(url, out var cached)) return cached;
+
+            try
+            {
+                var bytes = _httpClient.GetByteArrayAsync(url).GetAwaiter().GetResult();
+                using var ms = new MemoryStream(bytes);
+                using var temp = new Bitmap(ms);
+                var bmp = new Bitmap(temp); // 스트림 종속성 제거용 복사본
+                _iconCache[url] = bmp;
+                return bmp;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static Bitmap RenderEquipmentTooltip(ItemEquipmentInfo item)
@@ -125,8 +166,8 @@ namespace MapleHomework.CharaSimResource
                 // 아이템 이름
                 string name = item.ItemName ?? "";
                 if (ParseInt(item.ScrollUpgrade) > 0) name += $" (+{item.ScrollUpgrade})";
-                Color nameColor = GetGradeColor(item.PotentialOptionGrade);
-                DrawCenteredText(g, name, MapleGearGraphics.ItemNameFont, nameColor, TooltipWidth / 2, picH);
+                // 아이템 이름 색상: 요청에 따라 항상 흰색
+                DrawCenteredText(g, name, MapleGearGraphics.ItemNameFont, Color.White, TooltipWidth / 2, picH);
                 picH += 20;
 
                 // 추가 속성 (교환 불가 등)
@@ -151,29 +192,42 @@ namespace MapleHomework.CharaSimResource
                 DrawSeparator(g, picH);
                 picH += 8;
 
-                // --- [Potential] ---
-                if (!string.IsNullOrEmpty(item.PotentialOptionGrade) && item.PotentialOptionGrade != "없음")
+            bool hasPotential = !string.IsNullOrEmpty(item.PotentialOptionGrade) && item.PotentialOptionGrade != "없음";
+            bool hasAddPotential = !string.IsNullOrEmpty(item.AdditionalPotentialOptionGrade) && item.AdditionalPotentialOptionGrade != "없음";
+            bool hasFooter = !string.IsNullOrEmpty(item.ItemDescription);
+
+            // --- [Potential] ---
+            if (hasPotential)
+            {
+                var grade = item.PotentialOptionGrade ?? string.Empty;
+                if (!string.IsNullOrEmpty(grade))
                 {
                     var opts = new[] { item.PotentialOption1, item.PotentialOption2, item.PotentialOption3 }
                         .Select(x => x ?? string.Empty).ToArray();
-                    DrawPotential(g, item.PotentialOptionGrade, opts, false, ref picH);
+                    DrawPotential(g, grade, opts, false, ref picH);
                 }
+            }
 
-                if (!string.IsNullOrEmpty(item.AdditionalPotentialOptionGrade) && item.AdditionalPotentialOptionGrade != "없음")
+            if (hasAddPotential)
+            {
+                if (hasPotential) { picH += 4; DrawSeparator(g, picH); picH += 8; }
+                var grade = item.AdditionalPotentialOptionGrade ?? string.Empty;
+                if (!string.IsNullOrEmpty(grade))
                 {
-                    picH += 4;
-                    DrawSeparator(g, picH);
-                    picH += 8;
                     var opts = new[] { item.AdditionalPotentialOption1, item.AdditionalPotentialOption2, item.AdditionalPotentialOption3 }
                         .Select(x => x ?? string.Empty).ToArray();
-                    DrawPotential(g, item.AdditionalPotentialOptionGrade, opts, true, ref picH);
+                    DrawPotential(g, grade, opts, true, ref picH);
                 }
+            }
 
-                // --- [Footer] ---
+            // --- [Footer] --- (설명 있을 때만)
+            if (hasFooter)
+            {
                 picH += 4;
                 DrawSeparator(g, picH);
                 picH += 8;
                 DrawFooter(g, item, ref picH);
+            }
 
                 picH += 10; // Bottom Padding
 
@@ -181,51 +235,48 @@ namespace MapleHomework.CharaSimResource
                 var finalBitmap = new Bitmap(TooltipWidth, picH);
                 using (var fg = Graphics.FromImage(finalBitmap))
                 {
-                    // **핵심: GearGraphics.DrawNewTooltipBack 로직 적용**
-                    DrawNewTooltipBack(fg, 0, 0, TooltipWidth, picH);
+                    // 고정 프레임 배경
+                    DrawFixedTooltipBack(fg, 0, 0, TooltipWidth, picH);
                     
                     // 내용 복사
                     fg.DrawImage(contentBitmap, 0, 0, new Rectangle(0, 0, TooltipWidth, picH), GraphicsUnit.Pixel);
                 }
-                
+
+                // 확대 없이 원본 크기 반환
                 return finalBitmap;
             }
         }
 
-        // GearGraphics.DrawNewTooltipBack 구현 (TextureBrush 사용)
-        private static void DrawNewTooltipBack(Graphics g, int x, int y, int width, int height)
+        // 고정 프레임 배경 (UIToolTipNew.img.Item.Common.frame.fixed.*)
+        private static void DrawFixedTooltipBack(Graphics g, int x, int y, int width, int height)
         {
             // 리소스가 없으면 폴백
-            if (!_brushCache.ContainsKey("n")) 
+            if (!_fixedBrushCache.ContainsKey("top") || !_fixedBrushCache.ContainsKey("mid") || !_fixedBrushCache.ContainsKey("btm"))
             {
                 using (var b = new SolidBrush(Color.FromArgb(220, 0, 0, 0)))
                     g.FillRectangle(b, x, y, width, height);
                 return;
             }
 
-            var n = _brushCache["n"]; var ne = _brushCache["ne"]; var e = _brushCache["e"];
-            var se = _brushCache["se"]; var s = _brushCache["s"]; var sw = _brushCache["sw"];
-            var w = _brushCache["w"]; var nw = _brushCache["nw"]; var c = _brushCache["c"];
+            var top = _fixedBrushCache["top"];
+            var mid = _fixedBrushCache["mid"];
+            var btm = _fixedBrushCache["btm"];
 
-            int topH = n.Image.Height;
-            int btmH = s.Image.Height;
-            int leftW = w.Image.Width;
-            int rightW = e.Image.Width;
+            int topH = top.Image.Height;
+            int btmH = btm.Image.Height;
 
-            // 중앙
-            FillRect(g, c, x + leftW, y + topH, width - leftW - rightW, height - topH - btmH);
+            // 상단
+            g.DrawImage(top.Image, x, y, width, topH);
 
-            // 상하좌우 (Tile)
-            FillRect(g, n, x + leftW, y, width - leftW - rightW, topH);
-            FillRect(g, s, x + leftW, y + height - btmH, width - leftW - rightW, btmH);
-            FillRect(g, w, x, y + topH, leftW, height - topH - btmH);
-            FillRect(g, e, x + width - rightW, y + topH, rightW, height - topH - btmH);
+            // 중앙(타일)
+            int midH = Math.Max(0, height - topH - btmH);
+            if (midH > 0)
+            {
+                FillRect(g, mid, x, y + topH, width, midH);
+            }
 
-            // 모서리 (Image Draw)
-            g.DrawImage(nw.Image, x, y);
-            g.DrawImage(ne.Image, x + width - ne.Image.Width, y);
-            g.DrawImage(sw.Image, x, y + height - sw.Image.Height);
-            g.DrawImage(se.Image, x + width - se.Image.Width, y + height - se.Image.Height);
+            // 하단
+            g.DrawImage(btm.Image, x, y + height - btmH, width, btmH);
         }
 
         private static void FillRect(Graphics g, TextureBrush brush, int x, int y, int w, int h)
@@ -237,6 +288,13 @@ namespace MapleHomework.CharaSimResource
 
         private static void DrawSeparator(Graphics g, int y)
         {
+            var lineBrush = _fixedBrushCache.ContainsKey("line") ? _fixedBrushCache["line"] : null;
+            if (lineBrush != null)
+            {
+                g.DrawImage(lineBrush.Image, 0, y, TooltipWidth, lineBrush.Image.Height);
+            }
+            else
+        {
             var line = LoadResource("UIToolTipNew.img.Item.Common.frame.fixed.line.png");
             if (line != null)
                 g.DrawImage(line, 0, y, TooltipWidth, line.Height);
@@ -244,6 +302,7 @@ namespace MapleHomework.CharaSimResource
             {
                 using (var p = new Pen(Color.Gray) { DashStyle = DashStyle.Dot })
                     g.DrawLine(p, 10, y, TooltipWidth - 10, y);
+                }
             }
         }
 
@@ -288,28 +347,56 @@ namespace MapleHomework.CharaSimResource
         private static void DrawIconAndBaseInfo(Graphics g, ItemEquipmentInfo item, ref int picH)
         {
             int iconX = 15;
-            int iconSize = 72;
+            int iconY = picH + 10;
 
             // 아이콘 배경
-            var iconBase = LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.base.png");
-            if (iconBase != null) g.DrawImage(iconBase, iconX, picH);
+            var iconBase = LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.base.custom.png")
+                           ?? LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.base.png");
+            int baseW = iconBase?.Width ?? 72;
+            int baseH = iconBase?.Height ?? 72;
+            if (iconBase != null) g.DrawImage(iconBase, iconX, iconY);
+
+            // 실제 아이템 아이콘 (넥슨 API URL)
+            var icon = LoadIconFromUrl(item.ItemIcon ?? item.ItemShapeIcon);
+            if (icon != null)
+            {
+                // 원본 비율 유지, 베이스 박스 거의 가득(여백 6px)
+                int margin = 6;
+                double scale = Math.Min((baseW - margin * 2) / (double)icon.Width, (baseH - margin * 2) / (double)icon.Height);
+                scale = Math.Max(1.0, scale); // 너무 작게 그려지는 경우를 방지 (최소 100%)
+
+                int drawW = (int)Math.Round(icon.Width * scale);
+                int drawH = (int)Math.Round(icon.Height * scale);
+                int drawX = iconX + (baseW - drawW) / 2;
+                int drawY = iconY + (baseH - drawH) / 2;
+
+                var prevInterp = g.InterpolationMode;
+                g.InterpolationMode = InterpolationMode.NearestNeighbor; // 픽셀 보존
+                g.DrawImage(icon, drawX, drawY, drawW, drawH);
+                g.InterpolationMode = prevInterp;
+            }
 
             // 아이콘 커버
             var iconShade = LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.shade.png");
-            if (iconShade != null) g.DrawImage(iconShade, iconX, picH);
+            if (iconShade != null) g.DrawImage(iconShade, iconX, iconY);
 
             // 전투력 증가량 (우측 상단)
             int rightX = TooltipWidth - 15;
-            int textY = picH + 10;
+            int textY = iconY + 2;
             DrawText(g, "전투력 증가량", MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22DarkGray, rightX, textY, TextAlignment.Right);
             
             // 숫자 (이미지 대신 텍스트로 대체)
             DrawText(g, "+0", MapleGearGraphics.ItemNameFont, MapleGearGraphics.Equip22Emphasis, rightX, textY + 20, TextAlignment.Right);
 
-            // 카테고리 태그 (우측 하단)
-            // [전사] [모자] [방어구] (역순 배치)
-            string[] tags = { "전사", item.ItemEquipmentSlot ?? "모자", item.ItemEquipmentPart ?? "방어구" };
-            int tagY = picH + iconSize - 20;
+            // 카테고리 태그 (우측 하단) - 중복 제거 후 역순 배치
+            var rawTags = new[] { "전사", item.ItemEquipmentSlot ?? "모자", item.ItemEquipmentPart ?? "방어구" };
+            var tags = new List<string>();
+            foreach (var t in rawTags)
+            {
+                if (string.IsNullOrWhiteSpace(t)) continue;
+                if (!tags.Contains(t)) tags.Add(t);
+            }
+            int tagY = iconY + baseH - 20;
             int currentX = rightX;
 
             var cw = LoadResource("UIToolTipNew.img.Item.Equip.frame.common.category.w.png");
@@ -320,7 +407,11 @@ namespace MapleHomework.CharaSimResource
             {
                 foreach (var tag in tags)
                 {
-                    int textW = TextRenderer.MeasureText(g, tag, MapleGearGraphics.EquipMDMoris9Font).Width;
+                    // 텍스트 폭/높이 계산 (패딩 없이)
+                    var textSize = TextRenderer.MeasureText(g, tag, MapleGearGraphics.EquipMDMoris9Font,
+                        new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+                    int textW = textSize.Width;
+                    int textH = textSize.Height;
                     int boxW = cw.Width + textW + ce.Width;
                     
                     currentX -= boxW;
@@ -335,13 +426,15 @@ namespace MapleHomework.CharaSimResource
                     g.DrawImage(ce, currentX + cw.Width + textW, tagY);
 
                     // Draw Text
-                    DrawText(g, tag, MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22Gray, currentX + boxW/2, tagY + 2, TextAlignment.Center);
+                    int textYTag = tagY + Math.Max(0, (cc.Height - textH) / 2);
+                    DrawText(g, tag, MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22Gray, currentX + boxW/2, textYTag, TextAlignment.Center);
 
                     currentX -= 4; // 간격
                 }
             }
 
-            picH += iconSize + 10;
+            // 섹션 높이: 아이콘 박스 전체 + 여백
+            picH = iconY + baseH + 10;
         }
 
         private static void DrawStats(Graphics g, ItemEquipmentInfo item, ref int picH)
@@ -349,7 +442,7 @@ namespace MapleHomework.CharaSimResource
             if (item.ItemTotalOption == null || item.ItemBaseOption == null) return;
 
             int startX = 15;
-            int valX = 100; // 스탯 수치 시작 X좌표
+            int valX = 85; // 스탯 수치 시작 X좌표 (라벨과 더 가깝게)
 
             // 1. 일반 스탯 (STR, DEX, INT, LUK, HP, MP, ATT, MAG, DEF, SPEED, JUMP)
             var statList = new List<(string Label, string? Total, string? Base, string? Add, string? Etc, string? Star)>
@@ -369,58 +462,73 @@ namespace MapleHomework.CharaSimResource
 
             foreach (var stat in statList)
             {
-                int total = ParseInt(stat.Total);
+                int total = ParseInt(stat.Total);           // 총합 (API item_total_option)
+                int baseVal = ParseInt(stat.Base);          // 기본 (API item_base_option)
+                int addVal = ParseInt(stat.Add);            // 추가옵션 (API item_add_option)
+                int scrollVal = ParseInt(stat.Etc);         // 주문서 (API item_etc_option)
+                int starVal = ParseInt(stat.Star);          // 스타포스 (API item_starforce_option)
+                int enchVal = scrollVal + starVal;          // 강화(주문서+스타포스)
+
                 if (total == 0) continue;
 
-                int baseVal = ParseInt(stat.Base);
-                int addVal = ParseInt(stat.Add); // 추옵
-                // 주문서(Etc) + 스타포스(Star) 합산하여 강화 수치로 표기 (파란색/보라색)
-                int enchVal = ParseInt(stat.Etc) + ParseInt(stat.Star); 
+                // 색상 정의 (요구사항)
+                Color labelColor = Color.White; // 라벨도 흰색으로 표시
+                // 총합은 항상 흰색으로 표시
+                Color totalColor = Color.White;
+                Color baseColor = Color.White;
+                Color addColorStat = Color.FromArgb(0xCC, 0xFF, 0x00); // 연두색 (추옵)
+                Color starColorStat = MapleGearGraphics.Equip22Emphasis; // 스타포스: 노란색 계열
+                Color scrollColorStat = Color.FromArgb(0xAA, 0xAA, 0xFF); // 보라색 (주문서)
 
-                // 라벨 그리기 (연회색)
-                DrawText(g, stat.Label, MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22Gray, startX, picH, TextAlignment.Left);
+                // 라벨
+                DrawText(g, stat.Label, MapleGearGraphics.EquipMDMoris9Font, labelColor, startX, picH, TextAlignment.Left);
 
-                // 합계 그리기 (강화/추옵 있으면 하늘색, 없으면 흰색)
-                Color totalColor = (addVal > 0 || enchVal > 0) ? TextColorBlue : Color.White;
+                // 합계
                 string totalStr = $"+{total}";
-                
                 DrawText(g, totalStr, MapleGearGraphics.EquipMDMoris9Font, totalColor, valX, picH, TextAlignment.Left);
 
-                // 상세 수치 그리기 (기본 +추옵 +강화)
-                if (addVal > 0 || enchVal > 0)
+                // 세부 수치가 모두 0이면 괄호 없이 종료 (추옵/주문서/스타포스 0)
+                if (addVal == 0 && starVal == 0 && scrollVal == 0)
                 {
-                    // 합계 텍스트 길이 측정 후 괄호 시작 위치 계산
-                    int currentX = valX + System.Windows.Forms.TextRenderer.MeasureText(g, totalStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width + 4;
-
-                    // 괄호 시작
-                    DrawText(g, "(", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
-                    currentX += 5;
-
-                    // 기본값 (흰색)
-                    DrawText(g, $"{baseVal}", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
-                    currentX += System.Windows.Forms.TextRenderer.MeasureText(g, $"{baseVal}", MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
-
-                    // 추옵 (연두색)
-                    if (addVal > 0)
-                    {
-                        string addStr = $" +{addVal}";
-                        DrawText(g, addStr, MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22BonusStat, currentX, picH, TextAlignment.Left);
-                        currentX += System.Windows.Forms.TextRenderer.MeasureText(g, addStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
-                    }
-
-                    // 강화 (주문서+스타포스) (하늘색/보라색)
-                    if (enchVal > 0)
-                    {
-                        string enchStr = $" +{enchVal}";
-                        // 스타포스가 포함되어 있으면 보통 파란색(Blue), 주문서만이면 보라색(Scroll)을 쓰지만, 신형 UI에선 합쳐서 파란색 계열을 많이 씀
-                         // 여기선 하늘색(TextColorBlue) 사용
-                         DrawText(g, enchStr, MapleGearGraphics.EquipMDMoris9Font, TextColorBlue, currentX, picH, TextAlignment.Left);
-                        currentX += System.Windows.Forms.TextRenderer.MeasureText(g, enchStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
-                    }
-
-                    // 괄호 닫기
-                    DrawText(g, ")", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
+                    picH += 16;
+                    continue;
                 }
+
+                // 상세 (기본 +추옵 +주문서/스타포스)
+                int currentX = valX + System.Windows.Forms.TextRenderer.MeasureText(g, totalStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width + 4;
+                DrawText(g, "(", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
+                currentX += 5;
+
+                // 기본 (0도 표시)
+                string baseStr = $"{baseVal}";
+                DrawText(g, baseStr, MapleGearGraphics.EquipMDMoris9Font, baseColor, currentX, picH, TextAlignment.Left);
+                currentX += System.Windows.Forms.TextRenderer.MeasureText(g, baseStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+
+                // 스타포스
+                if (starVal > 0)
+                {
+                    string starStr = $" +{starVal}";
+                    DrawText(g, starStr, MapleGearGraphics.EquipMDMoris9Font, starColorStat, currentX, picH, TextAlignment.Left);
+                    currentX += System.Windows.Forms.TextRenderer.MeasureText(g, starStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                }
+
+                // 주문서
+                if (scrollVal > 0)
+                {
+                    string scrollStr = $" +{scrollVal}";
+                    DrawText(g, scrollStr, MapleGearGraphics.EquipMDMoris9Font, scrollColorStat, currentX, picH, TextAlignment.Left);
+                    currentX += System.Windows.Forms.TextRenderer.MeasureText(g, scrollStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                }
+
+                // 추옵
+                if (addVal > 0)
+                {
+                    string addStr = $" +{addVal}";
+                    DrawText(g, addStr, MapleGearGraphics.EquipMDMoris9Font, addColorStat, currentX, picH, TextAlignment.Left);
+                    currentX += System.Windows.Forms.TextRenderer.MeasureText(g, addStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                }
+
+                DrawText(g, ")", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
 
                 picH += 16;
             }
@@ -433,29 +541,72 @@ namespace MapleHomework.CharaSimResource
                 int addAll = ParseInt(item.ItemAddOption?.AllStat);
                 
                 DrawText(g, "올스탯", MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22Gray, startX, picH, TextAlignment.Left);
-                
-                Color totalColor = (addAll > 0) ? TextColorBlue : Color.White;
-                DrawText(g, $"+{allStat}%", MapleGearGraphics.EquipMDMoris9Font, totalColor, valX, picH, TextAlignment.Left);
+                DrawText(g, $"+{allStat}%", MapleGearGraphics.EquipMDMoris9Font, Color.White, valX, picH, TextAlignment.Left);
 
+                int currentX = valX + System.Windows.Forms.TextRenderer.MeasureText(g, $"+{allStat}%", MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width + 4;
+                DrawText(g, "(", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
+                currentX += 5;
+                string baseStr = $"{baseAll}%";
+                DrawText(g, baseStr, MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
+                currentX += System.Windows.Forms.TextRenderer.MeasureText(g, baseStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
                 if (addAll > 0)
                 {
-                    int currentX = valX + System.Windows.Forms.TextRenderer.MeasureText(g, $"+{allStat}%", MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width + 4;
-                    
-                    DrawText(g, $"(0% +{addAll}%)", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
-                    // 괄호 내부 색상 처리는 복잡하므로 여기선 흰색으로 통일하거나 위 로직처럼 분리 필요
-                    // 올스탯은 보통 기본 0%에 추옵이 붙는 구조가 많음
+                    string addStr = $" +{addAll}%";
+                    DrawText(g, addStr, MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22BonusStat, currentX, picH, TextAlignment.Left);
+                    currentX += System.Windows.Forms.TextRenderer.MeasureText(g, addStr, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
                 }
+                DrawText(g, ")", MapleGearGraphics.EquipMDMoris9Font, Color.White, currentX, picH, TextAlignment.Left);
                 picH += 16;
             }
 
-            // 3. 특수 옵션 (보공, 방무, 데미지) - 줄바꿈 없이 한 줄씩
-            // (착용 레벨 감소는 DrawRequirement에서 처리함)
-            
-            // 보스 공격력
+            // 3. 특수 옵션 순서: 데미지 → 보스 데미지 → 방무 (올스탯은 위에서 처리)
+            Color addColor = MapleGearGraphics.Equip22BonusStat; // 연두색
+
+            // 데미지
+            int damage = ParseInt(item.ItemTotalOption.Damage);
+            if (damage > 0)
+            {
+                int baseDmg = ParseInt(item.ItemBaseOption?.Damage);
+                int addDmg = ParseInt(item.ItemAddOption?.Damage);
+                DrawText(g, $"데미지 : +{damage}%", MapleGearGraphics.EquipMDMoris9Font, Color.White, startX, picH, TextAlignment.Left);
+
+                int cx = startX + System.Windows.Forms.TextRenderer.MeasureText(g, $"데미지 : +{damage}%", MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width + 4;
+                DrawText(g, "(", MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
+                cx += 5;
+                string b = $"{baseDmg}%";
+                DrawText(g, b, MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
+                cx += System.Windows.Forms.TextRenderer.MeasureText(g, b, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                if (addDmg > 0)
+                {
+                    string a = $" +{addDmg}%";
+                    DrawText(g, a, MapleGearGraphics.EquipMDMoris9Font, addColor, cx, picH, TextAlignment.Left);
+                    cx += System.Windows.Forms.TextRenderer.MeasureText(g, a, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                }
+                DrawText(g, ")", MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
+                picH += 16;
+            }
+
+            // 보스 데미지
             int bossDmg = ParseInt(item.ItemTotalOption.BossDamage);
             if (bossDmg > 0)
             {
-                DrawText(g, $"보스 몬스터 공격 시 데미지 : +{bossDmg}%", MapleGearGraphics.EquipMDMoris9Font, Color.White, startX, picH, TextAlignment.Left);
+                int baseBoss = ParseInt(item.ItemBaseOption?.BossDamage);
+                int addBoss = ParseInt(item.ItemAddOption?.BossDamage);
+                DrawText(g, $"보스 몬스터 데미지 : +{bossDmg}%", MapleGearGraphics.EquipMDMoris9Font, Color.White, startX, picH, TextAlignment.Left);
+
+                int cx = startX + System.Windows.Forms.TextRenderer.MeasureText(g, $"보스 몬스터 데미지 : +{bossDmg}%", MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width + 4;
+                DrawText(g, "(", MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
+                cx += 5;
+                string b = $"{baseBoss}%";
+                DrawText(g, b, MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
+                cx += System.Windows.Forms.TextRenderer.MeasureText(g, b, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                if (addBoss > 0)
+                {
+                    string a = $" +{addBoss}%";
+                    DrawText(g, a, MapleGearGraphics.EquipMDMoris9Font, addColor, cx, picH, TextAlignment.Left);
+                    cx += System.Windows.Forms.TextRenderer.MeasureText(g, a, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                }
+                DrawText(g, ")", MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
                 picH += 16;
             }
 
@@ -463,15 +614,23 @@ namespace MapleHomework.CharaSimResource
             int ignoreDef = ParseInt(item.ItemTotalOption.IgnoreMonsterArmor);
             if (ignoreDef > 0)
             {
+                int baseIgnore = ParseInt(item.ItemBaseOption?.IgnoreMonsterArmor);
+                int addIgnore = ParseInt(item.ItemAddOption?.IgnoreMonsterArmor);
                 DrawText(g, $"몬스터 방어율 무시 : +{ignoreDef}%", MapleGearGraphics.EquipMDMoris9Font, Color.White, startX, picH, TextAlignment.Left);
-                picH += 16;
-            }
 
-            // 데미지
-            int damage = ParseInt(item.ItemTotalOption.Damage);
-            if (damage > 0)
-            {
-                DrawText(g, $"데미지 : +{damage}%", MapleGearGraphics.EquipMDMoris9Font, Color.White, startX, picH, TextAlignment.Left);
+                int cx = startX + System.Windows.Forms.TextRenderer.MeasureText(g, $"몬스터 방어율 무시 : +{ignoreDef}%", MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width + 4;
+                DrawText(g, "(", MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
+                cx += 5;
+                string b = $"{baseIgnore}%";
+                DrawText(g, b, MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
+                cx += System.Windows.Forms.TextRenderer.MeasureText(g, b, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                if (addIgnore > 0)
+                {
+                    string a = $" +{addIgnore}%";
+                    DrawText(g, a, MapleGearGraphics.EquipMDMoris9Font, addColor, cx, picH, TextAlignment.Left);
+                    cx += System.Windows.Forms.TextRenderer.MeasureText(g, a, MapleGearGraphics.EquipMDMoris9Font, new Size(int.MaxValue, int.MaxValue), System.Windows.Forms.TextFormatFlags.NoPadding).Width;
+                }
+                DrawText(g, ")", MapleGearGraphics.EquipMDMoris9Font, Color.White, cx, picH, TextAlignment.Left);
                 picH += 16;
             }
         }
@@ -507,8 +666,41 @@ namespace MapleHomework.CharaSimResource
         private static void DrawFooter(Graphics g, ItemEquipmentInfo item, ref int picH)
         {
             string desc = item.ItemDescription ?? "";
-            DrawText(g, desc, MapleGearGraphics.EquipMDMoris9Font, Color.White, 15, picH, TextAlignment.Left);
-            picH += 16;
+            if (string.IsNullOrWhiteSpace(desc)) return;
+
+            int maxWidth = TooltipWidth - 30; // 좌우 15px 여백
+            DrawWrappedText(g, desc, MapleGearGraphics.EquipMDMoris9Font, Color.White, 15, picH, maxWidth, 16, ref picH);
+        }
+
+        // 단어 단위 줄바꿈 렌더링
+        private static void DrawWrappedText(Graphics g, string text, Font font, Color color, int x, int y, int maxWidth, int lineHeight, ref int picH)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+
+            var words = text.Split(' ');
+            string line = "";
+            foreach (var word in words)
+            {
+                string candidate = string.IsNullOrEmpty(line) ? word : line + " " + word;
+                var size = TextRenderer.MeasureText(g, candidate, font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+                if (size.Width > maxWidth && !string.IsNullOrEmpty(line))
+                {
+                    DrawText(g, line, font, color, x, y, TextAlignment.Left);
+                    y += lineHeight;
+                    picH += lineHeight;
+                    line = word;
+                }
+                else
+                {
+                    line = candidate;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(line))
+            {
+                DrawText(g, line, font, color, x, y, TextAlignment.Left);
+                picH += lineHeight;
+            }
         }
 
         // Helpers

@@ -124,10 +124,10 @@
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
                                                     
-                                                    <Border x:Name="CharacterAvatar" Width="56" Height="56" CornerRadius="28" ClipToBounds="True">
+                                            <Border x:Name="CharacterAvatar" Width="56" Height="56" CornerRadius="28" ClipToBounds="True">
                                                         <Border.Background>
                                                             <ImageBrush Stretch="UniformToFill"
-                                                                        ImageSource="{Binding DataContext.ImageUrl, ElementName=CharacterAvatar, FallbackValue={x:Null}, TargetNullValue={x:Null}}">
+                                                                ImageSource="{Binding ImageUrl, FallbackValue={x:Null}, TargetNullValue={x:Null}}">
                                                                 <ImageBrush.RelativeTransform>
                                                                     <ScaleTransform CenterX="0.5" CenterY="0.55" ScaleX="3.5" ScaleY="3.5"/>
                                                                 </ImageBrush.RelativeTransform>
@@ -250,7 +250,7 @@
                                             <Border x:Name="CharacterListAvatar" Width="80" Height="80" CornerRadius="40" ClipToBounds="True" VerticalAlignment="Center">
                                                 <Border.Background>
                                                     <ImageBrush Stretch="UniformToFill"
-                                                                ImageSource="{Binding DataContext.ImageUrl, ElementName=CharacterListAvatar, TargetNullValue={x:Null}, FallbackValue={x:Null}}">
+                                                                ImageSource="{Binding ImageUrl, TargetNullValue={x:Null}, FallbackValue={x:Null}}">
                                                         <ImageBrush.RelativeTransform>
                                                             <ScaleTransform CenterX="0.5" CenterY="0.55" ScaleX="3.5" ScaleY="3.5"/>
                                                         </ImageBrush.RelativeTransform>

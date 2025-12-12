@@ -117,28 +117,35 @@ namespace MapleHomework.Converters
                 var starOpt = ToStatOption(item.ItemStarforceOption);
                 var excOpt = ToStatOption(item.ItemExceptionalOption);
 
-                // 추가옵션: API add_option이 존재하면 우선 사용, 없으면 (total-base)로 계산
-                var addOpt = addOptApi ?? new GearStatOption
+                // 추가옵션: API add_option이 없을 때는 (total - base - etc - star - exceptional)로 분리해야
+                // 주문서/스타포스가 추옵에 섞여 들어가는 것을 방지
+                GearStatOption SubtractEnhance(GearStatOption total, GearStatOption baseStat, GearStatOption etcStat, GearStatOption starStat, GearStatOption excStat)
                 {
-                    Str = Math.Max(0, totalOpt.Str - baseOpt.Str),
-                    Dex = Math.Max(0, totalOpt.Dex - baseOpt.Dex),
-                    Int = Math.Max(0, totalOpt.Int - baseOpt.Int),
-                    Luk = Math.Max(0, totalOpt.Luk - baseOpt.Luk),
-                    MaxHp = Math.Max(0, totalOpt.MaxHp - baseOpt.MaxHp),
-                    MaxMp = Math.Max(0, totalOpt.MaxMp - baseOpt.MaxMp),
-                    AttackPower = Math.Max(0, totalOpt.AttackPower - baseOpt.AttackPower),
-                    MagicPower = Math.Max(0, totalOpt.MagicPower - baseOpt.MagicPower),
-                    Armor = Math.Max(0, totalOpt.Armor - baseOpt.Armor),
-                    BossDamage = Math.Max(0, totalOpt.BossDamage - baseOpt.BossDamage),
-                    IgnoreMonsterArmor = Math.Max(0, totalOpt.IgnoreMonsterArmor - baseOpt.IgnoreMonsterArmor),
-                    AllStat = Math.Max(0, totalOpt.AllStat - baseOpt.AllStat),
-                    Damage = Math.Max(0, totalOpt.Damage - baseOpt.Damage),
-                    EquipmentLevelDecrease = Math.Max(0, totalOpt.EquipmentLevelDecrease - baseOpt.EquipmentLevelDecrease),
-                    MaxHpRate = Math.Max(0, totalOpt.MaxHpRate - baseOpt.MaxHpRate),
-                    MaxMpRate = Math.Max(0, totalOpt.MaxMpRate - baseOpt.MaxMpRate),
-                    Speed = Math.Max(0, totalOpt.Speed - baseOpt.Speed),
-                    Jump = Math.Max(0, totalOpt.Jump - baseOpt.Jump),
-                };
+                    int diff(int t, int b, int e, int s, int c = 0) => Math.Max(0, t - b - e - s - c);
+                    return new GearStatOption
+                    {
+                        Str = diff(total.Str, baseStat.Str, etcStat.Str, starStat.Str, excStat.Str),
+                        Dex = diff(total.Dex, baseStat.Dex, etcStat.Dex, starStat.Dex, excStat.Dex),
+                        Int = diff(total.Int, baseStat.Int, etcStat.Int, starStat.Int, excStat.Int),
+                        Luk = diff(total.Luk, baseStat.Luk, etcStat.Luk, starStat.Luk, excStat.Luk),
+                        MaxHp = diff(total.MaxHp, baseStat.MaxHp, etcStat.MaxHp, starStat.MaxHp, excStat.MaxHp),
+                        MaxMp = diff(total.MaxMp, baseStat.MaxMp, etcStat.MaxMp, starStat.MaxMp, excStat.MaxMp),
+                        AttackPower = diff(total.AttackPower, baseStat.AttackPower, etcStat.AttackPower, starStat.AttackPower, excStat.AttackPower),
+                        MagicPower = diff(total.MagicPower, baseStat.MagicPower, etcStat.MagicPower, starStat.MagicPower, excStat.MagicPower),
+                        Armor = diff(total.Armor, baseStat.Armor, etcStat.Armor, starStat.Armor, excStat.Armor),
+                        BossDamage = diff(total.BossDamage, baseStat.BossDamage, etcStat.BossDamage, starStat.BossDamage, excStat.BossDamage),
+                        IgnoreMonsterArmor = diff(total.IgnoreMonsterArmor, baseStat.IgnoreMonsterArmor, etcStat.IgnoreMonsterArmor, starStat.IgnoreMonsterArmor, excStat.IgnoreMonsterArmor),
+                        AllStat = diff(total.AllStat, baseStat.AllStat, etcStat.AllStat, starStat.AllStat, excStat.AllStat),
+                        Damage = diff(total.Damage, baseStat.Damage, etcStat.Damage, starStat.Damage, excStat.Damage),
+                        EquipmentLevelDecrease = diff(total.EquipmentLevelDecrease, baseStat.EquipmentLevelDecrease, etcStat.EquipmentLevelDecrease, starStat.EquipmentLevelDecrease, excStat.EquipmentLevelDecrease),
+                        MaxHpRate = diff(total.MaxHpRate, baseStat.MaxHpRate, etcStat.MaxHpRate, starStat.MaxHpRate, excStat.MaxHpRate),
+                        MaxMpRate = diff(total.MaxMpRate, baseStat.MaxMpRate, etcStat.MaxMpRate, starStat.MaxMpRate, excStat.MaxMpRate),
+                        Speed = diff(total.Speed, baseStat.Speed, etcStat.Speed, starStat.Speed, excStat.Speed),
+                        Jump = diff(total.Jump, baseStat.Jump, etcStat.Jump, starStat.Jump, excStat.Jump),
+                    };
+                }
+
+                var addOpt = addOptApi ?? SubtractEnhance(totalOpt, baseOpt, etcOpt ?? new GearStatOption(), starOpt ?? new GearStatOption(), excOpt ?? new GearStatOption());
 
                 return new GearData
                 {
@@ -174,7 +181,7 @@ namespace MapleHomework.Converters
                     EquipmentLevelDecrease = ParseIntFlexible(item.ItemAddOption?.EquipmentLevelDecrease)
                         + ParseIntFlexible(item.ItemTotalOption?.EquipmentLevelDecrease)
                         + ParseIntFlexible(item.ItemBaseOption?.EquipmentLevelDecrease),
-                    SpecialRingLevel = ParseInt(item.SpecialRingLevel),
+                    SpecialRingLevel = ParseIntFlexible(item.SpecialRingLevel),
                     RequiredLevel = ParseIntFlexible(item.ItemBaseOption?.BaseEquipmentLevel)
                 };
             }
