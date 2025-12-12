@@ -2,383 +2,6 @@
   "DailyRecords": [],
   "GrowthRecords": [
     {
-      "Date": "2025-11-12T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 22.477,
-      "TotalExp": 568465771386890,
-      "CombatPower": 238333690,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8684,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-13T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 25.489,
-      "TotalExp": 572092512562570,
-      "CombatPower": 103043438,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8684,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-14T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 28.873,
-      "TotalExp": 576167177947199,
-      "CombatPower": 251541286,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8699,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-15T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 31.28,
-      "TotalExp": 579065440234670,
-      "CombatPower": 104867211,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8699,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-16T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 32.474,
-      "TotalExp": 580503132453715,
-      "CombatPower": 239801230,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8699,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-17T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 32.474,
-      "TotalExp": 580503132453715,
-      "CombatPower": 239801230,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8700,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-18T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 36.711,
-      "TotalExp": 585604892865852,
-      "CombatPower": 103043438,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8700,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-19T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 41.052,
-      "TotalExp": 590831879400921,
-      "CombatPower": 240325046,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8700,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-20T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 43.612,
-      "TotalExp": 593914368580782,
-      "CombatPower": 103479970,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8705,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-21T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 46.173,
-      "TotalExp": 596998061857979,
-      "CombatPower": 105066850,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8705,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-22T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 48.867,
-      "TotalExp": 600241900080848,
-      "CombatPower": 105066850,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8705,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-23T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 52.127,
-      "TotalExp": 604167257395828,
-      "CombatPower": 105589311,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8705,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-24T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 55.667,
-      "TotalExp": 608429761964854,
-      "CombatPower": 105589311,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8710,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-25T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 58.68,
-      "TotalExp": 612057707237870,
-      "CombatPower": 105589311,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8710,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-26T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 64.984,
-      "TotalExp": 619648336843278,
-      "CombatPower": 256626822,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8710,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-27T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 67.048,
-      "TotalExp": 622133593744541,
-      "CombatPower": 95559349,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8710,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-28T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 68.227,
-      "TotalExp": 623553224503548,
-      "CombatPower": 95559349,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-29T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 69.177,
-      "TotalExp": 624697116972637,
-      "CombatPower": 95559349,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-11-30T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 75.306,
-      "TotalExp": 632077029544265,
-      "CombatPower": 95559349,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-12-01T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 78.846,
-      "TotalExp": 636339534113292,
-      "CombatPower": 95559349,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-12-02T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 81.643,
-      "TotalExp": 639707394361757,
-      "CombatPower": 95559349,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 47
-    },
-    {
-      "Date": "2025-12-03T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 81.834,
-      "TotalExp": 639937376952911,
-      "CombatPower": 237817598,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 48
-    },
-    {
-      "Date": "2025-12-04T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 86.11,
-      "TotalExp": 645086097161147,
-      "CombatPower": 246544850,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 48
-    },
-    {
-      "Date": "2025-12-05T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 89.239,
-      "TotalExp": 648853717725126,
-      "CombatPower": 100266706,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 48
-    },
-    {
-      "Date": "2025-12-06T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 92.146,
-      "TotalExp": 652354028680539,
-      "CombatPower": 246544850,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 48
-    },
-    {
-      "Date": "2025-12-07T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 287,
-      "Experience": 0,
-      "ExperienceRate": 96.349,
-      "TotalExp": 657414849783256,
-      "CombatPower": 247958843,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8731,
-      "UnionPower": 48
-    },
-    {
-      "Date": "2025-12-08T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 288,
-      "Experience": 0,
-      "ExperienceRate": 3.968,
-      "TotalExp": 667066653208229,
-      "CombatPower": 99678682,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8732,
-      "UnionPower": 48
-    },
-    {
-      "Date": "2025-12-09T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 288,
-      "Experience": 0,
-      "ExperienceRate": 4.884,
-      "TotalExp": 668279901683865,
-      "CombatPower": 248082568,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8732,
-      "UnionPower": 48
-    },
-    {
-      "Date": "2025-12-10T00:00:00+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "Level": 288,
-      "Experience": 0,
-      "ExperienceRate": 5.07,
-      "TotalExp": 668526259998786,
-      "CombatPower": 248082568,
-      "HighestCombatPower": 256626822,
-      "UnionLevel": 8733,
-      "UnionPower": 48
-    },
-    {
       "Date": "2025-09-13T00:00:00+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
@@ -1159,6 +782,383 @@
       "UnionPower": 47
     },
     {
+      "Date": "2025-11-12T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 22.477,
+      "TotalExp": 568465771386890,
+      "CombatPower": 238333690,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8684,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-13T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 25.489,
+      "TotalExp": 572092512562570,
+      "CombatPower": 103043438,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8684,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-14T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 28.873,
+      "TotalExp": 576167177947199,
+      "CombatPower": 251541286,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8699,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-15T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 31.28,
+      "TotalExp": 579065440234670,
+      "CombatPower": 104867211,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8699,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-16T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 32.474,
+      "TotalExp": 580503132453715,
+      "CombatPower": 239801230,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8699,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-17T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 32.474,
+      "TotalExp": 580503132453715,
+      "CombatPower": 239801230,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8700,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-18T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 36.711,
+      "TotalExp": 585604892865852,
+      "CombatPower": 103043438,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8700,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-19T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 41.052,
+      "TotalExp": 590831879400921,
+      "CombatPower": 240325046,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8700,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-20T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 43.612,
+      "TotalExp": 593914368580782,
+      "CombatPower": 103479970,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8705,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-21T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 46.173,
+      "TotalExp": 596998061857979,
+      "CombatPower": 105066850,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8705,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-22T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 48.867,
+      "TotalExp": 600241900080848,
+      "CombatPower": 105066850,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8705,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-23T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 52.127,
+      "TotalExp": 604167257395828,
+      "CombatPower": 105589311,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8705,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-24T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 55.667,
+      "TotalExp": 608429761964854,
+      "CombatPower": 105589311,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8710,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-25T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 58.68,
+      "TotalExp": 612057707237870,
+      "CombatPower": 105589311,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8710,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-26T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 64.984,
+      "TotalExp": 619648336843278,
+      "CombatPower": 256626822,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8710,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-27T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 67.048,
+      "TotalExp": 622133593744541,
+      "CombatPower": 95559349,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8710,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-28T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 68.227,
+      "TotalExp": 623553224503548,
+      "CombatPower": 95559349,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-29T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 69.177,
+      "TotalExp": 624697116972637,
+      "CombatPower": 95559349,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-11-30T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 75.306,
+      "TotalExp": 632077029544265,
+      "CombatPower": 95559349,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-12-01T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 78.846,
+      "TotalExp": 636339534113292,
+      "CombatPower": 95559349,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-12-02T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 81.643,
+      "TotalExp": 639707394361757,
+      "CombatPower": 95559349,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 47
+    },
+    {
+      "Date": "2025-12-03T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 81.834,
+      "TotalExp": 639937376952911,
+      "CombatPower": 237817598,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 48
+    },
+    {
+      "Date": "2025-12-04T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 86.11,
+      "TotalExp": 645086097161147,
+      "CombatPower": 246544850,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 48
+    },
+    {
+      "Date": "2025-12-05T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 89.239,
+      "TotalExp": 648853717725126,
+      "CombatPower": 100266706,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 48
+    },
+    {
+      "Date": "2025-12-06T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 92.146,
+      "TotalExp": 652354028680539,
+      "CombatPower": 246544850,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 48
+    },
+    {
+      "Date": "2025-12-07T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 287,
+      "Experience": 0,
+      "ExperienceRate": 96.349,
+      "TotalExp": 657414849783256,
+      "CombatPower": 247958843,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8731,
+      "UnionPower": 48
+    },
+    {
+      "Date": "2025-12-08T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 288,
+      "Experience": 0,
+      "ExperienceRate": 3.968,
+      "TotalExp": 667066653208229,
+      "CombatPower": 99678682,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8732,
+      "UnionPower": 48
+    },
+    {
+      "Date": "2025-12-09T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 288,
+      "Experience": 0,
+      "ExperienceRate": 4.884,
+      "TotalExp": 668279901683865,
+      "CombatPower": 248082568,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8732,
+      "UnionPower": 48
+    },
+    {
+      "Date": "2025-12-10T00:00:00+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "Level": 288,
+      "Experience": 0,
+      "ExperienceRate": 5.07,
+      "TotalExp": 668526259998786,
+      "CombatPower": 248082568,
+      "HighestCombatPower": 256626822,
+      "UnionLevel": 8733,
+      "UnionPower": 48
+    },
+    {
       "Date": "2025-12-11T00:00:00+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
@@ -1175,205 +1175,7 @@
   "BossRewardRecords": [],
   "HexaSkillRecords": [
     {
-      "Date": "2025-11-13T00:46:53.4132291+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMB",
-      "OldLevel": 27,
-      "NewLevel": 28
-    },
-    {
-      "Date": "2025-11-13T00:46:53.4132291+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 \uC5D1\uC2A4\uD37C\uD2B8 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBME",
-      "OldLevel": 27,
-      "NewLevel": 28
-    },
-    {
-      "Date": "2025-11-20T00:46:53.4132289+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMB",
-      "OldLevel": 28,
-      "NewLevel": 29
-    },
-    {
-      "Date": "2025-11-20T00:46:53.4132289+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 \uC5D1\uC2A4\uD37C\uD2B8 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBME",
-      "OldLevel": 28,
-      "NewLevel": 29
-    },
-    {
-      "Date": "2025-11-22T00:46:53.4132288+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
-      "OldLevel": 19,
-      "NewLevel": 20
-    },
-    {
-      "Date": "2025-11-23T00:46:53.4132287+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
-      "OldLevel": 20,
-      "NewLevel": 21
-    },
-    {
-      "Date": "2025-11-24T00:46:53.4132287+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
-      "OldLevel": 21,
-      "NewLevel": 22
-    },
-    {
-      "Date": "2025-11-26T00:46:53.4132286+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
-      "OldLevel": 22,
-      "NewLevel": 27
-    },
-    {
-      "Date": "2025-11-28T00:46:53.4132286+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
-      "OldLevel": 27,
-      "NewLevel": 29
-    },
-    {
-      "Date": "2025-11-30T00:46:53.4132285+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
-      "OldLevel": 19,
-      "NewLevel": 20
-    },
-    {
-      "Date": "2025-11-30T00:46:53.4132285+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
-      "OldLevel": 19,
-      "NewLevel": 20
-    },
-    {
-      "Date": "2025-12-02T00:46:53.4132283+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
-      "OldLevel": 20,
-      "NewLevel": 21
-    },
-    {
-      "Date": "2025-12-02T00:46:53.4132283+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
-      "OldLevel": 20,
-      "NewLevel": 21
-    },
-    {
-      "Date": "2025-12-03T00:46:53.4132283+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
-      "OldLevel": 21,
-      "NewLevel": 22
-    },
-    {
-      "Date": "2025-12-03T00:46:53.4132283+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
-      "OldLevel": 21,
-      "NewLevel": 22
-    },
-    {
-      "Date": "2025-12-04T00:46:53.4132283+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
-      "OldLevel": 22,
-      "NewLevel": 23
-    },
-    {
-      "Date": "2025-12-04T00:46:53.4132283+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
-      "OldLevel": 22,
-      "NewLevel": 23
-    },
-    {
-      "Date": "2025-12-06T00:46:53.4132282+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
-      "OldLevel": 23,
-      "NewLevel": 29
-    },
-    {
-      "Date": "2025-12-06T00:46:53.4132282+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
-      "OldLevel": 23,
-      "NewLevel": 29
-    },
-    {
-      "Date": "2025-12-08T00:46:53.4132281+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uADF8\uB79C\uB4DC \uD53C\uB0A0\uB808",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPEMA",
-      "OldLevel": 1,
-      "NewLevel": 3
-    },
-    {
-      "Date": "2025-12-08T00:46:53.4132281+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uB9C8\uC2A4\uCF54\uD2B8 \uD328\uBC00\uB9AC\uC5B4 \uAC15\uD654",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KAPCLHKAJA",
-      "OldLevel": 1,
-      "NewLevel": 2
-    },
-    {
-      "Date": "2025-12-09T00:46:53.4132281+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "SkillName": "\uADF8\uB79C\uB4DC \uD53C\uB0A0\uB808",
-      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPEMA",
-      "OldLevel": 3,
-      "NewLevel": 5
-    },
-    {
-      "Date": "2025-09-15T07:04:06.3097306+09:00",
+      "Date": "2025-09-15T15:16:20.3506566+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
@@ -1382,7 +1184,7 @@
       "NewLevel": 12
     },
     {
-      "Date": "2025-09-15T07:04:06.3097306+09:00",
+      "Date": "2025-09-15T15:16:20.3506566+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
@@ -1391,7 +1193,7 @@
       "NewLevel": 12
     },
     {
-      "Date": "2025-09-20T07:04:06.3097303+09:00",
+      "Date": "2025-09-20T15:16:20.3506563+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
@@ -1400,7 +1202,7 @@
       "NewLevel": 14
     },
     {
-      "Date": "2025-09-20T07:04:06.3097303+09:00",
+      "Date": "2025-09-20T15:16:20.3506563+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
@@ -1409,7 +1211,7 @@
       "NewLevel": 14
     },
     {
-      "Date": "2025-09-22T07:04:06.3097302+09:00",
+      "Date": "2025-09-22T15:16:20.3506562+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
@@ -1418,7 +1220,7 @@
       "NewLevel": 15
     },
     {
-      "Date": "2025-09-22T07:04:06.3097302+09:00",
+      "Date": "2025-09-22T15:16:20.3506562+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
@@ -1427,7 +1229,7 @@
       "NewLevel": 15
     },
     {
-      "Date": "2025-09-23T07:04:06.3097302+09:00",
+      "Date": "2025-09-23T15:16:20.3506562+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
@@ -1436,7 +1238,7 @@
       "NewLevel": 16
     },
     {
-      "Date": "2025-09-23T07:04:06.3097302+09:00",
+      "Date": "2025-09-23T15:16:20.3506562+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
@@ -1445,7 +1247,7 @@
       "NewLevel": 16
     },
     {
-      "Date": "2025-09-26T07:04:06.30973+09:00",
+      "Date": "2025-09-26T15:16:20.3506561+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
@@ -1454,7 +1256,7 @@
       "NewLevel": 19
     },
     {
-      "Date": "2025-09-26T07:04:06.30973+09:00",
+      "Date": "2025-09-26T15:16:20.3506561+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
@@ -1463,7 +1265,7 @@
       "NewLevel": 19
     },
     {
-      "Date": "2025-10-25T07:04:06.3097284+09:00",
+      "Date": "2025-10-25T15:16:20.3506546+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1472,7 +1274,7 @@
       "NewLevel": 20
     },
     {
-      "Date": "2025-10-26T07:04:06.3097284+09:00",
+      "Date": "2025-10-26T15:16:20.3506546+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1481,7 +1283,7 @@
       "NewLevel": 23
     },
     {
-      "Date": "2025-10-29T07:04:06.3097282+09:00",
+      "Date": "2025-10-29T15:16:20.3506544+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1490,7 +1292,7 @@
       "NewLevel": 24
     },
     {
-      "Date": "2025-11-02T07:04:06.309728+09:00",
+      "Date": "2025-11-02T15:16:20.3506542+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1499,7 +1301,7 @@
       "NewLevel": 25
     },
     {
-      "Date": "2025-11-03T07:04:06.309728+09:00",
+      "Date": "2025-11-03T15:16:20.3506542+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1508,7 +1310,7 @@
       "NewLevel": 26
     },
     {
-      "Date": "2025-11-05T07:04:06.3097278+09:00",
+      "Date": "2025-11-05T15:16:20.3506541+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1517,7 +1319,7 @@
       "NewLevel": 27
     },
     {
-      "Date": "2025-11-07T07:04:06.3097277+09:00",
+      "Date": "2025-11-07T15:16:20.350654+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1526,7 +1328,7 @@
       "NewLevel": 28
     },
     {
-      "Date": "2025-11-08T07:04:06.3097277+09:00",
+      "Date": "2025-11-08T15:16:20.3506539+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uD2B8\uB9AC\uB2C8\uD2F0 VI",
@@ -1535,7 +1337,7 @@
       "NewLevel": 29
     },
     {
-      "Date": "2025-11-09T07:04:06.3097276+09:00",
+      "Date": "2025-11-09T15:16:20.3506539+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 VI",
@@ -1544,7 +1346,7 @@
       "NewLevel": 24
     },
     {
-      "Date": "2025-11-09T07:04:06.3097276+09:00",
+      "Date": "2025-11-09T15:16:20.3506539+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 \uC5D1\uC2A4\uD37C\uD2B8 VI",
@@ -1553,7 +1355,7 @@
       "NewLevel": 24
     },
     {
-      "Date": "2025-11-11T07:04:06.3097275+09:00",
+      "Date": "2025-11-11T15:16:20.3506538+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 VI",
@@ -1562,7 +1364,7 @@
       "NewLevel": 26
     },
     {
-      "Date": "2025-11-11T07:04:06.3097275+09:00",
+      "Date": "2025-11-11T15:16:20.3506538+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 \uC5D1\uC2A4\uD37C\uD2B8 VI",
@@ -1571,7 +1373,7 @@
       "NewLevel": 26
     },
     {
-      "Date": "2025-11-12T07:04:06.3097275+09:00",
+      "Date": "2025-11-12T15:16:20.3506537+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 VI",
@@ -1580,29 +1382,216 @@
       "NewLevel": 27
     },
     {
-      "Date": "2025-11-12T07:04:06.3097275+09:00",
+      "Date": "2025-11-12T15:16:20.3506537+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 \uC5D1\uC2A4\uD37C\uD2B8 VI",
       "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBME",
       "OldLevel": 26,
       "NewLevel": 27
+    },
+    {
+      "Date": "2025-11-13T15:16:20.3506536+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMB",
+      "OldLevel": 27,
+      "NewLevel": 28
+    },
+    {
+      "Date": "2025-11-13T15:16:20.3506536+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 \uC5D1\uC2A4\uD37C\uD2B8 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBME",
+      "OldLevel": 27,
+      "NewLevel": 28
+    },
+    {
+      "Date": "2025-11-20T15:16:20.3506533+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMB",
+      "OldLevel": 28,
+      "NewLevel": 29
+    },
+    {
+      "Date": "2025-11-20T15:16:20.3506533+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC18C\uC6B8 \uC2DC\uCEE4 \uC5D1\uC2A4\uD37C\uD2B8 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBME",
+      "OldLevel": 28,
+      "NewLevel": 29
+    },
+    {
+      "Date": "2025-11-22T15:16:20.3506532+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
+      "OldLevel": 19,
+      "NewLevel": 20
+    },
+    {
+      "Date": "2025-11-23T15:16:20.3506531+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
+      "OldLevel": 20,
+      "NewLevel": 21
+    },
+    {
+      "Date": "2025-11-24T15:16:20.3506531+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
+      "OldLevel": 21,
+      "NewLevel": 22
+    },
+    {
+      "Date": "2025-11-26T15:16:20.350653+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
+      "OldLevel": 22,
+      "NewLevel": 27
+    },
+    {
+      "Date": "2025-11-28T15:16:20.3506529+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uC288\uD37C \uB178\uBC14 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMF",
+      "OldLevel": 27,
+      "NewLevel": 29
+    },
+    {
+      "Date": "2025-11-30T15:16:20.3506528+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
+      "OldLevel": 19,
+      "NewLevel": 20
+    },
+    {
+      "Date": "2025-11-30T15:16:20.3506528+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
+      "OldLevel": 19,
+      "NewLevel": 20
+    },
+    {
+      "Date": "2025-12-02T15:16:20.3506526+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
+      "OldLevel": 20,
+      "NewLevel": 21
+    },
+    {
+      "Date": "2025-12-02T15:16:20.3506526+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
+      "OldLevel": 20,
+      "NewLevel": 21
+    },
+    {
+      "Date": "2025-12-03T15:16:20.3506526+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
+      "OldLevel": 21,
+      "NewLevel": 22
+    },
+    {
+      "Date": "2025-12-03T15:16:20.3506526+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
+      "OldLevel": 21,
+      "NewLevel": 22
+    },
+    {
+      "Date": "2025-12-04T15:16:20.3506525+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
+      "OldLevel": 22,
+      "NewLevel": 23
+    },
+    {
+      "Date": "2025-12-04T15:16:20.3506525+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
+      "OldLevel": 22,
+      "NewLevel": 23
+    },
+    {
+      "Date": "2025-12-06T15:16:20.3506524+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uD504\uB77C\uC774\uBA40 \uB85C\uC5B4 VI",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPBMG",
+      "OldLevel": 23,
+      "NewLevel": 29
+    },
+    {
+      "Date": "2025-12-06T15:16:20.3506524+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uB2E4\uCE74\uD3EC \uD398\uD22C\uCE58\uC544",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDOBMH",
+      "OldLevel": 23,
+      "NewLevel": 29
+    },
+    {
+      "Date": "2025-12-08T15:16:20.3506523+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uADF8\uB79C\uB4DC \uD53C\uB0A0\uB808",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPEMA",
+      "OldLevel": 1,
+      "NewLevel": 3
+    },
+    {
+      "Date": "2025-12-08T15:16:20.3506523+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uB9C8\uC2A4\uCF54\uD2B8 \uD328\uBC00\uB9AC\uC5B4 \uAC15\uD654",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KAPCLHKAJA",
+      "OldLevel": 1,
+      "NewLevel": 2
+    },
+    {
+      "Date": "2025-12-09T15:16:20.3506522+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "SkillName": "\uADF8\uB79C\uB4DC \uD53C\uB0A0\uB808",
+      "SkillIcon": "https://open.api.nexon.com/static/maplestory/skill/icon/KFJHKDPEMA",
+      "OldLevel": 3,
+      "NewLevel": 5
     }
   ],
   "ItemChangeRecords": [
     {
-      "Date": "2025-11-19T00:46:53.4132289+09:00",
-      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-      "CharacterName": "\uD0A4\uB80C",
-      "ItemSlot": "\uBB34\uAE30",
-      "OldItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
-      "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
-      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
-      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022295\u0022,\u0022dex\u0022:\u0022327\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002244\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022673\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002240\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00226\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002244\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022123\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002210\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00226\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
-      "ChangeSummary": ""
-    },
-    {
-      "Date": "2025-09-21T07:04:06.3097303+09:00",
+      "Date": "2025-09-21T16:41:42.1852239+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uBC18\uC9C03",
@@ -1610,10 +1599,27 @@
       "NewItemName": "\uB9C8\uC774\uC2A4\uD130\uB9C1",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uBC18\\uC9C0\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBC18\\uC9C03\u0022,\u0022item_name\u0022:\u0022\\uB9C8\\uC774\\uC2A4\\uD130\\uB9C1\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEODIHLE\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uB9C8\\uC774\\uC2A4\\uD130\\uB9C1\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEODIHLE\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u002281\u0022,\u0022dex\u0022:\u002281\u0022,\u0022int\u0022:\u002281\u0022,\u0022luk\u0022:\u002281\u0022,\u0022max_hp\u0022:\u0022455\u0022,\u0022max_mp\u0022:\u0022200\u0022,\u0022attack_power\u0022:\u002247\u0022,\u0022magic_power\u0022:\u002239\u0022,\u0022armor\u0022:\u0022393\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u00225\u0022,\u0022dex\u0022:\u00225\u0022,\u0022int\u0022:\u00225\u0022,\u0022luk\u0022:\u00225\u0022,\u0022max_hp\u0022:\u0022200\u0022,\u0022max_mp\u0022:\u0022200\u0022,\u0022attack_power\u0022:\u00221\u0022,\u0022magic_power\u0022:\u00221\u0022,\u0022armor\u0022:\u0022150\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:140},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00228\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u002276\u0022,\u0022dex\u0022:\u002276\u0022,\u0022int\u0022:\u002276\u0022,\u0022luk\u0022:\u002276\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002238\u0022,\u0022magic_power\u0022:\u002238\u0022,\u0022armor\u0022:\u0022243\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uC5D0\\uD53D\u0022,\u0022potential_option_1\u0022:\u0022\\uC62C\\uC2A4\\uD0EF \\u002B9%\u0022,\u0022potential_option_2\u0022:\u0022DEX \\u002B12%\u0022,\u0022potential_option_3\u0022:\u0022DEX \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B11\u0022,\u0022additional_potential_option_2\u0022:\u0022INT \\u002B2%\u0022,\u0022additional_potential_option_3\u0022:\u0022STR \\u002B10\u0022,\u0022scroll_upgrade\u0022:\u00222\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002219\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC2A4\uD0C0\uD3EC\uC2A4 18\uC131 \u2192 19\uC131",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:2,\u0022Category\u0022:\u0022\\uC2A4\\uD0C0\\uD3EC\\uC2A4\u0022,\u0022OldValue\u0022:\u002218\\uC131\u0022,\u0022NewValue\u0022:\u002219\\uC131\u0022,\u0022Description\u0022:\u002218\\uC131 \\u2192 19\\uC131\u0022,\u0022Details\u0022:[],\u0022DisplayText\u0022:\u002218\\uC131 \\u2192 19\\uC131\u0022,\u0022CategoryIcon\u0022:\u0022\\u2B50\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:false}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEODIHLE",
+      "OptionChanges": [
+        {
+          "ChangeType": 2,
+          "Category": "\uC2A4\uD0C0\uD3EC\uC2A4",
+          "OldValue": "18\uC131",
+          "NewValue": "19\uC131",
+          "Description": "18\uC131 \u2192 19\uC131",
+          "Details": [],
+          "DisplayText": "18\uC131 \u2192 19\uC131",
+          "CategoryIcon": "\u2B50",
+          "IsNewItem": false,
+          "HasDetails": false
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-10-05T07:04:06.3097295+09:00",
+      "Date": "2025-10-05T16:41:42.1852234+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uAE30\uACC4 \uC2EC\uC7A5",
@@ -1621,10 +1627,27 @@
       "NewItemName": "\uD50C\uB77C\uC988\uB9C8 \uD558\uD2B8",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uAE30\\uACC4 \\uC2EC\\uC7A5\u0022,\u0022item_equipment_slot\u0022:\u0022\\uAE30\\uACC4 \\uC2EC\\uC7A5\u0022,\u0022item_name\u0022:\u0022\\uD50C\\uB77C\\uC988\\uB9C8 \\uD558\\uD2B8\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uD50C\\uB77C\\uC988\\uB9C8 \\uD558\\uD2B8\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022115\u0022,\u0022dex\u0022:\u0022115\u0022,\u0022int\u0022:\u0022115\u0022,\u0022luk\u0022:\u0022115\u0022,\u0022max_hp\u0022:\u0022500\u0022,\u0022max_mp\u0022:\u0022500\u0022,\u0022attack_power\u0022:\u0022148\u0022,\u0022magic_power\u0022:\u002250\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u002215\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u002210\u0022,\u0022dex\u0022:\u002210\u0022,\u0022int\u0022:\u002210\u0022,\u0022luk\u0022:\u002210\u0022,\u0022max_hp\u0022:\u0022500\u0022,\u0022max_mp\u0022:\u0022500\u0022,\u0022attack_power\u0022:\u00225\u0022,\u0022magic_power\u0022:\u00225\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u002215\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:130},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u002230\u0022,\u0022dex\u0022:\u002230\u0022,\u0022int\u0022:\u002230\u0022,\u0022luk\u0022:\u002230\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002298\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u002275\u0022,\u0022dex\u0022:\u002275\u0022,\u0022int\u0022:\u002275\u0022,\u0022luk\u0022:\u002275\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002245\u0022,\u0022magic_power\u0022:\u002245\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uC720\\uB2C8\\uD06C\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uC5D0\\uD53D\u0022,\u0022potential_option_1\u0022:\u0022DEX \\u002B9%\u0022,\u0022potential_option_2\u0022:\u0022DEX \\u002B6%\u0022,\u0022potential_option_3\u0022:\u0022\\uCD5C\\uB300 MP \\u002B6%\u0022,\u0022additional_potential_option_1\u0022:\u0022DEX \\u002B4%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B10\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uCD5C\\uB300 MP \\u002B100\u0022,\u0022scroll_upgrade\u0022:\u002210\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002220\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC2A4\uD0C0\uD3EC\uC2A4 17\uC131 \u2192 20\uC131",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:2,\u0022Category\u0022:\u0022\\uC2A4\\uD0C0\\uD3EC\\uC2A4\u0022,\u0022OldValue\u0022:\u002217\\uC131\u0022,\u0022NewValue\u0022:\u002220\\uC131\u0022,\u0022Description\u0022:\u002217\\uC131 \\u2192 20\\uC131\u0022,\u0022Details\u0022:[],\u0022DisplayText\u0022:\u002217\\uC131 \\u2192 20\\uC131\u0022,\u0022CategoryIcon\u0022:\u0022\\u2B50\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:false}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI",
+      "OptionChanges": [
+        {
+          "ChangeType": 2,
+          "Category": "\uC2A4\uD0C0\uD3EC\uC2A4",
+          "OldValue": "17\uC131",
+          "NewValue": "20\uC131",
+          "Description": "17\uC131 \u2192 20\uC131",
+          "Details": [],
+          "DisplayText": "17\uC131 \u2192 20\uC131",
+          "CategoryIcon": "\u2B50",
+          "IsNewItem": false,
+          "HasDetails": false
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-10-10T07:04:06.3097292+09:00",
+      "Date": "2025-10-10T16:41:42.1852231+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uBCF4\uC870\uBB34\uAE30",
@@ -1632,10 +1655,30 @@
       "NewItemName": "\uBE14\uB799 \uC18C\uC6B8\uB9C1",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uB9C1\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBCF4\\uC870\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uBE14\\uB799 \\uC18C\\uC6B8\\uB9C1\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEMHJBOE\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uBE14\\uB799 \\uC18C\\uC6B8\\uB9C1\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEMHJBOE\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u00228\u0022,\u0022dex\u0022:\u00228\u0022,\u0022int\u0022:\u00228\u0022,\u0022luk\u0022:\u00228\u0022,\u0022max_hp\u0022:\u0022800\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022275\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u00228\u0022,\u0022dex\u0022:\u00228\u0022,\u0022int\u0022:\u00228\u0022,\u0022luk\u0022:\u00228\u0022,\u0022max_hp\u0022:\u0022800\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022275\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:100},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022potential_option_2\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022potential_option_3\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B30%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_3\u0022:\u0022STR \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00220\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u00220\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC7A0\uC7AC \uB808\uC804\uB4DC\uB9AC",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:4,\u0022Category\u0022:\u0022\\uC7A0\\uC7AC \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B30% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B9%\u0022],\u0022DisplayText\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\\n\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B30% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDC8E\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEMHJBOE",
+      "OptionChanges": [
+        {
+          "ChangeType": 4,
+          "Category": "\uC7A0\uC7AC \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B35% \u2192 \uACF5\uACA9\uB825 \u002B12%",
+            "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B30% \u2192 \uACF5\uACA9\uB825 \u002B9%"
+          ],
+          "DisplayText": "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B35% \u2192 \uACF5\uACA9\uB825 \u002B12%\n\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B30% \u2192 \uACF5\uACA9\uB825 \u002B9%",
+          "CategoryIcon": "\uD83D\uDC8E",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-10-19T07:04:06.3097288+09:00",
+      "Date": "2025-10-19T16:41:42.1852228+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uC0C1\uC758",
@@ -1643,10 +1686,30 @@
       "NewItemName": "\uC5D0\uD14C\uB974\uB12C \uD30C\uC774\uB81B\uCF54\uD2B8",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC0C1\\uC758\u0022,\u0022item_equipment_slot\u0022:\u0022\\uC0C1\\uC758\u0022,\u0022item_name\u0022:\u0022\\uC5D0\\uD14C\\uB974\\uB12C \\uD30C\\uC774\\uB81B\\uCF54\\uD2B8\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEPGJDNG\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC5D0\\uD14C\\uB974\\uB12C \\uD30C\\uC774\\uB81B\\uCF54\\uD2B8\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEPGJDNG\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022141\u0022,\u0022dex\u0022:\u0022362\u0022,\u0022int\u0022:\u002294\u0022,\u0022luk\u0022:\u002235\u0022,\u0022max_hp\u0022:\u00221445\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002258\u0022,\u0022magic_power\u0022:\u002245\u0022,\u0022armor\u0022:\u00221055\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00225\u0022,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u002250\u0022,\u0022dex\u0022:\u002250\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00226\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022325\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00225\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:250},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u0022149\u0022,\u0022int\u0022:\u002242\u0022,\u0022luk\u0022:\u002235\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002272\u0022,\u0022int\u0022:\u00221\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00221190\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00227\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022107\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u002291\u0022,\u0022dex\u0022:\u002291\u0022,\u0022int\u0022:\u002251\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002245\u0022,\u0022magic_power\u0022:\u002245\u0022,\u0022armor\u0022:\u0022623\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uC5D0\\uD53D\u0022,\u0022potential_option_1\u0022:\u0022DEX \\u002B13%\u0022,\u0022potential_option_2\u0022:\u0022DEX \\u002B10%\u0022,\u0022potential_option_3\u0022:\u0022\\uC62C\\uC2A4\\uD0EF \\u002B7%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12\u0022,\u0022additional_potential_option_2\u0022:\u0022DEX \\u002B3%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uCD5C\\uB300 MP \\u002B125\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u00229\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002218\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC5D0\uB514\uC154\uB110 \uC5D0\uD53D",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:6,\u0022Category\u0022:\u0022\\uC5D0\\uB514 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022\\uC62C\\uC2A4\\uD0EF \\u002B3% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12\u0022,\u0022\\uC62C\\uC2A4\\uD0EF \\u002B4 \\u2192 \\uCD5C\\uB300 MP \\u002B125\u0022],\u0022DisplayText\u0022:\u0022\\uC62C\\uC2A4\\uD0EF \\u002B3% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12\\n\\uC62C\\uC2A4\\uD0EF \\u002B4 \\u2192 \\uCD5C\\uB300 MP \\u002B125\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDCA0\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEPGJDNG",
+      "OptionChanges": [
+        {
+          "ChangeType": 6,
+          "Category": "\uC5D0\uB514 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "\uC62C\uC2A4\uD0EF \u002B3% \u2192 \uACF5\uACA9\uB825 \u002B12",
+            "\uC62C\uC2A4\uD0EF \u002B4 \u2192 \uCD5C\uB300 MP \u002B125"
+          ],
+          "DisplayText": "\uC62C\uC2A4\uD0EF \u002B3% \u2192 \uACF5\uACA9\uB825 \u002B12\n\uC62C\uC2A4\uD0EF \u002B4 \u2192 \uCD5C\uB300 MP \u002B125",
+          "CategoryIcon": "\uD83D\uDCA0",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-10-19T07:04:06.3097288+09:00",
+      "Date": "2025-10-19T16:41:42.1852228+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uBB34\uAE30",
@@ -1654,10 +1717,27 @@
       "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022295\u0022,\u0022dex\u0022:\u0022357\u0022,\u0022int\u0022:\u002230\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u00222655\u0022,\u0022attack_power\u0022:\u0022707\u0022,\u0022magic_power\u0022:\u002293\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002230\u0022,\u0022int\u0022:\u002230\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00222400\u0022,\u0022attack_power\u0022:\u0022157\u0022,\u0022magic_power\u0022:\u002293\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC5D0\uB514\uC154\uB110 \uB808\uC804\uB4DC\uB9AC",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:5,\u0022Category\u0022:\u0022\\uC5D0\\uB514\\uC154\\uB110\u0022,\u0022OldValue\u0022:\u0022\\uC720\\uB2C8\\uD06C\u0022,\u0022NewValue\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Description\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Details\u0022:[],\u0022DisplayText\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDCA0\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:false}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 5,
+          "Category": "\uC5D0\uB514\uC154\uB110",
+          "OldValue": "\uC720\uB2C8\uD06C",
+          "NewValue": "\uB808\uC804\uB4DC\uB9AC",
+          "Description": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "Details": [],
+          "DisplayText": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "CategoryIcon": "\uD83D\uDCA0",
+          "IsNewItem": false,
+          "HasDetails": false
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-10-19T07:04:06.3097288+09:00",
+      "Date": "2025-10-19T16:41:42.1852228+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uAE30\uACC4 \uC2EC\uC7A5",
@@ -1665,10 +1745,27 @@
       "NewItemName": "\uD50C\uB77C\uC988\uB9C8 \uD558\uD2B8",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uAE30\\uACC4 \\uC2EC\\uC7A5\u0022,\u0022item_equipment_slot\u0022:\u0022\\uAE30\\uACC4 \\uC2EC\\uC7A5\u0022,\u0022item_name\u0022:\u0022\\uD50C\\uB77C\\uC988\\uB9C8 \\uD558\\uD2B8\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uD50C\\uB77C\\uC988\\uB9C8 \\uD558\\uD2B8\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022115\u0022,\u0022dex\u0022:\u0022115\u0022,\u0022int\u0022:\u0022115\u0022,\u0022luk\u0022:\u0022115\u0022,\u0022max_hp\u0022:\u0022500\u0022,\u0022max_mp\u0022:\u0022500\u0022,\u0022attack_power\u0022:\u0022148\u0022,\u0022magic_power\u0022:\u002250\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u002215\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u002210\u0022,\u0022dex\u0022:\u002210\u0022,\u0022int\u0022:\u002210\u0022,\u0022luk\u0022:\u002210\u0022,\u0022max_hp\u0022:\u0022500\u0022,\u0022max_mp\u0022:\u0022500\u0022,\u0022attack_power\u0022:\u00225\u0022,\u0022magic_power\u0022:\u00225\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u002215\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:130},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u002230\u0022,\u0022dex\u0022:\u002230\u0022,\u0022int\u0022:\u002230\u0022,\u0022luk\u0022:\u002230\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002298\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u002275\u0022,\u0022dex\u0022:\u002275\u0022,\u0022int\u0022:\u002275\u0022,\u0022luk\u0022:\u002275\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002245\u0022,\u0022magic_power\u0022:\u002245\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uC5D0\\uD53D\u0022,\u0022potential_option_1\u0022:\u0022DEX \\u002B12%\u0022,\u0022potential_option_2\u0022:\u0022DEX \\u002B9%\u0022,\u0022potential_option_3\u0022:\u0022DEX \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022DEX \\u002B4%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B10\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uCD5C\\uB300 MP \\u002B100\u0022,\u0022scroll_upgrade\u0022:\u002210\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002220\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC7A0\uC7AC \uB808\uC804\uB4DC\uB9AC",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:3,\u0022Category\u0022:\u0022\\uC7A0\\uC7AC\\uB2A5\\uB825\u0022,\u0022OldValue\u0022:\u0022\\uC720\\uB2C8\\uD06C\u0022,\u0022NewValue\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Description\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Details\u0022:[],\u0022DisplayText\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDC8E\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:false}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI",
+      "OptionChanges": [
+        {
+          "ChangeType": 3,
+          "Category": "\uC7A0\uC7AC\uB2A5\uB825",
+          "OldValue": "\uC720\uB2C8\uD06C",
+          "NewValue": "\uB808\uC804\uB4DC\uB9AC",
+          "Description": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "Details": [],
+          "DisplayText": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "CategoryIcon": "\uD83D\uDC8E",
+          "IsNewItem": false,
+          "HasDetails": false
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-10-26T07:04:06.3097284+09:00",
+      "Date": "2025-10-26T16:41:42.1852225+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uBC18\uC9C03",
@@ -1676,10 +1773,27 @@
       "NewItemName": "\uB9C8\uC774\uC2A4\uD130\uB9C1",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uBC18\\uC9C0\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBC18\\uC9C03\u0022,\u0022item_name\u0022:\u0022\\uB9C8\\uC774\\uC2A4\\uD130\\uB9C1\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEODIHLE\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uB9C8\\uC774\\uC2A4\\uD130\\uB9C1\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEODIHLE\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u002299\u0022,\u0022dex\u0022:\u002299\u0022,\u0022int\u0022:\u002299\u0022,\u0022luk\u0022:\u002299\u0022,\u0022max_hp\u0022:\u0022455\u0022,\u0022max_mp\u0022:\u0022200\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u002264\u0022,\u0022armor\u0022:\u0022434\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u00225\u0022,\u0022dex\u0022:\u00225\u0022,\u0022int\u0022:\u00225\u0022,\u0022luk\u0022:\u00225\u0022,\u0022max_hp\u0022:\u0022200\u0022,\u0022max_mp\u0022:\u0022200\u0022,\u0022attack_power\u0022:\u00221\u0022,\u0022magic_power\u0022:\u00221\u0022,\u0022armor\u0022:\u0022150\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:140},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00228\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u002294\u0022,\u0022dex\u0022:\u002294\u0022,\u0022int\u0022:\u002294\u0022,\u0022luk\u0022:\u002294\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002263\u0022,\u0022magic_power\u0022:\u002263\u0022,\u0022armor\u0022:\u0022284\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uC5D0\\uD53D\u0022,\u0022potential_option_1\u0022:\u0022\\uC62C\\uC2A4\\uD0EF \\u002B9%\u0022,\u0022potential_option_2\u0022:\u0022DEX \\u002B12%\u0022,\u0022potential_option_3\u0022:\u0022DEX \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022DEX \\u002B4%\u0022,\u0022additional_potential_option_2\u0022:\u0022DEX \\u002B2%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uC62C\\uC2A4\\uD0EF \\u002B3\u0022,\u0022scroll_upgrade\u0022:\u00222\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002221\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC2A4\uD0C0\uD3EC\uC2A4 19\uC131 \u2192 21\uC131",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:2,\u0022Category\u0022:\u0022\\uC2A4\\uD0C0\\uD3EC\\uC2A4\u0022,\u0022OldValue\u0022:\u002219\\uC131\u0022,\u0022NewValue\u0022:\u002221\\uC131\u0022,\u0022Description\u0022:\u002219\\uC131 \\u2192 21\\uC131\u0022,\u0022Details\u0022:[],\u0022DisplayText\u0022:\u002219\\uC131 \\u2192 21\\uC131\u0022,\u0022CategoryIcon\u0022:\u0022\\u2B50\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:false}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEODIHLE",
+      "OptionChanges": [
+        {
+          "ChangeType": 2,
+          "Category": "\uC2A4\uD0C0\uD3EC\uC2A4",
+          "OldValue": "19\uC131",
+          "NewValue": "21\uC131",
+          "Description": "19\uC131 \u2192 21\uC131",
+          "Details": [],
+          "DisplayText": "19\uC131 \u2192 21\uC131",
+          "CategoryIcon": "\u2B50",
+          "IsNewItem": false,
+          "HasDetails": false
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-10-29T07:04:06.3097282+09:00",
+      "Date": "2025-10-29T16:41:42.1852224+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uBB34\uAE30",
@@ -1687,10 +1801,36 @@
       "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022331\u0022,\u0022dex\u0022:\u0022327\u0022,\u0022int\u0022:\u002236\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022673\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002238\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u002236\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u002236\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022123\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00228\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uCD94\uAC00\uC635\uC158 \uBCC0\uACBD",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:7,\u0022Category\u0022:\u0022\\uCD94\\uAC00\\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022STR 0 \\u2192 36\u0022,\u0022DEX 30 \\u2192 0\u0022,\u0022INT 30 \\u2192 36\u0022,\u0022MaxMP 2400 \\u2192 0\u0022,\u0022\\uACF5\\uACA9\\uB825 157 \\u2192 123\u0022,\u0022\\uB9C8\\uB825 93 \\u2192 0\u0022,\u0022\\uC62C\\uC2A4\\uD0EF% 0 \\u2192 5\u0022,\u0022\\uBCF4\\uACF5% 0 \\u2192 8\u0022],\u0022DisplayText\u0022:\u0022STR 0 \\u2192 36\\nDEX 30 \\u2192 0\\nINT 30 \\u2192 36\\nMaxMP 2400 \\u2192 0\\n\\uACF5\\uACA9\\uB825 157 \\u2192 123\\n\\uB9C8\\uB825 93 \\u2192 0\\n\\uC62C\\uC2A4\\uD0EF% 0 \\u2192 5\\n\\uBCF4\\uACF5% 0 \\u2192 8\u0022,\u0022CategoryIcon\u0022:\u0022\\u2795\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 7,
+          "Category": "\uCD94\uAC00\uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "STR 0 \u2192 36",
+            "DEX 30 \u2192 0",
+            "INT 30 \u2192 36",
+            "MaxMP 2400 \u2192 0",
+            "\uACF5\uACA9\uB825 157 \u2192 123",
+            "\uB9C8\uB825 93 \u2192 0",
+            "\uC62C\uC2A4\uD0EF% 0 \u2192 5",
+            "\uBCF4\uACF5% 0 \u2192 8"
+          ],
+          "DisplayText": "STR 0 \u2192 36\nDEX 30 \u2192 0\nINT 30 \u2192 36\nMaxMP 2400 \u2192 0\n\uACF5\uACA9\uB825 157 \u2192 123\n\uB9C8\uB825 93 \u2192 0\n\uC62C\uC2A4\uD0EF% 0 \u2192 5\n\uBCF4\uACF5% 0 \u2192 8",
+          "CategoryIcon": "\u2795",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
     },
     {
-      "Date": "2025-11-08T07:04:06.3097277+09:00",
+      "Date": "2025-11-08T16:41:42.1852219+09:00",
       "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
       "CharacterName": "\uD0A4\uB80C",
       "ItemSlot": "\uBB34\uAE30",
@@ -1698,8 +1838,318 @@
       "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
       "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
       "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022295\u0022,\u0022dex\u0022:\u0022357\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002230\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022673\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002238\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00225\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002230\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002230\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022123\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00228\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00225\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
-      "ChangeSummary": ""
+      "ChangeSummary": "\uC5D0\uB514\uC154\uB110 \uB808\uC804\uB4DC\uB9AC / \uCD94\uAC00\uC635\uC158 \uBCC0\uACBD",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:6,\u0022Category\u0022:\u0022\\uC5D0\\uB514 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5 \\u2192 \\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022],\u0022DisplayText\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\\n\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5 \\u2192 \\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDCA0\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true},{\u0022ChangeType\u0022:7,\u0022Category\u0022:\u0022\\uCD94\\uAC00\\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022STR 36 \\u2192 0\u0022,\u0022DEX 0 \\u2192 30\u0022,\u0022INT 36 \\u2192 0\u0022,\u0022LUK 0 \\u2192 30\u0022,\u0022\\uC62C\\uC2A4\\uD0EF% 5 \\u2192 0\u0022,\u0022\\uB370\\uBBF8\\uC9C0% 0 \\u2192 5\u0022],\u0022DisplayText\u0022:\u0022STR 36 \\u2192 0\\nDEX 0 \\u2192 30\\nINT 36 \\u2192 0\\nLUK 0 \\u2192 30\\n\\uC62C\\uC2A4\\uD0EF% 5 \\u2192 0\\n\\uB370\\uBBF8\\uC9C0% 0 \\u2192 5\u0022,\u0022CategoryIcon\u0022:\u0022\\u2795\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 6,
+          "Category": "\uC5D0\uB514 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B18% \u2192 \uACF5\uACA9\uB825 \u002B12%",
+            "\uACF5\uACA9 \uC2DC 15% \uD655\uB960\uB85C 95\uC758 HP \uD68C\uBCF5 \u2192 \uBAAC\uC2A4\uD130 \uBC29\uC5B4\uC728 \uBB34\uC2DC \u002B4%"
+          ],
+          "DisplayText": "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B18% \u2192 \uACF5\uACA9\uB825 \u002B12%\n\uACF5\uACA9 \uC2DC 15% \uD655\uB960\uB85C 95\uC758 HP \uD68C\uBCF5 \u2192 \uBAAC\uC2A4\uD130 \uBC29\uC5B4\uC728 \uBB34\uC2DC \u002B4%",
+          "CategoryIcon": "\uD83D\uDCA0",
+          "IsNewItem": false,
+          "HasDetails": true
+        },
+        {
+          "ChangeType": 7,
+          "Category": "\uCD94\uAC00\uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "STR 36 \u2192 0",
+            "DEX 0 \u2192 30",
+            "INT 36 \u2192 0",
+            "LUK 0 \u2192 30",
+            "\uC62C\uC2A4\uD0EF% 5 \u2192 0",
+            "\uB370\uBBF8\uC9C0% 0 \u2192 5"
+          ],
+          "DisplayText": "STR 36 \u2192 0\nDEX 0 \u2192 30\nINT 36 \u2192 0\nLUK 0 \u2192 30\n\uC62C\uC2A4\uD0EF% 5 \u2192 0\n\uB370\uBBF8\uC9C0% 0 \u2192 5",
+          "CategoryIcon": "\u2795",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-11-19T16:41:42.1852215+09:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uBB34\uAE30",
+      "OldItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022295\u0022,\u0022dex\u0022:\u0022327\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002244\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022673\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002240\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00226\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002244\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022123\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002210\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00226\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
+      "ChangeSummary": "\uCD94\uAC00\uC635\uC158 \uBCC0\uACBD",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:7,\u0022Category\u0022:\u0022\\uCD94\\uAC00\\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022DEX 30 \\u2192 0\u0022,\u0022LUK 30 \\u2192 44\u0022,\u0022\\uBCF4\\uACF5% 8 \\u2192 10\u0022,\u0022\\uB370\\uBBF8\\uC9C0% 5 \\u2192 6\u0022],\u0022DisplayText\u0022:\u0022DEX 30 \\u2192 0\\nLUK 30 \\u2192 44\\n\\uBCF4\\uACF5% 8 \\u2192 10\\n\\uB370\\uBBF8\\uC9C0% 5 \\u2192 6\u0022,\u0022CategoryIcon\u0022:\u0022\\u2795\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 7,
+          "Category": "\uCD94\uAC00\uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "DEX 30 \u2192 0",
+            "LUK 30 \u2192 44",
+            "\uBCF4\uACF5% 8 \u2192 10",
+            "\uB370\uBBF8\uC9C0% 5 \u2192 6"
+          ],
+          "DisplayText": "DEX 30 \u2192 0\nLUK 30 \u2192 44\n\uBCF4\uACF5% 8 \u2192 10\n\uB370\uBBF8\uC9C0% 5 \u2192 6",
+          "CategoryIcon": "\u2795",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-10-10T00:00:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uBCF4\uC870\uBB34\uAE30",
+      "OldItemName": "\uBE14\uB799 \uC18C\uC6B8\uB9C1",
+      "NewItemName": "\uBE14\uB799 \uC18C\uC6B8\uB9C1",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uB9C1\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBCF4\\uC870\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uBE14\\uB799 \\uC18C\\uC6B8\\uB9C1\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEMHJBOE\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uBE14\\uB799 \\uC18C\\uC6B8\\uB9C1\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEMHJBOE\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u00228\u0022,\u0022dex\u0022:\u00228\u0022,\u0022int\u0022:\u00228\u0022,\u0022luk\u0022:\u00228\u0022,\u0022max_hp\u0022:\u0022800\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022275\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u00228\u0022,\u0022dex\u0022:\u00228\u0022,\u0022int\u0022:\u00228\u0022,\u0022luk\u0022:\u00228\u0022,\u0022max_hp\u0022:\u0022800\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022275\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:100},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022potential_option_2\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022potential_option_3\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B30%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_3\u0022:\u0022STR \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00220\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u00220\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
+      "ChangeSummary": "\uC7A0\uC7AC \uB808\uC804\uB4DC\uB9AC",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:4,\u0022Category\u0022:\u0022\\uC7A0\\uC7AC\\uB2A5\\uB825 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B30% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B9%\u0022],\u0022DisplayText\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\\n\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B30% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDC8E\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEMHJBOE",
+      "OptionChanges": [
+        {
+          "ChangeType": 4,
+          "Category": "\uC7A0\uC7AC\uB2A5\uB825 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B35% \u2192 \uACF5\uACA9\uB825 \u002B12%",
+            "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B30% \u2192 \uACF5\uACA9\uB825 \u002B9%"
+          ],
+          "DisplayText": "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B35% \u2192 \uACF5\uACA9\uB825 \u002B12%\n\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B30% \u2192 \uACF5\uACA9\uB825 \u002B9%",
+          "CategoryIcon": "\uD83D\uDC8E",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-10-19T00:00:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uC0C1\uC758",
+      "OldItemName": "\uC5D0\uD14C\uB974\uB12C \uD30C\uC774\uB81B\uCF54\uD2B8",
+      "NewItemName": "\uC5D0\uD14C\uB974\uB12C \uD30C\uC774\uB81B\uCF54\uD2B8",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC0C1\\uC758\u0022,\u0022item_equipment_slot\u0022:\u0022\\uC0C1\\uC758\u0022,\u0022item_name\u0022:\u0022\\uC5D0\\uD14C\\uB974\\uB12C \\uD30C\\uC774\\uB81B\\uCF54\\uD2B8\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEPGJDNG\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC5D0\\uD14C\\uB974\\uB12C \\uD30C\\uC774\\uB81B\\uCF54\\uD2B8\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEPGJDNG\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022141\u0022,\u0022dex\u0022:\u0022362\u0022,\u0022int\u0022:\u002294\u0022,\u0022luk\u0022:\u002235\u0022,\u0022max_hp\u0022:\u00221445\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002258\u0022,\u0022magic_power\u0022:\u002245\u0022,\u0022armor\u0022:\u00221055\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00225\u0022,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u002250\u0022,\u0022dex\u0022:\u002250\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00226\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022325\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u00225\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:250},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u0022149\u0022,\u0022int\u0022:\u002242\u0022,\u0022luk\u0022:\u002235\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002272\u0022,\u0022int\u0022:\u00221\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00221190\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00227\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u0022107\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u002291\u0022,\u0022dex\u0022:\u002291\u0022,\u0022int\u0022:\u002251\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002245\u0022,\u0022magic_power\u0022:\u002245\u0022,\u0022armor\u0022:\u0022623\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uC5D0\\uD53D\u0022,\u0022potential_option_1\u0022:\u0022DEX \\u002B13%\u0022,\u0022potential_option_2\u0022:\u0022DEX \\u002B10%\u0022,\u0022potential_option_3\u0022:\u0022\\uC62C\\uC2A4\\uD0EF \\u002B7%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12\u0022,\u0022additional_potential_option_2\u0022:\u0022DEX \\u002B3%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uCD5C\\uB300 MP \\u002B125\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u00229\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002218\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
+      "ChangeSummary": "\uC5D0\uB514\uC154\uB110 \uC5D0\uD53D",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:6,\u0022Category\u0022:\u0022\\uC5D0\\uB514\\uC154\\uB110 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022\\uC62C\\uC2A4\\uD0EF \\u002B3% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12\u0022,\u0022\\uC62C\\uC2A4\\uD0EF \\u002B4 \\u2192 \\uCD5C\\uB300 MP \\u002B125\u0022],\u0022DisplayText\u0022:\u0022\\uC62C\\uC2A4\\uD0EF \\u002B3% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12\\n\\uC62C\\uC2A4\\uD0EF \\u002B4 \\u2192 \\uCD5C\\uB300 MP \\u002B125\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDCA0\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEPGJDNG",
+      "OptionChanges": [
+        {
+          "ChangeType": 6,
+          "Category": "\uC5D0\uB514\uC154\uB110 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "\uC62C\uC2A4\uD0EF \u002B3% \u2192 \uACF5\uACA9\uB825 \u002B12",
+            "\uC62C\uC2A4\uD0EF \u002B4 \u2192 \uCD5C\uB300 MP \u002B125"
+          ],
+          "DisplayText": "\uC62C\uC2A4\uD0EF \u002B3% \u2192 \uACF5\uACA9\uB825 \u002B12\n\uC62C\uC2A4\uD0EF \u002B4 \u2192 \uCD5C\uB300 MP \u002B125",
+          "CategoryIcon": "\uD83D\uDCA0",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-10-19T00:00:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uBB34\uAE30",
+      "OldItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022295\u0022,\u0022dex\u0022:\u0022357\u0022,\u0022int\u0022:\u002230\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u00222655\u0022,\u0022attack_power\u0022:\u0022707\u0022,\u0022magic_power\u0022:\u002293\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002230\u0022,\u0022int\u0022:\u002230\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00222400\u0022,\u0022attack_power\u0022:\u0022157\u0022,\u0022magic_power\u0022:\u002293\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
+      "ChangeSummary": "\uC5D0\uB514\uC154\uB110 \uB808\uC804\uB4DC\uB9AC",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:5,\u0022Category\u0022:\u0022\\uC5D0\\uB514\\uC154\\uB110 \\uB4F1\\uAE09\\uC5C5\u0022,\u0022OldValue\u0022:\u0022\\uC720\\uB2C8\\uD06C\u0022,\u0022NewValue\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Description\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Details\u0022:[],\u0022DisplayText\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDCA0\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:false}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 5,
+          "Category": "\uC5D0\uB514\uC154\uB110 \uB4F1\uAE09\uC5C5",
+          "OldValue": "\uC720\uB2C8\uD06C",
+          "NewValue": "\uB808\uC804\uB4DC\uB9AC",
+          "Description": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "Details": [],
+          "DisplayText": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "CategoryIcon": "\uD83D\uDCA0",
+          "IsNewItem": false,
+          "HasDetails": false
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-10-19T00:00:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uAE30\uACC4 \uC2EC\uC7A5",
+      "OldItemName": "\uD50C\uB77C\uC988\uB9C8 \uD558\uD2B8",
+      "NewItemName": "\uD50C\uB77C\uC988\uB9C8 \uD558\uD2B8",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uAE30\\uACC4 \\uC2EC\\uC7A5\u0022,\u0022item_equipment_slot\u0022:\u0022\\uAE30\\uACC4 \\uC2EC\\uC7A5\u0022,\u0022item_name\u0022:\u0022\\uD50C\\uB77C\\uC988\\uB9C8 \\uD558\\uD2B8\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uD50C\\uB77C\\uC988\\uB9C8 \\uD558\\uD2B8\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022115\u0022,\u0022dex\u0022:\u0022115\u0022,\u0022int\u0022:\u0022115\u0022,\u0022luk\u0022:\u0022115\u0022,\u0022max_hp\u0022:\u0022500\u0022,\u0022max_mp\u0022:\u0022500\u0022,\u0022attack_power\u0022:\u0022148\u0022,\u0022magic_power\u0022:\u002250\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u002215\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u002210\u0022,\u0022dex\u0022:\u002210\u0022,\u0022int\u0022:\u002210\u0022,\u0022luk\u0022:\u002210\u0022,\u0022max_hp\u0022:\u0022500\u0022,\u0022max_mp\u0022:\u0022500\u0022,\u0022attack_power\u0022:\u00225\u0022,\u0022magic_power\u0022:\u00225\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:\u002215\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:130},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00220\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u002230\u0022,\u0022dex\u0022:\u002230\u0022,\u0022int\u0022:\u002230\u0022,\u0022luk\u0022:\u002230\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002298\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u002275\u0022,\u0022dex\u0022:\u002275\u0022,\u0022int\u0022:\u002275\u0022,\u0022luk\u0022:\u002275\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002245\u0022,\u0022magic_power\u0022:\u002245\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uC5D0\\uD53D\u0022,\u0022potential_option_1\u0022:\u0022DEX \\u002B12%\u0022,\u0022potential_option_2\u0022:\u0022DEX \\u002B9%\u0022,\u0022potential_option_3\u0022:\u0022DEX \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022DEX \\u002B4%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B10\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uCD5C\\uB300 MP \\u002B100\u0022,\u0022scroll_upgrade\u0022:\u002210\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002220\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:null,\u0022soul_option\u0022:null}",
+      "ChangeSummary": "\uC7A0\uC7AC \uB808\uC804\uB4DC\uB9AC",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:3,\u0022Category\u0022:\u0022\\uC7A0\\uC7AC\\uB2A5\\uB825 \\uB4F1\\uAE09\\uC5C5\u0022,\u0022OldValue\u0022:\u0022\\uC720\\uB2C8\\uD06C\u0022,\u0022NewValue\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Description\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022Details\u0022:[],\u0022DisplayText\u0022:\u0022\\uC720\\uB2C8\\uD06C \\u2192 \\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDC8E\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:false}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KEJFJHHI",
+      "OptionChanges": [
+        {
+          "ChangeType": 3,
+          "Category": "\uC7A0\uC7AC\uB2A5\uB825 \uB4F1\uAE09\uC5C5",
+          "OldValue": "\uC720\uB2C8\uD06C",
+          "NewValue": "\uB808\uC804\uB4DC\uB9AC",
+          "Description": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "Details": [],
+          "DisplayText": "\uC720\uB2C8\uD06C \u2192 \uB808\uC804\uB4DC\uB9AC",
+          "CategoryIcon": "\uD83D\uDC8E",
+          "IsNewItem": false,
+          "HasDetails": false
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-10-29T00:00:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uBB34\uAE30",
+      "OldItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022331\u0022,\u0022dex\u0022:\u0022327\u0022,\u0022int\u0022:\u002236\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022673\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002238\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u002236\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u002236\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022123\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00228\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00225\u0022,\u0022damage\u0022:\u00220\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
+      "ChangeSummary": "\uCD94\uAC00\uC635\uC158 \uBCC0\uACBD",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:7,\u0022Category\u0022:\u0022\\uCD94\\uAC00 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022STR 0 \\u2192 36\u0022,\u0022DEX 30 \\u2192 0\u0022,\u0022INT 30 \\u2192 36\u0022,\u0022MaxMP 2400 \\u2192 0\u0022,\u0022\\uACF5\\uACA9\\uB825 157 \\u2192 123\u0022,\u0022\\uB9C8\\uB825 93 \\u2192 0\u0022,\u0022\\uC62C\\uC2A4\\uD0EF% 0 \\u2192 5\u0022,\u0022\\uBCF4\\uACF5% 0 \\u2192 8\u0022],\u0022DisplayText\u0022:\u0022STR 0 \\u2192 36\\nDEX 30 \\u2192 0\\nINT 30 \\u2192 36\\nMaxMP 2400 \\u2192 0\\n\\uACF5\\uACA9\\uB825 157 \\u2192 123\\n\\uB9C8\\uB825 93 \\u2192 0\\n\\uC62C\\uC2A4\\uD0EF% 0 \\u2192 5\\n\\uBCF4\\uACF5% 0 \\u2192 8\u0022,\u0022CategoryIcon\u0022:\u0022\\u2795\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 7,
+          "Category": "\uCD94\uAC00 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "STR 0 \u2192 36",
+            "DEX 30 \u2192 0",
+            "INT 30 \u2192 36",
+            "MaxMP 2400 \u2192 0",
+            "\uACF5\uACA9\uB825 157 \u2192 123",
+            "\uB9C8\uB825 93 \u2192 0",
+            "\uC62C\uC2A4\uD0EF% 0 \u2192 5",
+            "\uBCF4\uACF5% 0 \u2192 8"
+          ],
+          "DisplayText": "STR 0 \u2192 36\nDEX 30 \u2192 0\nINT 30 \u2192 36\nMaxMP 2400 \u2192 0\n\uACF5\uACA9\uB825 157 \u2192 123\n\uB9C8\uB825 93 \u2192 0\n\uC62C\uC2A4\uD0EF% 0 \u2192 5\n\uBCF4\uACF5% 0 \u2192 8",
+          "CategoryIcon": "\u2795",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-11-08T00:00:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uBB34\uAE30",
+      "OldItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022295\u0022,\u0022dex\u0022:\u0022357\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002230\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022673\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002238\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00225\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002230\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002230\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022123\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u00228\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00225\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
+      "ChangeSummary": "\uC5D0\uB514\uC154\uB110 \uB808\uC804\uB4DC\uB9AC / \uCD94\uAC00\uC635\uC158 \uBCC0\uACBD",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:6,\u0022Category\u0022:\u0022\\uC5D0\\uB514\\uC154\\uB110 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5 \\u2192 \\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022],\u0022DisplayText\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B18% \\u2192 \\uACF5\\uACA9\\uB825 \\u002B12%\\n\\uACF5\\uACA9 \\uC2DC 15% \\uD655\\uB960\\uB85C 95\\uC758 HP \\uD68C\\uBCF5 \\u2192 \\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022,\u0022CategoryIcon\u0022:\u0022\\uD83D\\uDCA0\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true},{\u0022ChangeType\u0022:7,\u0022Category\u0022:\u0022\\uCD94\\uAC00 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022STR 36 \\u2192 0\u0022,\u0022DEX 0 \\u2192 30\u0022,\u0022INT 36 \\u2192 0\u0022,\u0022LUK 0 \\u2192 30\u0022,\u0022\\uC62C\\uC2A4\\uD0EF% 5 \\u2192 0\u0022,\u0022\\uB370\\uBBF8\\uC9C0% 0 \\u2192 5\u0022],\u0022DisplayText\u0022:\u0022STR 36 \\u2192 0\\nDEX 0 \\u2192 30\\nINT 36 \\u2192 0\\nLUK 0 \\u2192 30\\n\\uC62C\\uC2A4\\uD0EF% 5 \\u2192 0\\n\\uB370\\uBBF8\\uC9C0% 0 \\u2192 5\u0022,\u0022CategoryIcon\u0022:\u0022\\u2795\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 6,
+          "Category": "\uC5D0\uB514\uC154\uB110 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B18% \u2192 \uACF5\uACA9\uB825 \u002B12%",
+            "\uACF5\uACA9 \uC2DC 15% \uD655\uB960\uB85C 95\uC758 HP \uD68C\uBCF5 \u2192 \uBAAC\uC2A4\uD130 \uBC29\uC5B4\uC728 \uBB34\uC2DC \u002B4%"
+          ],
+          "DisplayText": "\uBCF4\uC2A4 \uBAAC\uC2A4\uD130 \uB370\uBBF8\uC9C0 \u002B18% \u2192 \uACF5\uACA9\uB825 \u002B12%\n\uACF5\uACA9 \uC2DC 15% \uD655\uB960\uB85C 95\uC758 HP \uD68C\uBCF5 \u2192 \uBAAC\uC2A4\uD130 \uBC29\uC5B4\uC728 \uBB34\uC2DC \u002B4%",
+          "CategoryIcon": "\uD83D\uDCA0",
+          "IsNewItem": false,
+          "HasDetails": true
+        },
+        {
+          "ChangeType": 7,
+          "Category": "\uCD94\uAC00 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "STR 36 \u2192 0",
+            "DEX 0 \u2192 30",
+            "INT 36 \u2192 0",
+            "LUK 0 \u2192 30",
+            "\uC62C\uC2A4\uD0EF% 5 \u2192 0",
+            "\uB370\uBBF8\uC9C0% 0 \u2192 5"
+          ],
+          "DisplayText": "STR 36 \u2192 0\nDEX 0 \u2192 30\nINT 36 \u2192 0\nLUK 0 \u2192 30\n\uC62C\uC2A4\uD0EF% 5 \u2192 0\n\uB370\uBBF8\uC9C0% 0 \u2192 5",
+          "CategoryIcon": "\u2795",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
+    },
+    {
+      "Date": "2025-11-19T00:00:00",
+      "CharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
+      "CharacterName": "\uD0A4\uB80C",
+      "ItemSlot": "\uBB34\uAE30",
+      "OldItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "NewItemName": "\uC81C\uB124\uC2DC\uC2A4 \uC18C\uC6B8\uC288\uD130",
+      "ChangeType": "\uC635\uC158 \uBCC0\uACBD",
+      "ItemInfoJson": "{\u0022item_equipment_part\u0022:\u0022\\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_equipment_slot\u0022:\u0022\\uBB34\\uAE30\u0022,\u0022item_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_description\u0022:null,\u0022item_shape_name\u0022:\u0022\\uC81C\\uB124\\uC2DC\\uC2A4 \\uC18C\\uC6B8\\uC288\\uD130\u0022,\u0022item_shape_icon\u0022:\u0022https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD\u0022,\u0022item_total_option\u0022:{\u0022str\u0022:\u0022295\u0022,\u0022dex\u0022:\u0022327\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002244\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022673\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002240\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00226\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:null},\u0022item_base_option\u0022:{\u0022str\u0022:\u0022150\u0022,\u0022dex\u0022:\u0022150\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022255\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002230\u0022,\u0022ignore_monster_armor\u0022:\u002220\u0022,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:\u00220\u0022,\u0022max_mp_rate\u0022:\u00220\u0022,\u0022base_equipment_level\u0022:200},\u0022item_add_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u002244\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u0022123\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:\u002210\u0022,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:\u00220\u0022,\u0022damage\u0022:\u00226\u0022,\u0022equipment_level_decrease\u0022:0,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_etc_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u002232\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u002272\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_starforce_option\u0022:{\u0022str\u0022:\u0022145\u0022,\u0022dex\u0022:\u0022145\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u0022255\u0022,\u0022max_mp\u0022:\u0022255\u0022,\u0022attack_power\u0022:\u0022223\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:\u00220\u0022,\u0022speed\u0022:\u00220\u0022,\u0022jump\u0022:\u00220\u0022,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022item_exceptional_option\u0022:{\u0022str\u0022:\u00220\u0022,\u0022dex\u0022:\u00220\u0022,\u0022int\u0022:\u00220\u0022,\u0022luk\u0022:\u00220\u0022,\u0022max_hp\u0022:\u00220\u0022,\u0022max_mp\u0022:\u00220\u0022,\u0022attack_power\u0022:\u00220\u0022,\u0022magic_power\u0022:\u00220\u0022,\u0022armor\u0022:null,\u0022speed\u0022:null,\u0022jump\u0022:null,\u0022boss_damage\u0022:null,\u0022ignore_monster_armor\u0022:null,\u0022all_stat\u0022:null,\u0022damage\u0022:null,\u0022equipment_level_decrease\u0022:null,\u0022max_hp_rate\u0022:null,\u0022max_mp_rate\u0022:null,\u0022base_equipment_level\u0022:null},\u0022potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022additional_potential_option_grade\u0022:\u0022\\uB808\\uC804\\uB4DC\\uB9AC\u0022,\u0022potential_option_1\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_2\u0022:\u0022\\uBCF4\\uC2A4 \\uBAAC\\uC2A4\\uD130 \\uB370\\uBBF8\\uC9C0 \\u002B35%\u0022,\u0022potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022additional_potential_option_1\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B12%\u0022,\u0022additional_potential_option_2\u0022:\u0022\\uBAAC\\uC2A4\\uD130 \\uBC29\\uC5B4\\uC728 \\uBB34\\uC2DC \\u002B4%\u0022,\u0022additional_potential_option_3\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B9%\u0022,\u0022scroll_upgrade\u0022:\u00228\u0022,\u0022scroll_upgradeable_count\u0022:\u00220\u0022,\u0022scroll_resilience_count\u0022:\u00220\u0022,\u0022cuttable_count\u0022:\u0022255\u0022,\u0022golden_hammer_flag\u0022:\u0022\\uBBF8\\uC801\\uC6A9\u0022,\u0022starforce\u0022:\u002222\u0022,\u0022starforce_scroll_flag\u0022:\u0022\\uBBF8\\uC0AC\\uC6A9\u0022,\u0022special_ring_level\u0022:0,\u0022soul_name\u0022:\u0022\\uC704\\uB300\\uD55C \\uC2DC\\uADF8\\uB108\\uC2A4\\uC758 \\uC18C\\uC6B8 \\uC801\\uC6A9\u0022,\u0022soul_option\u0022:\u0022\\uACF5\\uACA9\\uB825 \\u002B3%\u0022}",
+      "ChangeSummary": "\uCD94\uAC00\uC635\uC158 \uBCC0\uACBD",
+      "OptionChangesJson": "[{\u0022ChangeType\u0022:7,\u0022Category\u0022:\u0022\\uCD94\\uAC00 \\uC635\\uC158\u0022,\u0022OldValue\u0022:\u0022\u0022,\u0022NewValue\u0022:\u0022\u0022,\u0022Description\u0022:\u0022\u0022,\u0022Details\u0022:[\u0022DEX 30 \\u2192 0\u0022,\u0022LUK 30 \\u2192 44\u0022,\u0022\\uBCF4\\uACF5% 8 \\u2192 10\u0022,\u0022\\uB370\\uBBF8\\uC9C0% 5 \\u2192 6\u0022],\u0022DisplayText\u0022:\u0022DEX 30 \\u2192 0\\nLUK 30 \\u2192 44\\n\\uBCF4\\uACF5% 8 \\u2192 10\\n\\uB370\\uBBF8\\uC9C0% 5 \\u2192 6\u0022,\u0022CategoryIcon\u0022:\u0022\\u2795\u0022,\u0022IsNewItem\u0022:false,\u0022HasDetails\u0022:true}]",
+      "ItemIcon": "https://open.api.nexon.com/static/maplestory/item/icon/KENAJGMD",
+      "OptionChanges": [
+        {
+          "ChangeType": 7,
+          "Category": "\uCD94\uAC00 \uC635\uC158",
+          "OldValue": "",
+          "NewValue": "",
+          "Description": "",
+          "Details": [
+            "DEX 30 \u2192 0",
+            "LUK 30 \u2192 44",
+            "\uBCF4\uACF5% 8 \u2192 10",
+            "\uB370\uBBF8\uC9C0% 5 \u2192 6"
+          ],
+          "DisplayText": "DEX 30 \u2192 0\nLUK 30 \u2192 44\n\uBCF4\uACF5% 8 \u2192 10\n\uB370\uBBF8\uC9C0% 5 \u2192 6",
+          "CategoryIcon": "\u2795",
+          "IsNewItem": false,
+          "HasDetails": true
+        }
+      ],
+      "IsNewItem": false
     }
   ],
-  "LastUpdated": "2025-12-12T07:59:26.4468237+09:00"
+  "LastUpdated": "2025-12-12T17:12:48.0891544+09:00"
 }

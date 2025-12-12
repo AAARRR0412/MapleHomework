@@ -13,20 +13,24 @@
         UseLayoutRounding="True">
 
     <Window.Resources>
-        <!-- 다크 모드 기본 테마 (동적으로 변경됨) -->
-        <!-- 기본값을 라이트 팔레트로 설정 (테마 적용 시 오버라이드) -->
+        <!-- 테마 지원 리소스 (라이트/다크 모드에서 동적으로 변경됨) -->
+        <!-- 기본값: 라이트 모드 팔레트 -->
         <SolidColorBrush x:Key="WindowBackground" Color="#F5F7FB"/>
         <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="CardBackgroundHover" Color="#EEF2F7"/>
+        <SolidColorBrush x:Key="CardBackgroundAlt" Color="#F8FAFC"/>
         <SolidColorBrush x:Key="TextPrimary" Color="#0F172A"/>
         <SolidColorBrush x:Key="TextSecondary" Color="#475569"/>
         <SolidColorBrush x:Key="TextMuted" Color="#64748B"/>
+        <SolidColorBrush x:Key="TextInverse" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="AccentCyan" Color="#5AC8FA"/>
         <SolidColorBrush x:Key="AccentOrange" Color="#FF9F43"/>
         <SolidColorBrush x:Key="AccentGreen" Color="#10B981"/>
         <SolidColorBrush x:Key="AccentPurple" Color="#A78BFA"/>
         <SolidColorBrush x:Key="AccentRed" Color="#F43F5E"/>
+        <SolidColorBrush x:Key="AccentBlue" Color="#3B82F6"/>
         <SolidColorBrush x:Key="DividerColor" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#E2E8F0"/>
         <SolidColorBrush x:Key="ChartBarGradientStart" Color="#5AC8FA"/>
         <SolidColorBrush x:Key="ChartBarGradientEnd" Color="#818CF8"/>
         <!-- 차트 텍스트 -->
@@ -35,6 +39,14 @@
         <!-- 사이드/알림 카드 -->
         <SolidColorBrush x:Key="ApiCardBackground" Color="#FFF6EC"/>
         <SolidColorBrush x:Key="ApiCardBorder" Color="#FFE3C2"/>
+        <!-- 아이템 카드용 -->
+        <SolidColorBrush x:Key="ItemCardBackground" Color="#FAFBFC"/>
+        <SolidColorBrush x:Key="ItemCardBorder" Color="#E5E9F0"/>
+        <SolidColorBrush x:Key="ItemCardHover" Color="#F0F4F8"/>
+        <SolidColorBrush x:Key="BadgeBackground" Color="#EEF2FF"/>
+        <SolidColorBrush x:Key="BadgeText" Color="#6366F1"/>
+        <!-- 장비 상세 보기 배경 -->
+        <SolidColorBrush x:Key="DetailViewBackground" Color="#1A1D2E"/>
 
         <converters:JsonToItemInfoConverter x:Key="JsonToItemInfoConverter"/>
         <converters:StringNotEmptyToBoolConverter x:Key="StringNotEmptyToBoolConverter"/>
@@ -42,6 +54,8 @@
         <converters:StarRepeatConverter x:Key="StarRepeatConverter"/>
         <converters:StatDeltaConverter x:Key="StatDeltaConverter"/>
         <converters:ItemTooltipImageConverter x:Key="ItemTooltipImageConverter"/>
+        <converters:InverseBoolToVisConverter x:Key="BoolToVisibilityInverse"/>
+        <converters:CountToVisibilityInverseConverter x:Key="CountToVisibilityInverse"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
 
         <!-- 메이플스토리 22버전 장비 툴팁 스타일 (GearTooltipRender22.cs + Resource 기반) -->
@@ -309,14 +323,30 @@
             </StackPanel>
         </DataTemplate>
 
-        <!-- 모던 카드 스타일 -->
+        <!-- 모던 카드 스타일 (DynamicResource로 테마 변경 반영) -->
         <Style x:Key="ModernCard" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource CardBackground}"/>
+            <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
             <Setter Property="CornerRadius" Value="16"/>
             <Setter Property="Padding" Value="20"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.15" Color="#000000"/>
+                    <DropShadowEffect BlurRadius="16" ShadowDepth="0" Opacity="0.1" Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 메이플 스타일 섹션 헤더 -->
+        <Style x:Key="MapleHeader" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#5AC8FA" Offset="0"/>
+                        <GradientStop Color="#38BDF8" Offset="1"/>
+                    </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -351,9 +381,9 @@
                         <ui:SymbolIcon Symbol="DataHistogram24" FontSize="22" Foreground="White"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock x:Name="TitleText" Text="통계 리포트" Foreground="{StaticResource TextPrimary}" 
+                        <TextBlock x:Name="TitleText" Text="통계 리포트" Foreground="{DynamicResource TextPrimary}" 
                                    FontSize="20" FontWeight="SemiBold"/>
-                        <TextBlock Text="캐릭터 성장 분석 · 숙제 완료 통계" Foreground="{StaticResource TextSecondary}" 
+                        <TextBlock Text="캐릭터 성장 분석 · 숙제 완료 통계" Foreground="{DynamicResource TextSecondary}" 
                                    FontSize="12" Margin="0,2,0,0"/>
                     </StackPanel>
                 </StackPanel>
@@ -361,11 +391,11 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Button Width="40" Height="40" Click="MinimizeButton_Click"
                             Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="최소화">
-                        <ui:SymbolIcon Symbol="Subtract24" FontSize="18" Foreground="{StaticResource TextSecondary}"/>
+                        <ui:SymbolIcon Symbol="Subtract24" FontSize="18" Foreground="{DynamicResource TextSecondary}"/>
                     </Button>
                     <Button Width="40" Height="40" Click="CloseButton_Click"
                             Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="닫기">
-                        <ui:SymbolIcon Symbol="Dismiss24" FontSize="18" Foreground="{StaticResource TextSecondary}"/>
+                        <ui:SymbolIcon Symbol="Dismiss24" FontSize="18" Foreground="{DynamicResource TextSecondary}"/>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -383,50 +413,136 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <!-- 캐릭터 필터 -->
-                        <TextBlock Text="캐릭터 선택" Foreground="{StaticResource TextSecondary}" FontSize="12" Margin="0,0,0,8"/>
+                        <TextBlock Text="캐릭터 선택" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="0,0,0,8"/>
                         <ComboBox x:Name="CharacterFilterCombo" SelectionChanged="CharacterFilterCombo_SelectionChanged" 
                                   Margin="0,0,0,15">
                             <ComboBoxItem Content="전체 캐릭터" IsSelected="True"/>
                         </ComboBox>
 
-                        <Border Height="1" Background="{StaticResource DividerColor}" Margin="0,0,0,15"/>
+                        <Border Height="1" Background="{DynamicResource DividerColor}" Margin="0,0,0,15"/>
 
                         <!-- 새로고침 -->
                         <ui:Button Content="데이터 새로고침" Icon="ArrowSync24" 
                                    Appearance="Secondary" HorizontalAlignment="Stretch"
                                    Click="RefreshButton_Click" Height="38" Margin="0,0,0,15"/>
 
-                        <Border Height="1" Background="{StaticResource DividerColor}" Margin="0,0,0,15"/>
+                        <Border Height="1" Background="{DynamicResource DividerColor}" Margin="0,0,0,15"/>
 
                         <!-- API 데이터 수집 -->
-                        <Border Background="{StaticResource ApiCardBackground}" BorderBrush="{StaticResource ApiCardBorder}"
+                        <Border x:Name="ApiCollectCard" Background="{DynamicResource ApiCardBackground}" BorderBrush="{DynamicResource ApiCardBorder}"
                                 BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,0,15">
-                            <StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                    <ui:SymbolIcon Symbol="CloudArrowDown24" Foreground="{StaticResource AccentOrange}" FontSize="18"/>
-                                    <TextBlock Text="API 데이터 수집" Foreground="{StaticResource AccentOrange}" 
-                                               FontSize="12" FontWeight="SemiBold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            <Grid>
+                                <!-- 수집 완료 애니메이션 오버레이 -->
+                                <Border x:Name="CollectCompleteOverlay" Background="#3010B981" CornerRadius="8" Visibility="Collapsed" Panel.ZIndex="10">
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="✓" FontSize="32" Foreground="{DynamicResource AccentGreen}" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="CollectCompleteText" Text="수집 완료!" FontSize="14" Foreground="{DynamicResource AccentGreen}" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <ui:SymbolIcon Symbol="CloudArrowDown24" Foreground="{DynamicResource AccentOrange}" FontSize="18"/>
+                                        <TextBlock Text="API 데이터 수집" Foreground="{DynamicResource AccentOrange}" 
+                                                   FontSize="12" FontWeight="SemiBold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    
+                                    <!-- 데이터 현황 요약 -->
+                                    <Border Background="{DynamicResource CardBackgroundAlt}" CornerRadius="8" Padding="10" Margin="0,0,0,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="수집된 데이터" Foreground="{DynamicResource TextMuted}" FontSize="10"/>
+                                                <TextBlock x:Name="DataSummaryText" Text="0일" Foreground="{DynamicResource TextPrimary}" 
+                                                           FontSize="14" FontWeight="Bold"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                                                <TextBlock Text="누락된 날짜" Foreground="{DynamicResource TextMuted}" FontSize="10"/>
+                                                <TextBlock x:Name="MissingDaysText" Text="0일" Foreground="{DynamicResource AccentOrange}" 
+                                                           FontSize="14" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    
+                                    <!-- 캘린더 헤더 -->
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="CalendarPrevMonth" Content="◀" Background="Transparent" 
+                                                Foreground="{DynamicResource TextSecondary}" BorderThickness="0" 
+                                                FontSize="10" Padding="6,2" Cursor="Hand" Click="CalendarPrevMonth_Click"/>
+                                        <TextBlock x:Name="CalendarMonthText" Text="2024년 12월" Grid.Column="1" 
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource TextPrimary}" FontSize="12" FontWeight="SemiBold"/>
+                                        <Button x:Name="CalendarNextMonth" Content="▶" Grid.Column="2" Background="Transparent" 
+                                                Foreground="{DynamicResource TextSecondary}" BorderThickness="0" 
+                                                FontSize="10" Padding="6,2" Cursor="Hand" Click="CalendarNextMonth_Click"/>
+                                    </Grid>
+                                    
+                                    <!-- 캘린더 요일 헤더 -->
+                                    <Grid Margin="0,0,0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="일" Grid.Column="0" HorizontalAlignment="Center" Foreground="#F43F5E" FontSize="9" FontWeight="SemiBold"/>
+                                        <TextBlock Text="월" Grid.Column="1" HorizontalAlignment="Center" Foreground="{DynamicResource TextMuted}" FontSize="9"/>
+                                        <TextBlock Text="화" Grid.Column="2" HorizontalAlignment="Center" Foreground="{DynamicResource TextMuted}" FontSize="9"/>
+                                        <TextBlock Text="수" Grid.Column="3" HorizontalAlignment="Center" Foreground="{DynamicResource TextMuted}" FontSize="9"/>
+                                        <TextBlock Text="목" Grid.Column="4" HorizontalAlignment="Center" Foreground="{DynamicResource TextMuted}" FontSize="9"/>
+                                        <TextBlock Text="금" Grid.Column="5" HorizontalAlignment="Center" Foreground="{DynamicResource TextMuted}" FontSize="9"/>
+                                        <TextBlock Text="토" Grid.Column="6" HorizontalAlignment="Center" Foreground="#3B82F6" FontSize="9" FontWeight="SemiBold"/>
+                                    </Grid>
+                                    
+                                    <!-- 캘린더 날짜 그리드 -->
+                                    <Border Background="{DynamicResource CardBackground}" CornerRadius="6" Padding="4" Margin="0,0,0,8">
+                                        <UniformGrid x:Name="CalendarGrid" Rows="6" Columns="7"/>
+                                    </Border>
+                                    
+                                    <!-- 범례 -->
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                        <Border Background="#3B82F6" CornerRadius="3" Width="12" Height="12" Margin="0,0,4,0"/>
+                                        <TextBlock Text="수집됨" Foreground="{DynamicResource TextMuted}" FontSize="9" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <Border Background="#F43F5E" CornerRadius="3" Width="12" Height="12" Margin="0,0,4,0"/>
+                                        <TextBlock Text="누락" Foreground="{DynamicResource TextMuted}" FontSize="9" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <Border Background="#10B981" CornerRadius="3" Width="12" Height="12" Margin="0,0,4,0"/>
+                                        <TextBlock Text="선택됨" Foreground="{DynamicResource TextMuted}" FontSize="9" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    
+                                    <!-- 선택된 날짜 수 표시 -->
+                                    <Border Background="{DynamicResource CardBackgroundAlt}" CornerRadius="6" Padding="8,6" Margin="0,0,0,8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <TextBlock Text="선택된 날짜:" Foreground="{DynamicResource TextMuted}" FontSize="11" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="SelectedDatesCountText" Text="0일" Foreground="{DynamicResource AccentCyan}" 
+                                                       FontSize="11" FontWeight="Bold" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,8">
+                                        <Button Content="누락만 선택" Click="SelectAllMissing_Click" 
+                                                Background="Transparent" Foreground="{DynamicResource AccentOrange}" 
+                                                BorderThickness="0" FontSize="10" Padding="4,2" Cursor="Hand"/>
+                                        <Button Content="전체 해제" Click="DeselectAllMissing_Click" 
+                                                Background="Transparent" Foreground="{DynamicResource TextMuted}" 
+                                                BorderThickness="0" FontSize="10" Padding="4,2" Cursor="Hand" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <ui:Button x:Name="CollectHistoryButton" Content="선택한 날짜 수집" Icon="History24" 
+                                               Appearance="Primary" HorizontalAlignment="Stretch"
+                                               Click="CollectHistoryButton_Click" Height="36"/>
+                                    
+                                    <ProgressBar x:Name="CollectProgressBar" Height="4" Margin="0,10,0,0" 
+                                                 Visibility="Collapsed" Foreground="{DynamicResource AccentCyan}"/>
+                                    <TextBlock x:Name="CollectStatusText" Text="" Foreground="{DynamicResource TextPrimary}" 
+                                               FontSize="10" Margin="0,5,0,0" TextAlignment="Center"/>
                                 </StackPanel>
-                                <TextBlock Text="Nexon API에서 과거 데이터를 불러와 통계에 저장합니다." 
-                                           Foreground="{StaticResource TextPrimary}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                                
-                                <ComboBox x:Name="HistoryDaysCombo" Margin="0,0,0,10" FontSize="12">
-                                    <ComboBoxItem Content="최근 7일" Tag="7" IsSelected="True"/>
-                                    <ComboBoxItem Content="최근 30일" Tag="30"/>
-                                    <ComboBoxItem Content="최근 90일" Tag="90"/>
-                                    <ComboBoxItem Content="최근 180일" Tag="180"/>
-                                    <ComboBoxItem Content="최근 365일" Tag="365"/>
-                                </ComboBox>
-                                
-                                <ui:Button x:Name="CollectHistoryButton" Content="수집 시작" Icon="History24" 
-                                           Appearance="Primary" HorizontalAlignment="Stretch"
-                                           Click="CollectHistoryButton_Click" Height="36"/>
-                                
-                                <ProgressBar x:Name="CollectProgressBar" Height="4" Margin="0,10,0,0" 
-                                             Visibility="Collapsed" Foreground="{StaticResource AccentCyan}"/>
-                                <TextBlock x:Name="CollectStatusText" Text="" Foreground="{StaticResource TextPrimary}" 
-                                           FontSize="10" Margin="0,5,0,0" TextAlignment="Center"/>
-                            </StackPanel>
+                            </Grid>
                         </Border>
 
                         <!-- 데이터 초기화 -->
@@ -470,150 +586,259 @@
                             </Grid>
                         </Border>
 
-                        <!-- 경험치/전투력 변화 (2열, 가로 스크롤) -->
-                        <TextBlock Text="📈 경험치 · 전투력 변화" Foreground="{StaticResource TextPrimary}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16"/>
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                            <Grid Margin="0,0,0,24">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                        <!-- 경험치/전투력 변화 (2열) -->
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                                <!-- 경험치 변화 -->
-                                <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                                        <TextBlock Text="경험치 변화 내역" Foreground="{StaticResource TextPrimary}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,0,0,0">
-                                            <Button x:Name="ExpDayBtn" Content="1일" Tag="day" Click="ExpRangeButton_Click" Margin="0,0,4,0" Padding="8,4"/>
-                                            <Button x:Name="ExpWeekBtn" Content="1주" Tag="week" Click="ExpRangeButton_Click" Margin="0,0,4,0" Padding="8,4"/>
-                                            <Button x:Name="ExpMonthBtn" Content="1달" Tag="month" Click="ExpRangeButton_Click" Padding="8,4"/>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource ModernCard}" Padding="0,12,0,12">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="320"/>
-                                            </Grid.RowDefinitions>
-                                            <StackPanel Orientation="Horizontal" Margin="12,0,0,12">
-                                                <Border Background="#1A5AC8FA" CornerRadius="6" Padding="8,4" Margin="0,0,8,0">
-                                                    <TextBlock Text="경험치 %" Foreground="{StaticResource AccentCyan}" FontSize="11" FontWeight="SemiBold"/>
+                            <!-- 경험치 변화 내역 카드 -->
+                            <Border Grid.Column="0" Margin="0,0,12,0" CornerRadius="16" 
+                                    Background="{DynamicResource CardBackground}" 
+                                    BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.08" Color="#000000"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 메이플 스타일 헤더 (시안-블루 그라데이션) -->
+                                    <Border Grid.Row="0" CornerRadius="16,16,0,0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#667EEA" Offset="0"/>
+                                                <GradientStop Color="#64B5F6" Offset="0.5"/>
+                                                <GradientStop Color="#4DD0E1" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid Margin="20,14">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border Background="#20FFFFFF" CornerRadius="8" Padding="8" Margin="0,0,14,0">
+                                                    <ui:SymbolIcon Symbol="ArrowTrendingLines24" FontSize="18" Foreground="White"/>
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="경험치 변화 내역" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                                                    <TextBlock Text="레벨 및 경험치 추이" Foreground="#B0FFFFFF" FontSize="10" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <!-- 기간 선택 (일수 + 집계단위) -->
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <!-- 조회 기간 선택 -->
+                                                <ComboBox x:Name="ChartDaysCombo" SelectionChanged="ChartDaysCombo_SelectionChanged"
+                                                          Background="#30FFFFFF" Foreground="White" BorderThickness="0" 
+                                                          FontSize="11" Padding="8,4" Margin="0,0,8,0" MinWidth="70">
+                                                    <ComboBox.Style>
+                                                        <Style TargetType="ComboBox">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="ComboBox">
+                                                                        <Grid>
+                                                                            <ToggleButton x:Name="ToggleButton" Background="#30FFFFFF" BorderThickness="0"
+                                                                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                                          ClickMode="Press" Focusable="False">
+                                                                                <ToggleButton.Template>
+                                                                                    <ControlTemplate TargetType="ToggleButton">
+                                                                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="10,5">
+                                                                                            <Grid>
+                                                                                                <Grid.ColumnDefinitions>
+                                                                                                    <ColumnDefinition Width="*"/>
+                                                                                                    <ColumnDefinition Width="Auto"/>
+                                                                                                </Grid.ColumnDefinitions>
+                                                                                                <ContentPresenter Grid.Column="0" Content="{TemplateBinding Content}" 
+                                                                                                                  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                                                                <Path Grid.Column="1" Data="M0,0 L4,4 L8,0" Stroke="White" StrokeThickness="1.5"
+                                                                                                      VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                                                                            </Grid>
+                                                                                        </Border>
+                                                                                    </ControlTemplate>
+                                                                                </ToggleButton.Template>
+                                                                                <ContentControl Content="{TemplateBinding SelectionBoxItem}" Foreground="White" FontWeight="SemiBold"/>
+                                                                            </ToggleButton>
+                                                                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                                                   AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                                                <Border Background="{DynamicResource CardBackground}" CornerRadius="8" 
+                                                                                        BorderBrush="{DynamicResource BorderColor}" BorderThickness="1"
+                                                                                        Margin="0,4,0,0" Padding="4">
+                                                                                    <Border.Effect>
+                                                                                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                                                                                    </Border.Effect>
+                                                                                    <StackPanel IsItemsHost="True"/>
+                                                                                </Border>
+                                                                            </Popup>
+                                                                        </Grid>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </ComboBox.Style>
+                                                    <ComboBoxItem Content="7일" Tag="7"/>
+                                                    <ComboBoxItem Content="30일" Tag="30" IsSelected="True"/>
+                                                    <ComboBoxItem Content="90일" Tag="90"/>
+                                                    <ComboBoxItem Content="전체" Tag="0"/>
+                                                </ComboBox>
+                                                
+                                                <!-- 집계 단위 선택 -->
+                                                <Border x:Name="ExpDayBorder" Background="#30FFFFFF" CornerRadius="6" Margin="0,0,4,0" Cursor="Hand">
+                                                    <Button x:Name="ExpDayBtn" Content="1일" Tag="day" Click="ExpRangeButton_Click" 
+                                                            Background="Transparent" BorderThickness="0" Foreground="White" 
+                                                            FontSize="11" FontWeight="SemiBold" Padding="10,5"/>
+                                                </Border>
+                                                <Border Background="#20FFFFFF" CornerRadius="6" Margin="0,0,4,0" Cursor="Hand">
+                                                    <Button x:Name="ExpWeekBtn" Content="1주" Tag="week" Click="ExpRangeButton_Click"
+                                                            Background="Transparent" BorderThickness="0" Foreground="White" 
+                                                            FontSize="11" FontWeight="SemiBold" Padding="10,5"/>
+                                                </Border>
+                                                <Border Background="#20FFFFFF" CornerRadius="6" Cursor="Hand">
+                                                    <Button x:Name="ExpMonthBtn" Content="1달" Tag="month" Click="ExpRangeButton_Click"
+                                                            Background="Transparent" BorderThickness="0" Foreground="White" 
+                                                            FontSize="11" FontWeight="SemiBold" Padding="10,5"/>
                                                 </Border>
                                             </StackPanel>
-                                            <Border Grid.Row="1" Background="#08FFFFFF" CornerRadius="12" Padding="10,8">
-                                                <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled"
-                                                              PreviewMouseWheel="InnerScroll_PreviewMouseWheel">
-                                                    <ItemsControl x:Name="ExpGrowthList">
-                                                        <ItemsControl.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="6,0,6,0"/>
-                                                            </ItemsPanelTemplate>
-                                                        </ItemsControl.ItemsPanel>
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Grid Margin="6,0" Width="70" VerticalAlignment="Bottom">
-                                                                    <Grid.RowDefinitions>
-                                                                        <RowDefinition Height="*" />
-                                                                        <RowDefinition Height="Auto" />
-                                                                        <RowDefinition Height="Auto" />
-                                                                    </Grid.RowDefinitions>
-                                                                    <!-- 그래프 바 -->
-                                                                    <Border Grid.Row="0" VerticalAlignment="Bottom"
-                                                                            Height="{Binding GraphRate, Converter={StaticResource RateToWidthConverter}, ConverterParameter=180}"
-                                                                            MinHeight="5" CornerRadius="8" Background="{StaticResource ExpGradient}">
-                                                                        <Border.Effect>
-                                                                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.4" Color="#667EEA"/>
-                                                                        </Border.Effect>
-                                                                    </Border>
-                                                                    <!-- 날짜 -->
-                                                                    <TextBlock Grid.Row="1" Text="{Binding Date, StringFormat=MM/dd}"
-                                                                               Foreground="{StaticResource ChartTextSecondary}" FontSize="9"
-                                                                               HorizontalAlignment="Center" Margin="0,8,0,4"/>
-                                                                    <!-- 레벨/퍼센트/획득량 -->
-                                                                    <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,4">
-                                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,2">
-                                                                            <TextBlock Text="{Binding Level, StringFormat=Lv.{0}}"
-                                                                                       Foreground="{StaticResource ChartTextPrimary}" FontSize="10" FontWeight="Bold"/>
-                                                                            <TextBlock Text=" ⬆" Foreground="#10B981" FontSize="9" FontWeight="Bold"
-                                                                                       Visibility="{Binding LeveledUp, Converter={StaticResource BoolToVisibility}}"/>
-                                                                        </StackPanel>
-                                                                        <TextBlock Text="{Binding ExperienceRate, StringFormat={}{0:F1}%}"
-                                                                                   Foreground="{StaticResource ChartTextPrimary}" FontSize="10" FontWeight="SemiBold"
-                                                                                   HorizontalAlignment="Center"/>
-                                                                        <TextBlock Text="{Binding DailyExpGainFormatted}"
-                                                                                   Foreground="#10B981" FontSize="8" FontWeight="SemiBold"
-                                                                                   HorizontalAlignment="Center" Opacity="0.9"/>
-                                                                    </StackPanel>
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </ScrollViewer>
-                                            </Border>
                                         </Grid>
                                     </Border>
-                                </StackPanel>
 
-                                <!-- 전투력 변화 -->
-                                <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                                        <TextBlock Text="전투력 변화 내역" Foreground="{StaticResource TextPrimary}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource ModernCard}" Padding="0,12,0,12">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="320"/>
-                                            </Grid.RowDefinitions>
-                                            <StackPanel Orientation="Horizontal" Margin="12,0,0,12">
-                                                <Border Background="#1AFF6B6B" CornerRadius="6" Padding="8,4">
-                                                    <TextBlock Text="전투력" Foreground="#FF6B6B" FontSize="11" FontWeight="SemiBold"/>
+                                    <!-- 차트 영역 -->
+                                    <Border Grid.Row="1" Background="{DynamicResource CardBackgroundAlt}" CornerRadius="0,0,16,16" Padding="12">
+                                        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled"
+                                                      PreviewMouseWheel="InnerScroll_PreviewMouseWheel" Height="300">
+                                            <ItemsControl x:Name="ExpGrowthList">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="6,0,6,0"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Margin="6,0" Width="70" VerticalAlignment="Bottom">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="*" />
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+                                                            <!-- 그래프 바 -->
+                                                            <Border Grid.Row="0" VerticalAlignment="Bottom"
+                                                                    Height="{Binding GraphRate, Converter={StaticResource RateToWidthConverter}, ConverterParameter=160}"
+                                                                    MinHeight="5" CornerRadius="8" Background="{StaticResource ExpGradient}">
+                                                                <Border.Effect>
+                                                                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.4" Color="#667EEA"/>
+                                                                </Border.Effect>
+                                                            </Border>
+                                                            <!-- 날짜 -->
+                                                            <TextBlock Grid.Row="1" Text="{Binding Date, StringFormat=MM/dd}"
+                                                                       Foreground="{DynamicResource ChartTextSecondary}" FontSize="9"
+                                                                       HorizontalAlignment="Center" Margin="0,8,0,4"/>
+                                                            <!-- 레벨/퍼센트/획득량 -->
+                                                            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,4">
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,2">
+                                                                    <TextBlock Text="{Binding Level, StringFormat=Lv.{0}}"
+                                                                               Foreground="{DynamicResource ChartTextPrimary}" FontSize="10" FontWeight="Bold"/>
+                                                                    <TextBlock Text=" ⬆" Foreground="{DynamicResource AccentGreen}" FontSize="9" FontWeight="Bold"
+                                                                               Visibility="{Binding LeveledUp, Converter={StaticResource BoolToVisibility}}"/>
+                                                                </StackPanel>
+                                                                <TextBlock Text="{Binding ExperienceRate, StringFormat={}{0:F1}%}"
+                                                                           Foreground="{DynamicResource ChartTextPrimary}" FontSize="10" FontWeight="SemiBold"
+                                                                           HorizontalAlignment="Center"/>
+                                                                <TextBlock Text="{Binding DailyExpGainFormatted}"
+                                                                           Foreground="{DynamicResource AccentGreen}" FontSize="8" FontWeight="SemiBold"
+                                                                           HorizontalAlignment="Center" Opacity="0.9"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!-- 전투력 변화 내역 카드 -->
+                            <Border Grid.Column="1" Margin="12,0,0,0" CornerRadius="16" 
+                                    Background="{DynamicResource CardBackground}" 
+                                    BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.08" Color="#000000"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 메이플 스타일 헤더 (오렌지-레드 그라데이션) -->
+                                    <Border Grid.Row="0" CornerRadius="16,16,0,0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#FF6B6B" Offset="0"/>
+                                                <GradientStop Color="#FFA726" Offset="0.5"/>
+                                                <GradientStop Color="#FFD54F" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid Margin="20,14">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border Background="#20FFFFFF" CornerRadius="8" Padding="8" Margin="0,0,14,0">
+                                                    <ui:SymbolIcon Symbol="Flash24" FontSize="18" Foreground="White"/>
                                                 </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="전투력 변화 내역" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                                                    <TextBlock Text="전투력 성장 추이" Foreground="#B0FFFFFF" FontSize="10" Margin="0,2,0,0"/>
+                                                </StackPanel>
                                             </StackPanel>
-                                            <Border Grid.Row="1" Background="#08FFFFFF" CornerRadius="12" Padding="10,8">
-                                                <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled"
-                                                              PreviewMouseWheel="InnerScroll_PreviewMouseWheel">
-                                                    <ItemsControl x:Name="CombatPowerList">
-                                                        <ItemsControl.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="6,0,6,0"/>
-                                                            </ItemsPanelTemplate>
-                                                        </ItemsControl.ItemsPanel>
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Grid Margin="6,0" Width="70" VerticalAlignment="Bottom">
-                                                                    <Grid.RowDefinitions>
-                                                                        <RowDefinition Height="Auto"/>
-                                                                        <RowDefinition Height="*" />
-                                                                        <RowDefinition Height="Auto"/>
-                                                                    </Grid.RowDefinitions>
-                                                                    <TextBlock Grid.Row="0" Text="{Binding NewPower, StringFormat={}{0:N0}}"
-                                                                               Foreground="{StaticResource ChartTextPrimary}" FontSize="9" FontWeight="SemiBold"
-                                                                               HorizontalAlignment="Center" Margin="0,0,0,6" TextTrimming="CharacterEllipsis"/>
-                                                                    <Border Grid.Row="1" VerticalAlignment="Bottom"
-                                                                            Height="{Binding GraphRate, Converter={StaticResource RateToWidthConverter}, ConverterParameter=150}"
-                                                                            CornerRadius="8" Background="{StaticResource PowerGradient}">
-                                                                        <Border.Effect>
-                                                                            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.4" Color="#FF6B6B"/>
-                                                                        </Border.Effect>
-                                                                    </Border>
-                                                                    <TextBlock Grid.Row="2" Text="{Binding Date, StringFormat=MM/dd}"
-                                                                               Foreground="{StaticResource ChartTextSecondary}" FontSize="10"
-                                                                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </ScrollViewer>
-                                            </Border>
-                                            <TextBlock x:Name="NoCombatPowerDataText" Grid.Row="1" Text="전투력 변화 기록이 없습니다." 
-                                                       Foreground="{StaticResource TextMuted}" FontSize="13" 
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- 차트 영역 -->
+                                    <Border Grid.Row="1" Background="{DynamicResource CardBackgroundAlt}" CornerRadius="0,0,16,16" Padding="12">
+                                        <Grid>
+                                            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled"
+                                                          PreviewMouseWheel="InnerScroll_PreviewMouseWheel" Height="300">
+                                                <ItemsControl x:Name="CombatPowerList">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="6,0,6,0"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Margin="6,0" Width="70" VerticalAlignment="Bottom">
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="*" />
+                                                                    <RowDefinition Height="Auto"/>
+                                                                </Grid.RowDefinitions>
+                                                                <TextBlock Grid.Row="0" Text="{Binding NewPower, StringFormat={}{0:N0}}"
+                                                                           Foreground="{DynamicResource ChartTextPrimary}" FontSize="9" FontWeight="SemiBold"
+                                                                           HorizontalAlignment="Center" Margin="0,0,0,6" TextTrimming="CharacterEllipsis"/>
+                                                                <Border Grid.Row="1" VerticalAlignment="Bottom"
+                                                                        Height="{Binding GraphRate, Converter={StaticResource RateToWidthConverter}, ConverterParameter=140}"
+                                                                        CornerRadius="8" Background="{StaticResource PowerGradient}">
+                                                                    <Border.Effect>
+                                                                        <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.4" Color="#FF6B6B"/>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <TextBlock Grid.Row="2" Text="{Binding Date, StringFormat=MM/dd}"
+                                                                           Foreground="{DynamicResource ChartTextSecondary}" FontSize="10"
+                                                                           HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                            <TextBlock x:Name="NoCombatPowerDataText" Text="전투력 변화 기록이 없습니다." 
+                                                       Foreground="{DynamicResource TextMuted}" FontSize="13" 
                                                        HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                         </Grid>
                                     </Border>
-                                </StackPanel>
-                            </Grid>
-                        </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Grid>
 
                         <!-- 6차 스킬 섹션 (상세 좌, 현황 우) -->
                         <Grid Margin="0,0,0,16">
@@ -623,68 +848,138 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- 상세 내역 (좌측, 가변) -->
-                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                <TextBlock Text="✨ 6차 스킬 강화 상세 내역" Foreground="{StaticResource TextPrimary}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16"/>
-                                <Border Style="{StaticResource ModernCard}" Margin="0,0,0,8" Padding="0">
-                                    <ScrollViewer MaxHeight="720" VerticalScrollBarVisibility="Auto"
+                            <Border Grid.Column="0" Margin="0,0,12,0" CornerRadius="12"
+                                    Background="{DynamicResource CardBackground}" 
+                                    BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 메이플 스타일 헤더 -->
+                                    <Border Grid.Row="0" CornerRadius="12,12,0,0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#EC4899" Offset="0"/>
+                                                <GradientStop Color="#A855F7" Offset="0.5"/>
+                                                <GradientStop Color="#8B5CF6" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <StackPanel Orientation="Horizontal" Margin="20,14">
+                                            <Grid Width="35" Height="35" Margin="0,0,5,0" Background="Transparent" VerticalAlignment="Center">
+                                                <Image Source="/Data/hexa.png" Stretch="Uniform" 
+                                                       RenderOptions.BitmapScalingMode="Fant"
+                                                       SnapsToDevicePixels="False"
+                                                       UseLayoutRounding="False"/>
+                                            </Grid>
+                                            <TextBlock Text="6차 스킬 강화 상세 내역" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <ScrollViewer Grid.Row="1" MaxHeight="680" VerticalScrollBarVisibility="Auto"
                                                   PreviewMouseWheel="InnerScroll_PreviewMouseWheel">
-                                        <ItemsControl x:Name="HexaSkillList">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Margin="0,0,0,12">
-                                                        <TextBlock Text="{Binding Date, StringFormat=yyyy/MM/dd}"
-                                                                   Foreground="{StaticResource TextPrimary}" FontSize="13" FontWeight="Bold" Margin="12,8,12,6"/>
-                                                        <ItemsControl ItemsSource="{Binding Items}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <Border Background="#08FFFFFF" CornerRadius="10" Padding="14,10" Margin="12,0,12,8" BorderBrush="#EEF2F7" BorderThickness="1">
-                                                                        <Grid>
-                                                                            <Grid.ColumnDefinitions>
-                                                                                <ColumnDefinition Width="Auto"/>
-                                                                                <ColumnDefinition Width="*"/>
-                                                                                <ColumnDefinition Width="Auto"/>
-                                                                            </Grid.ColumnDefinitions>
-                                                                            <Border Width="36" Height="36" CornerRadius="8" Background="#1AA78BFA" VerticalAlignment="Center">
-                                                                                <Image Source="{Binding SkillIcon}" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                                            </Border>
-                                                                            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                                                                <TextBlock Text="{Binding SkillName}" Foreground="{StaticResource TextPrimary}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                                                <TextBlock Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,2,0,0">
-                                                                                    <Run Text="스킬 Lv. "/>
-                                                                                    <Run Text="{Binding OldLevel}"/>
-                                                                                    <Run Text=" → "/>
-                                                                                    <Run Text="{Binding NewLevel}"/>
-                                                                                </TextBlock>
-                                                                            </StackPanel>
-                                                                            <Border Grid.Column="2" Background="#1AA78BFA" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
-                                                                                <TextBlock Foreground="{StaticResource AccentPurple}" FontSize="12" FontWeight="Bold">
-                                                                                    <Run Text="Lv."/>
-                                                                                    <Run Text="{Binding OldLevel}"/>
-                                                                                    <Run Text=" → "/>
-                                                                                    <Run Text="{Binding NewLevel}"/>
-                                                                                </TextBlock>
-                                                                            </Border>
-                                                                        </Grid>
-                                                                    </Border>
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                        </ItemsControl>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+                                        <Grid>
+                                            <ItemsControl x:Name="HexaSkillList" Margin="8,8,8,8">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Margin="0,0,0,8">
+                                                            <Border Background="{DynamicResource CardBackgroundAlt}" CornerRadius="6" Padding="12,6" Margin="4,4,4,6">
+                                                                <TextBlock Text="{Binding Date, StringFormat=yyyy/MM/dd}"
+                                                                           Foreground="{DynamicResource TextPrimary}" FontSize="13" FontWeight="Bold"/>
+                                                            </Border>
+                                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <Border Background="{DynamicResource ItemCardBackground}" CornerRadius="10" Padding="12,10" Margin="4,0,4,6" 
+                                                                                BorderBrush="{DynamicResource ItemCardBorder}" BorderThickness="1">
+                                                                            <Grid>
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="Auto"/>
+                                                                                    <ColumnDefinition Width="*"/>
+                                                                                    <ColumnDefinition Width="Auto"/>
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <Border Width="40" Height="40" CornerRadius="8" VerticalAlignment="Center">
+                                                                                    <Border.Background>
+                                                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                                            <GradientStop Color="#20A855F7" Offset="0"/>
+                                                                                            <GradientStop Color="#108B5CF6" Offset="1"/>
+                                                                                        </LinearGradientBrush>
+                                                                                    </Border.Background>
+                                                                                    <Image Source="{Binding SkillIcon}" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                                </Border>
+                                                                                <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                                                                    <TextBlock Text="{Binding SkillName}" Foreground="{DynamicResource TextPrimary}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                                                    <TextBlock Foreground="{DynamicResource TextSecondary}" FontSize="11" Margin="0,2,0,0">
+                                                                                        <Run Text="스킬 Lv. "/>
+                                                                                        <Run Text="{Binding OldLevel}"/>
+                                                                                        <Run Text=" → "/>
+                                                                                        <Run Text="{Binding NewLevel}"/>
+                                                                                    </TextBlock>
+                                                                                </StackPanel>
+                                                                                <Border Grid.Column="2" CornerRadius="6" Padding="10,5" VerticalAlignment="Center">
+                                                                                    <Border.Background>
+                                                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                                            <GradientStop Color="#A855F7" Offset="0"/>
+                                                                                            <GradientStop Color="#8B5CF6" Offset="1"/>
+                                                                                        </LinearGradientBrush>
+                                                                                    </Border.Background>
+                                                                                    <TextBlock Foreground="White" FontSize="11" FontWeight="Bold">
+                                                                                        <Run Text="Lv."/>
+                                                                                        <Run Text="{Binding OldLevel}"/>
+                                                                                        <Run Text=" → "/>
+                                                                                        <Run Text="{Binding NewLevel}"/>
+                                                                                    </TextBlock>
+                                                                                </Border>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                            <TextBlock x:Name="NoHexaSkillDataText" Text="6차 스킬 강화 기록이 없습니다." 
+                                                       Foreground="{DynamicResource TextMuted}" FontSize="13" 
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
                                     </ScrollViewer>
-                                </Border>
-                                <TextBlock x:Name="NoHexaSkillDataText" Text="6차 스킬 강화 기록이 없습니다." 
-                                           Foreground="{StaticResource TextMuted}" FontSize="13" 
-                                           HorizontalAlignment="Center" Visibility="Collapsed" Margin="0,8,0,0"/>
-                            </StackPanel>
+                                </Grid>
+                            </Border>
 
                             <!-- 현황 (우측, 고정 크기) -->
-                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                                <TextBlock Text="✨ 6차 스킬 강화 현황" Foreground="{StaticResource TextPrimary}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16"/>
-                                <Border Style="{StaticResource ModernCard}" Padding="16" Background="#0D0F17"
-                                        Width="480" MinHeight="720" HorizontalAlignment="Stretch">
+                            <Border Grid.Column="1" Margin="12,0,0,0" CornerRadius="12"
+                                    Background="{DynamicResource DetailViewBackground}"
+                                    BorderBrush="#30FFFFFF" BorderThickness="1"
+                                    Width="480" MinHeight="720">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 메이플 스타일 헤더 -->
+                                    <Border Grid.Row="0" CornerRadius="12,12,0,0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#6366F1" Offset="0"/>
+                                                <GradientStop Color="#8B5CF6" Offset="0.5"/>
+                                                <GradientStop Color="#A855F7" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <StackPanel Orientation="Horizontal" Margin="20,14">
+                                            <Grid Width="35" Height="35" Margin="0,0,5,0" Background="Transparent" VerticalAlignment="Center">
+                                                <Image Source="/Data/hexa.png" Stretch="Uniform" 
+                                                       RenderOptions.BitmapScalingMode="Fant"
+                                                       SnapsToDevicePixels="False"
+                                                       UseLayoutRounding="False"/>
+                                            </Grid>
+                                            <TextBlock Text="6차 스킬 강화 현황" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Grid.Row="1" Padding="16">
                                     <Grid>
                                         <Rectangle Fill="Transparent" />
                                         <Rectangle>
@@ -801,88 +1096,367 @@
                                         </ItemsControl>
                                     </Grid>
                                 </Border>
-                            </StackPanel>
+                                </Grid>
+                            </Border>
                         </Grid>
 
-                        <!-- 장비 변경 내역 -->
-                        <TextBlock Text="🛡️ 장비 변경 내역" Foreground="{StaticResource TextPrimary}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16"/>
-                        <Border Style="{StaticResource ModernCard}" Height="500" Padding="16">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="350" />
-                                </Grid.ColumnDefinitions>
+                        <!-- 장비 변경 섹션 (메이플 2025 스타일 디자인) -->
+                        <Grid Margin="0,16,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="420" />
+                            </Grid.ColumnDefinitions>
 
-                                <!-- 변경 리스트 (좌) -->
-                                <Border Grid.Column="0" BorderBrush="#E0E6ED" BorderThickness="1" CornerRadius="12" Padding="10" Background="#04FFFFFF">
-                                    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                                  PreviewMouseWheel="InnerScroll_PreviewMouseWheel"
-                                                  Height="468">
-                                        <ListBox x:Name="ItemChangeList"
-                                                 BorderThickness="0"
-                                                 Background="Transparent"
-                                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                                            <ListBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border Background="#0BFFFFFF" CornerRadius="12" Padding="14,12" Margin="0,0,0,10"
-                                                            BorderBrush="#E0E6ED" BorderThickness="1"
-                                                            Cursor="Hand">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="90"/>
-                                                                <ColumnDefinition Width="Auto"/>
-                                                                <ColumnDefinition Width="80"/>
-                                                                <ColumnDefinition Width="*"/>
-                                                                <ColumnDefinition Width="Auto"/>
-                                                            </Grid.ColumnDefinitions>
-                                                            <TextBlock Text="{Binding Date, StringFormat=yyyy/MM/dd}" 
-                                                                       Foreground="{StaticResource TextPrimary}" FontSize="12" VerticalAlignment="Center"/>
-                                                            <Border Grid.Column="1" Background="#1A5AC8FA" CornerRadius="6" Padding="3" Margin="0,0,10,0">
-                                                                <Image Width="30" Height="30" Stretch="Uniform"
-                                                                       Source="{Binding ItemInfoJson, Converter={StaticResource JsonToItemInfoConverter}, ConverterParameter=Icon}"/>
-                                                            </Border>
-                                                            <TextBlock Grid.Column="2" Text="{Binding ItemSlot}" 
-                                                                       Foreground="{StaticResource AccentCyan}" FontSize="12" FontWeight="SemiBold" 
-                                                                       VerticalAlignment="Center"/>
-                                                            <StackPanel Grid.Column="3" VerticalAlignment="Center">
-                                                                <TextBlock Text="{Binding NewItemName}" 
-                                                                           Foreground="{StaticResource TextPrimary}" FontSize="13" FontWeight="SemiBold"
-                                                                           TextTrimming="CharacterEllipsis"/>
-                                                                <Border Background="#1128C76F" CornerRadius="6" Padding="8,4" MaxWidth="260" Margin="0,4,0,0">
-                                                                    <TextBlock Text="{Binding ChangeSummary}" Foreground="{StaticResource AccentGreen}" FontSize="11" TextWrapping="Wrap"/>
+                            <!-- 장비 변경 내역 (좌측) -->
+                            <Border Grid.Column="0" Margin="0,0,12,0" CornerRadius="16" 
+                                    Background="{DynamicResource CardBackground}" 
+                                    BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.08" Color="#000000"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>  <!-- Row 0: 헤더 -->
+                                        <RowDefinition Height="Auto"/>  <!-- Row 1: 필터 패널 -->
+                                        <RowDefinition Height="*"/>     <!-- Row 2: 리스트 영역 -->
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 메이플 스케줄러 스타일 헤더 -->
+                                    <Border Grid.Row="0" CornerRadius="16,16,0,0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#5AC8FA" Offset="0"/>
+                                                <GradientStop Color="#38BDF8" Offset="0.4"/>
+                                                <GradientStop Color="#22D3EE" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid Margin="20,16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border Background="#20FFFFFF" CornerRadius="8" Padding="8" Margin="0,0,14,0">
+                                                    <ui:SymbolIcon Symbol="Shield24" FontSize="20" Foreground="White"/>
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="장비 변경 내역" Foreground="White" FontSize="17" FontWeight="Bold"/>
+                                                    <TextBlock Text="최근 장비 강화 및 교체 기록" Foreground="#C0FFFFFF" FontSize="11" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <!-- 필터 버튼 -->
+                                            <Border Grid.Column="1" Background="#30FFFFFF" CornerRadius="6" Cursor="Hand" 
+                                                    MouseLeftButtonDown="ItemFilterButton_Click">
+                                                <Button x:Name="ItemFilterButton" 
+                                                        Background="Transparent" BorderThickness="0" 
+                                                        Padding="10,6" Cursor="Hand" Click="ItemFilterButton_Click">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ui:SymbolIcon Symbol="Filter24" FontSize="14" Foreground="White" Margin="0,0,6,0"/>
+                                                        <TextBlock Text="필터" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- 필터 패널 -->
+                                    <Border x:Name="ItemFilterPanel" Grid.Row="1" 
+                                            Background="{DynamicResource CardBackgroundAlt}" 
+                                            BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,1,0,0"
+                                            Padding="16,12" Visibility="Collapsed">
+                                        <StackPanel>
+                                            <TextBlock Text="필터 옵션" Foreground="{DynamicResource TextPrimary}" 
+                                                       FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
+                                            
+                                            <!-- 프리셋 아이템 필터 -->
+                                            <CheckBox x:Name="FilterPresetItems" Content="프리셋 아이템 표시" 
+                                                      Foreground="{DynamicResource TextPrimary}" FontSize="12"
+                                                      IsChecked="False" Checked="ItemFilter_Changed" Unchecked="ItemFilter_Changed"
+                                                      Margin="0,0,0,8"/>
+                                            
+                                            <!-- 정령의 펜던트 필터 -->
+                                            <CheckBox x:Name="FilterSpiritPendant" Content="정령의 펜던트 표시" 
+                                                      Foreground="{DynamicResource TextPrimary}" FontSize="12"
+                                                      IsChecked="False" Checked="ItemFilter_Changed" Unchecked="ItemFilter_Changed"
+                                                      Margin="0,0,0,8"/>
+                                            
+                                            <!-- 변경 타입 필터 -->
+                                            <TextBlock Text="변경 타입" Foreground="{DynamicResource TextSecondary}" 
+                                                       FontSize="11" FontWeight="SemiBold" Margin="0,4,0,6"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                                <CheckBox x:Name="FilterTypeEquip" Content="장착" Tag="장착"
+                                                          Foreground="{DynamicResource TextPrimary}" FontSize="11"
+                                                          IsChecked="True" Checked="ItemFilter_Changed" Unchecked="ItemFilter_Changed"
+                                                          Margin="0,0,12,0"/>
+                                                <CheckBox x:Name="FilterTypeReplace" Content="교체" Tag="교체"
+                                                          Foreground="{DynamicResource TextPrimary}" FontSize="11"
+                                                          IsChecked="True" Checked="ItemFilter_Changed" Unchecked="ItemFilter_Changed"
+                                                          Margin="0,0,12,0"/>
+                                                <CheckBox x:Name="FilterTypeOption" Content="옵션 변경" Tag="옵션 변경"
+                                                          Foreground="{DynamicResource TextPrimary}" FontSize="11"
+                                                          IsChecked="True" Checked="ItemFilter_Changed" Unchecked="ItemFilter_Changed"/>
+                                            </StackPanel>
+                                            
+                                            <!-- 날짜 범위 필터 -->
+                                            <TextBlock Text="날짜 범위" Foreground="{DynamicResource TextSecondary}" 
+                                                       FontSize="11" FontWeight="SemiBold" Margin="0,4,0,6"/>
+                                            <ComboBox x:Name="ItemDateRangeCombo" FontSize="11" 
+                                                      SelectionChanged="ItemDateRangeCombo_SelectionChanged" Margin="0,0,0,8">
+                                                <ComboBoxItem Content="전체" Tag="0" IsSelected="True"/>
+                                                <ComboBoxItem Content="최근 7일" Tag="7"/>
+                                                <ComboBoxItem Content="최근 30일" Tag="30"/>
+                                                <ComboBoxItem Content="최근 90일" Tag="90"/>
+                                            </ComboBox>
+                                            
+                                            <!-- 필터 초기화 버튼 -->
+                                            <Border Background="{DynamicResource BorderColor}" CornerRadius="4" 
+                                                    HorizontalAlignment="Left">
+                                                <Button Content="필터 초기화" FontSize="11" Padding="8,4" 
+                                                        Background="Transparent" 
+                                                        Foreground="{DynamicResource TextPrimary}"
+                                                        BorderThickness="0"
+                                                        Click="ItemFilterReset_Click"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- 리스트 영역 -->
+                                    <ScrollViewer x:Name="ItemListScrollViewer" Grid.Row="2" MaxHeight="540" VerticalScrollBarVisibility="Auto"
+                                                  PreviewMouseWheel="InnerScroll_PreviewMouseWheel">
+                                        <Grid Margin="12,12,12,12">
+                                            <ListBox x:Name="ItemChangeList"
+                                                     BorderThickness="0"
+                                                     Background="Transparent"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <Setter Property="Padding" Value="0"/>
+                                                        <Setter Property="Margin" Value="0"/>
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ListBoxItem">
+                                                                    <Border x:Name="ItemBorder" Background="Transparent" CornerRadius="12">
+                                                                        <ContentPresenter/>
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsSelected" Value="True">
+                                                                            <Setter TargetName="ItemBorder" Property="Background" Value="#255AC8FA"/>
+                                                                        </Trigger>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="ItemBorder" Property="Background" Value="#125AC8FA"/>
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Background="{DynamicResource ItemCardBackground}" 
+                                                                CornerRadius="14" Padding="16,14" Margin="2,2,2,10"
+                                                                BorderBrush="{DynamicResource ItemCardBorder}" BorderThickness="1"
+                                                                Cursor="Hand">
+                                                            <Border.Effect>
+                                                                <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.04" Color="#000000"/>
+                                                            </Border.Effect>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <!-- 아이템 아이콘 (메이플 인벤토리 스타일) -->
+                                                                <Grid Margin="0,0,14,0">
+                                                                    <Border Width="58" Height="58" CornerRadius="12" BorderThickness="2">
+                                                                        <Border.BorderBrush>
+                                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                                <GradientStop Color="#5AC8FA" Offset="0"/>
+                                                                                <GradientStop Color="#A78BFA" Offset="1"/>
+                                                                            </LinearGradientBrush>
+                                                                        </Border.BorderBrush>
+                                                                        <Border.Background>
+                                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                                <GradientStop Color="#155AC8FA" Offset="0"/>
+                                                                                <GradientStop Color="#10A78BFA" Offset="1"/>
+                                                                            </LinearGradientBrush>
+                                                                        </Border.Background>
+                                                                        <Grid>
+                                                                            <Image Width="40" Height="40" Stretch="Uniform"
+                                                                                   Source="{Binding ItemInfoJson, Converter={StaticResource JsonToItemInfoConverter}, ConverterParameter=Icon}"
+                                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                    <!-- 신규 장착 배지 -->
+                                                                    <Border Visibility="{Binding IsNewItem, Converter={StaticResource BoolToVisibility}}"
+                                                                            HorizontalAlignment="Right" VerticalAlignment="Top" 
+                                                                            Margin="0,-6,-6,0" CornerRadius="6" Padding="5,2">
+                                                                        <Border.Background>
+                                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                                <GradientStop Color="#10B981" Offset="0"/>
+                                                                                <GradientStop Color="#34D399" Offset="1"/>
+                                                                            </LinearGradientBrush>
+                                                                        </Border.Background>
+                                                                        <TextBlock Text="NEW" Foreground="White" FontSize="8" FontWeight="Bold"/>
+                                                                    </Border>
+                                                                </Grid>
+
+                                                                <!-- 아이템 정보 -->
+                                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                                    <!-- 상단: 슬롯 배지 + 날짜 + 신규 장착 태그 -->
+                                                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                                        <Border CornerRadius="6" Padding="8,3" Margin="0,0,8,0">
+                                                                            <Border.Background>
+                                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                                    <GradientStop Color="#A78BFA" Offset="0"/>
+                                                                                    <GradientStop Color="#8B5CF6" Offset="1"/>
+                                                                                </LinearGradientBrush>
+                                                                            </Border.Background>
+                                                                            <TextBlock Text="{Binding ItemSlot}" Foreground="White" FontSize="10" FontWeight="Bold"/>
+                                                                        </Border>
+                                                                        <Border Background="#10000000" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                                                                            <TextBlock Text="{Binding Date, StringFormat=yyyy.MM.dd}" 
+                                                                                       Foreground="{DynamicResource TextMuted}" FontSize="10"/>
+                                                                        </Border>
+                                                                        <!-- 신규 장착 강조 태그 -->
+                                                                        <Border Visibility="{Binding IsNewItem, Converter={StaticResource BoolToVisibility}}"
+                                                                                CornerRadius="4" Padding="6,2">
+                                                                            <Border.Background>
+                                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                                    <GradientStop Color="#2010B981" Offset="0"/>
+                                                                                    <GradientStop Color="#2034D399" Offset="1"/>
+                                                                                </LinearGradientBrush>
+                                                                            </Border.Background>
+                                                                            <TextBlock Text="✨ 신규 장착" Foreground="{DynamicResource AccentGreen}" FontSize="9" FontWeight="SemiBold"/>
+                                                                        </Border>
+                                                                    </StackPanel>
+
+                                                                    <!-- 아이템 이름 -->
+                                                                    <TextBlock Text="{Binding NewItemName}" 
+                                                                               Foreground="{DynamicResource TextPrimary}" FontSize="15" FontWeight="SemiBold"
+                                                                               TextTrimming="CharacterEllipsis" Margin="0,0,0,8"/>
+
+                                                                    <!-- 상세 옵션 변경 내역 -->
+                                                                    <ItemsControl ItemsSource="{Binding OptionChanges}" Margin="0,0,0,4">
+                                                                        <ItemsControl.ItemTemplate>
+                                                                            <DataTemplate>
+                                                                                <Border Margin="0,0,0,4" Padding="8,5" CornerRadius="6"
+                                                                                        Background="#10000000"
+                                                                                        Visibility="{Binding IsNewItem, Converter={StaticResource BoolToVisibilityInverse}}">
+                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                        <TextBlock Text="{Binding Category}" Foreground="{DynamicResource TextMuted}" 
+                                                                                                   FontSize="11" FontWeight="Medium" Margin="0,0,8,0" MinWidth="70"/>
+                                                                                        <TextBlock Text="{Binding DisplayText}" Foreground="{DynamicResource AccentCyan}" 
+                                                                                                   FontSize="11" FontWeight="SemiBold" TextWrapping="Wrap" MaxWidth="180"/>
+                                                                                    </StackPanel>
+                                                                                </Border>
+                                                                            </DataTemplate>
+                                                                        </ItemsControl.ItemTemplate>
+                                                                    </ItemsControl>
+
+                                                                    <!-- 기존 변경 요약 (옵션 변경이 없을 경우 폴백) -->
+                                                                    <Border CornerRadius="8" Padding="10,6" HorizontalAlignment="Left"
+                                                                            Visibility="{Binding OptionChanges.Count, Converter={StaticResource CountToVisibilityInverse}}">
+                                                                        <Border.Background>
+                                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                                <GradientStop Color="#1834D399" Offset="0"/>
+                                                                                <GradientStop Color="#1010B981" Offset="1"/>
+                                                                            </LinearGradientBrush>
+                                                                        </Border.Background>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <Border Background="{DynamicResource AccentGreen}" CornerRadius="10" Width="18" Height="18" Margin="0,0,8,0">
+                                                                                <TextBlock Text="↑" Foreground="White" FontSize="10" FontWeight="Bold" 
+                                                                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                            <TextBlock Text="{Binding ChangeSummary}" Foreground="{DynamicResource AccentGreen}" 
+                                                                                       FontSize="12" FontWeight="Medium" TextWrapping="Wrap" MaxWidth="220"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </StackPanel>
+
+                                                                <!-- 화살표 아이콘 -->
+                                                                <Border Grid.Column="2" Background="#08000000" CornerRadius="8" Width="32" Height="32" 
+                                                                        VerticalAlignment="Center" Margin="8,0,0,0">
+                                                                    <ui:SymbolIcon Symbol="ChevronRight24" FontSize="14" 
+                                                                                   Foreground="{DynamicResource TextMuted}" 
+                                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
-                                                            </StackPanel>
-                                                        </Grid>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ListBox.ItemTemplate>
-                                        </ListBox>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                            <TextBlock x:Name="NoItemChangeDataText" Text="장비 변경 기록이 없습니다." 
+                                                       Foreground="{DynamicResource TextMuted}" FontSize="13" 
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
                                     </ScrollViewer>
-                                </Border>
+                                </Grid>
+                            </Border>
 
-                                <!-- 상세 뷰 (우) -->
-                                <Border Grid.Column="1" Margin="12,0,0,0" Padding="14" CornerRadius="12" BorderBrush="{StaticResource DividerColor}" BorderThickness="1" Background="{StaticResource CardBackground}"
-                                        Width="350" Height="500">
-                                    <Grid DataContext="{Binding SelectedItem, ElementName=ItemChangeList}"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Image Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               Source="{Binding ItemInfoJson, Converter={StaticResource ItemTooltipImageConverter}}"
-                                               RenderOptions.BitmapScalingMode="NearestNeighbor">
-                                            <Image.Style>
-                                                <Style TargetType="Image">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ItemInfoJson, Converter={StaticResource StringNotEmptyToBoolConverter}}" Value="False">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <TextBlock Text="(이미지 없음)" Foreground="{StaticResource TextSecondary}" FontSize="13"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
+                            <!-- 장비 상세 보기 (우측) -->
+                            <Border Grid.Column="1" Margin="12,0,0,0" CornerRadius="16"
+                                    Background="{DynamicResource DetailViewBackground}"
+                                    BorderBrush="#25FFFFFF" BorderThickness="1">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.15" Color="#000000"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 메이플 스타일 헤더 (보라-핑크 그라데이션) -->
+                                    <Border Grid.Row="0" CornerRadius="16,16,0,0">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#A78BFA" Offset="0"/>
+                                                <GradientStop Color="#C084FC" Offset="0.5"/>
+                                                <GradientStop Color="#E879F9" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid Margin="20,16">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border Background="#20FFFFFF" CornerRadius="8" Padding="8" Margin="0,0,14,0">
+                                                    <ui:SymbolIcon Symbol="Search24" FontSize="20" Foreground="White"/>
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="장비 상세 보기" Foreground="White" FontSize="17" FontWeight="Bold"/>
+                                                    <TextBlock Text="선택한 장비의 상세 정보" Foreground="#C0FFFFFF" FontSize="11" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- 장비 상세 영역 -->
+                                    <Grid Grid.Row="1" DataContext="{Binding SelectedItem, ElementName=ItemChangeList}">
+                                        <!-- 장비 툴팁 이미지 -->
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                            <Image Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                                   Margin="16,24,16,24"
+                                                   Source="{Binding ItemInfoJson, Converter={StaticResource ItemTooltipImageConverter}}"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor">
+                                                <Image.Style>
+                                                    <Style TargetType="Image">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ItemInfoJson, Converter={StaticResource StringNotEmptyToBoolConverter}}" Value="False">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </ScrollViewer>
+
+                                        <!-- 빈 상태 -->
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding ItemInfoJson, Converter={StaticResource StringNotEmptyToBoolConverter}}" Value="True">
@@ -890,15 +1464,24 @@
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
+                                            </StackPanel.Style>
+                                            <Border CornerRadius="20" Width="72" Height="72" Margin="0,0,0,16">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#30A78BFA" Offset="0"/>
+                                                        <GradientStop Color="#208B5CF6" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                                <ui:SymbolIcon Symbol="Cube24" FontSize="32" Foreground="#8090A0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="장비를 선택해주세요" Foreground="#A0B0C0" FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="좌측 목록에서 장비를 클릭하면" Foreground="#6A7A8A" FontSize="12" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                            <TextBlock Text="상세 정보가 여기에 표시됩니다" Foreground="#6A7A8A" FontSize="12" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                                        </StackPanel>
                                     </Grid>
-                                </Border>
-                            </Grid>
-                        </Border>
-                        <TextBlock x:Name="NoItemChangeDataText" Text="장비 변경 기록이 없습니다." 
-                                   Foreground="{StaticResource TextMuted}" FontSize="13" 
-                                   HorizontalAlignment="Center" Visibility="Collapsed" Margin="0,8,0,0"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
                     </StackPanel>
 
                     <!-- 장비 변경 내역 팝업: 클릭 시 단일 팝업 사용 -->
@@ -953,12 +1536,12 @@
                     <Border x:Name="NoDataPanel" Style="{StaticResource ModernCard}" Margin="0,24,0,0" Visibility="Collapsed">
                         <StackPanel HorizontalAlignment="Center" Margin="20">
                             <Border Background="#1A5AC8FA" Width="80" Height="80" CornerRadius="40" Margin="0,0,0,20">
-                                <ui:SymbolIcon Symbol="Info24" FontSize="36" Foreground="{StaticResource AccentCyan}"/>
+                                <ui:SymbolIcon Symbol="Info24" FontSize="36" Foreground="{DynamicResource AccentCyan}"/>
                             </Border>
-                            <TextBlock Text="데이터가 없습니다" Foreground="{StaticResource TextPrimary}" FontSize="18" FontWeight="SemiBold" 
+                            <TextBlock Text="데이터가 없습니다" Foreground="{DynamicResource TextPrimary}" FontSize="18" FontWeight="SemiBold" 
                                        HorizontalAlignment="Center"/>
                             <TextBlock Text="프로그램을 사용하면서 숙제를 완료하면&#x0a;자동으로 통계가 수집됩니다." 
-                                       Foreground="{StaticResource TextSecondary}" FontSize="13" TextAlignment="Center" Margin="0,12,0,0"/>
+                                       Foreground="{DynamicResource TextSecondary}" FontSize="13" TextAlignment="Center" Margin="0,12,0,0"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>

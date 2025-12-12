@@ -13,6 +13,36 @@
 
             <FontFamily x:Key="PretendardFont">./Fonts/#Pretendard</FontFamily>
             
+            <!-- 전역 테마 리소스 (라이트 모드 기본값) - 모든 창에서 DynamicResource로 접근 가능 -->
+            <SolidColorBrush x:Key="WindowBackground" Color="#F5F7FB"/>
+            <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="CardBackgroundHover" Color="#EEF2F7"/>
+            <SolidColorBrush x:Key="CardBackgroundAlt" Color="#F8FAFC"/>
+            <SolidColorBrush x:Key="TextPrimary" Color="#0F172A"/>
+            <SolidColorBrush x:Key="TextSecondary" Color="#475569"/>
+            <SolidColorBrush x:Key="TextMuted" Color="#64748B"/>
+            <SolidColorBrush x:Key="TextInverse" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="AccentCyan" Color="#5AC8FA"/>
+            <SolidColorBrush x:Key="AccentOrange" Color="#FF9F43"/>
+            <SolidColorBrush x:Key="AccentGreen" Color="#10B981"/>
+            <SolidColorBrush x:Key="AccentPurple" Color="#A78BFA"/>
+            <SolidColorBrush x:Key="AccentRed" Color="#F43F5E"/>
+            <SolidColorBrush x:Key="AccentBlue" Color="#3B82F6"/>
+            <SolidColorBrush x:Key="DividerColor" Color="#E2E8F0"/>
+            <SolidColorBrush x:Key="BorderColor" Color="#E2E8F0"/>
+            <SolidColorBrush x:Key="ChartBarGradientStart" Color="#5AC8FA"/>
+            <SolidColorBrush x:Key="ChartBarGradientEnd" Color="#818CF8"/>
+            <SolidColorBrush x:Key="ChartTextPrimary" Color="#0F172A"/>
+            <SolidColorBrush x:Key="ChartTextSecondary" Color="#475569"/>
+            <SolidColorBrush x:Key="ApiCardBackground" Color="#FFF6EC"/>
+            <SolidColorBrush x:Key="ApiCardBorder" Color="#FFE3C2"/>
+            <SolidColorBrush x:Key="ItemCardBackground" Color="#FAFBFC"/>
+            <SolidColorBrush x:Key="ItemCardBorder" Color="#E5E9F0"/>
+            <SolidColorBrush x:Key="ItemCardHover" Color="#F0F4F8"/>
+            <SolidColorBrush x:Key="BadgeBackground" Color="#EEF2FF"/>
+            <SolidColorBrush x:Key="BadgeText" Color="#6366F1"/>
+            <SolidColorBrush x:Key="DetailViewBackground" Color="#1A1D2E"/>
+            
             <!-- 대시보드용 컨버터 -->
             <converters:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
             <converters:TasksToTooltipConverter x:Key="TasksToTooltipConverter"/>

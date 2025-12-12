@@ -143,7 +143,7 @@ namespace MapleHomework.CharaSimResource
             }
         }
 
-        public static Bitmap RenderEquipmentTooltip(ItemEquipmentInfo item)
+        public static Bitmap RenderEquipmentTooltip(ItemEquipmentInfo item, string? jobClass = null)
         {
             // 1. 임시 비트맵에 내용 그리기 (배경 제외)
             var contentBitmap = new Bitmap(TooltipWidth, DefaultPicHeight);
@@ -160,7 +160,7 @@ namespace MapleHomework.CharaSimResource
                 int starforce = ParseInt(item.Starforce);
                 if (starforce > 0)
                 {
-                    DrawStarforce(g, starforce, 25, ref picH);
+                    DrawStarforce(g, starforce, 30, ref picH);
                 }
 
                 // 아이템 이름
@@ -181,7 +181,7 @@ namespace MapleHomework.CharaSimResource
                 picH += 8; // 구분선 아래 여백
 
                 // --- [Basic Info] ---
-                DrawIconAndBaseInfo(g, item, ref picH);
+                DrawIconAndBaseInfo(g, item, ref picH, jobClass);
 
                 DrawSeparator(g, picH);
                 picH += 8;
@@ -318,7 +318,6 @@ namespace MapleHomework.CharaSimResource
             int groupGap = 6; // 5개 단위 간격
 
             // 중앙 정렬 계산
-            // 한 줄에 최대 15개 (메이플 규칙: 15, 10, 5)
             // 여기서는 단순화하여 15개씩 끊음
             for (int i = 0; i < max; i += 15)
             {
@@ -344,98 +343,102 @@ namespace MapleHomework.CharaSimResource
             picH += 4;
         }
 
-        private static void DrawIconAndBaseInfo(Graphics g, ItemEquipmentInfo item, ref int picH)
-        {
-            int iconX = 15;
-            int iconY = picH + 10;
-
-            // 아이콘 배경
-            var iconBase = LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.base.custom.png")
-                           ?? LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.base.png");
-            int baseW = iconBase?.Width ?? 72;
-            int baseH = iconBase?.Height ?? 72;
-            if (iconBase != null) g.DrawImage(iconBase, iconX, iconY);
-
-            // 실제 아이템 아이콘 (넥슨 API URL)
-            var icon = LoadIconFromUrl(item.ItemIcon ?? item.ItemShapeIcon);
-            if (icon != null)
+        private static void DrawIconAndBaseInfo(Graphics g, ItemEquipmentInfo item, ref int picH, string? jobClass = null)
             {
-                // 원본 비율 유지, 베이스 박스 거의 가득(여백 6px)
-                int margin = 6;
-                double scale = Math.Min((baseW - margin * 2) / (double)icon.Width, (baseH - margin * 2) / (double)icon.Height);
-                scale = Math.Max(1.0, scale); // 너무 작게 그려지는 경우를 방지 (최소 100%)
+                int iconX = 15;
+                int iconY = picH + 10;
 
-                int drawW = (int)Math.Round(icon.Width * scale);
-                int drawH = (int)Math.Round(icon.Height * scale);
-                int drawX = iconX + (baseW - drawW) / 2;
-                int drawY = iconY + (baseH - drawH) / 2;
+                // 아이콘 배경
+                var iconBase = LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.base.custom.png")
+                            ?? LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.base.png");
+                int baseW = iconBase?.Width ?? 72;
+                int baseH = iconBase?.Height ?? 72;
+                if (iconBase != null) g.DrawImage(iconBase, iconX, iconY);
 
-                var prevInterp = g.InterpolationMode;
-                g.InterpolationMode = InterpolationMode.NearestNeighbor; // 픽셀 보존
-                g.DrawImage(icon, drawX, drawY, drawW, drawH);
-                g.InterpolationMode = prevInterp;
-            }
-
-            // 아이콘 커버
-            var iconShade = LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.shade.png");
-            if (iconShade != null) g.DrawImage(iconShade, iconX, iconY);
-
-            // 전투력 증가량 (우측 상단)
-            int rightX = TooltipWidth - 15;
-            int textY = iconY + 2;
-            DrawText(g, "전투력 증가량", MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22DarkGray, rightX, textY, TextAlignment.Right);
-            
-            // 숫자 (이미지 대신 텍스트로 대체)
-            DrawText(g, "+0", MapleGearGraphics.ItemNameFont, MapleGearGraphics.Equip22Emphasis, rightX, textY + 20, TextAlignment.Right);
-
-            // 카테고리 태그 (우측 하단) - 중복 제거 후 역순 배치
-            var rawTags = new[] { "전사", item.ItemEquipmentSlot ?? "모자", item.ItemEquipmentPart ?? "방어구" };
-            var tags = new List<string>();
-            foreach (var t in rawTags)
-            {
-                if (string.IsNullOrWhiteSpace(t)) continue;
-                if (!tags.Contains(t)) tags.Add(t);
-            }
-            int tagY = iconY + baseH - 20;
-            int currentX = rightX;
-
-            var cw = LoadResource("UIToolTipNew.img.Item.Equip.frame.common.category.w.png");
-            var cc = LoadResource("UIToolTipNew.img.Item.Equip.frame.common.category.c.png");
-            var ce = LoadResource("UIToolTipNew.img.Item.Equip.frame.common.category.e.png");
-
-            if (cw != null && cc != null && ce != null)
-            {
-                foreach (var tag in tags)
+                // 실제 아이템 아이콘 (넥슨 API URL)
+                var icon = LoadIconFromUrl(item.ItemIcon ?? item.ItemShapeIcon);
+                if (icon != null)
                 {
-                    // 텍스트 폭/높이 계산 (패딩 없이)
-                    var textSize = TextRenderer.MeasureText(g, tag, MapleGearGraphics.EquipMDMoris9Font,
-                        new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
-                    int textW = textSize.Width;
-                    int textH = textSize.Height;
-                    int boxW = cw.Width + textW + ce.Width;
-                    
-                    currentX -= boxW;
+                    // 원본 비율 유지, 베이스 박스 거의 가득(여백 6px)
+                    int margin = 6;
+                    double scale = Math.Min((baseW - margin * 2) / (double)icon.Width, (baseH - margin * 2) / (double)icon.Height);
+                    scale = Math.Max(1.0, scale); // 너무 작게 그려지는 경우를 방지 (최소 100%)
 
-                    // Draw Tag Box
-                    g.DrawImage(cw, currentX, tagY);
-                    using (var tb = new TextureBrush(cc, WrapMode.Tile))
-                    {
-                        tb.TranslateTransform(currentX + cw.Width, tagY);
-                        g.FillRectangle(tb, currentX + cw.Width, tagY, textW, cc.Height);
-                    }
-                    g.DrawImage(ce, currentX + cw.Width + textW, tagY);
+                    int drawW = (int)Math.Round(icon.Width * scale);
+                    int drawH = (int)Math.Round(icon.Height * scale);
+                    int drawX = iconX + (baseW - drawW) / 2;
+                    int drawY = iconY + (baseH - drawH) / 2;
 
-                    // Draw Text
-                    int textYTag = tagY + Math.Max(0, (cc.Height - textH) / 2);
-                    DrawText(g, tag, MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22Gray, currentX + boxW/2, textYTag, TextAlignment.Center);
-
-                    currentX -= 4; // 간격
+                    var prevInterp = g.InterpolationMode;
+                    g.InterpolationMode = InterpolationMode.NearestNeighbor; // 픽셀 보존
+                    g.DrawImage(icon, drawX, drawY, drawW, drawH);
+                    g.InterpolationMode = prevInterp;
                 }
-            }
 
-            // 섹션 높이: 아이콘 박스 전체 + 여백
-            picH = iconY + baseH + 10;
-        }
+                // 아이콘 커버
+                var iconShade = LoadResource("UIToolTipNew.img.Item.Common.ItemIcon.shade.png");
+                if (iconShade != null) g.DrawImage(iconShade, iconX, iconY);
+
+                // 전투력 증가량 (우측 상단)
+                int rightX = TooltipWidth - 15;
+                int textY = iconY + 2;
+                DrawText(g, "전투력 증가량", MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22DarkGray, rightX, textY, TextAlignment.Right);
+                
+                // 숫자 (이미지 대신 텍스트로 대체)
+                DrawText(g, "+0", MapleGearGraphics.ItemNameFont, MapleGearGraphics.Equip22Emphasis, rightX, textY + 20, TextAlignment.Right);
+
+                // 카테고리 태그 (우측 하단) - 중복 제거 후 역순 배치
+                var rawTags = new[] { "전사", item.ItemEquipmentSlot ?? "모자", item.ItemEquipmentPart ?? "방어구" };
+                var tags = new List<string>();
+                foreach (var t in rawTags)
+                {
+                    if (string.IsNullOrWhiteSpace(t)) continue;
+                    if (!tags.Contains(t)) tags.Add(t);
+                }
+                int tagY = iconY + baseH - 20;
+                int currentX = rightX;
+
+                var cw = LoadResource("UIToolTipNew.img.Item.Equip.frame.common.category.w.png");
+                var cc = LoadResource("UIToolTipNew.img.Item.Equip.frame.common.category.c.png");
+                var ce = LoadResource("UIToolTipNew.img.Item.Equip.frame.common.category.e.png");
+
+                if (cw != null && cc != null && ce != null)
+                {
+                    foreach (var tag in tags)
+                    {
+                        // 텍스트 폭/높이 계산 (패딩 없이)
+                        var textSize = TextRenderer.MeasureText(g, tag, MapleGearGraphics.EquipMDMoris9Font,
+                            new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+                        int textW = textSize.Width;
+                        int textH = textSize.Height;
+                        int boxW = cw.Width + textW + ce.Width;
+                        
+                        currentX -= boxW;
+
+                        using (ImageAttributes imgAttr = new ImageAttributes())
+                        {
+                            imgAttr.SetWrapMode(WrapMode.TileFlipXY);
+
+                            g.DrawImage(cw, new Rectangle(currentX, tagY, cw.Width, cw.Height),
+                                0, 0, cw.Width, cw.Height, GraphicsUnit.Pixel, imgAttr);
+
+                            g.DrawImage(cc, new Rectangle(currentX + cw.Width, tagY, textW, cc.Height),
+                                0, 0, cc.Width, cc.Height, GraphicsUnit.Pixel, imgAttr);
+
+                            g.DrawImage(ce, new Rectangle(currentX + cw.Width + textW, tagY, ce.Width, ce.Height),
+                                0, 0, ce.Width, ce.Height, GraphicsUnit.Pixel, imgAttr);
+                        }
+
+                        int textYTag = tagY + Math.Max(0, (cc.Height - textH) / 2);
+                        DrawText(g, tag, MapleGearGraphics.EquipMDMoris9Font, MapleGearGraphics.Equip22Gray, currentX + boxW/2, textYTag, TextAlignment.Center);
+
+                        currentX -= 4; // 태그 간 간격
+                    }
+                }
+
+                // 섹션 높이: 아이콘 박스 전체 + 여백
+                picH = iconY + baseH + 10;
+            }
 
         private static void DrawStats(Graphics g, ItemEquipmentInfo item, ref int picH)
         {

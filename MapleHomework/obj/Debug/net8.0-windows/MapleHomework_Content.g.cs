@@ -725,5 +725,6 @@
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("charasimresource/resources/vscr9.enabled.thumb2.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("charasimresource/resources/vsobject_enum.bmp")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("charasimresource/resources/nanumgothicextrabold.ttf")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("icon.ico")]
 
 

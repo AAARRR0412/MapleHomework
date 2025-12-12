@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
@@ -11,13 +11,22 @@ namespace MapleHomework
 {
     public partial class MainWindow : Window
     {
+        public static MainWindow? Instance { get; private set; }
+        
         public MainViewModel ViewModel { get; set; }
         private Forms.NotifyIcon? _notifyIcon;
         private NotificationService? _notificationService;
         private OverlayWindow? _overlayWindow;
 
+        /// <summary>
+        /// NotificationService 인스턴스 (외부 접근용)
+        /// </summary>
+        public NotificationService? NotificationServiceInstance => _notificationService;
+
         public MainWindow()
         {
+            Instance = this;
+            
             InitializeComponent();
             ViewModel = new MainViewModel();
             this.DataContext = ViewModel;

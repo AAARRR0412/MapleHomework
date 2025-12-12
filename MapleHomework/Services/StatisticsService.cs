@@ -85,6 +85,30 @@ namespace MapleHomework.Services
         public string ChangeType { get; set; } = ""; // 장착, 강화, 스타포스 등
         public string ItemInfoJson { get; set; } = ""; // 툴팁용 상세 정보 JSON
         public string ChangeSummary { get; set; } = ""; // 옵션 차이 요약 (예: 스타포스 15성 -> 20성)
+        public string OptionChangesJson { get; set; } = ""; // 상세 옵션 변경 내역 JSON
+        public string ItemIcon { get; set; } = ""; // 아이템 아이콘 URL
+        
+        // UI 바인딩용: JSON에서 파싱된 옵션 변경 목록
+        public List<ItemOptionChange> OptionChanges
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(OptionChangesJson))
+                    return new List<ItemOptionChange>();
+                try
+                {
+                    return System.Text.Json.JsonSerializer.Deserialize<List<ItemOptionChange>>(OptionChangesJson) 
+                           ?? new List<ItemOptionChange>();
+                }
+                catch
+                {
+                    return new List<ItemOptionChange>();
+                }
+            }
+        }
+        
+        // 신규 아이템 여부
+        public bool IsNewItem => ChangeType == "장착" || OptionChanges.Any(c => c.IsNewItem);
     }
 
     /// <summary>
@@ -332,7 +356,8 @@ namespace MapleHomework.Services
 
         public static void RecordItemChange(string characterId, string characterName,
             string itemSlot, string oldItemName, string newItemName, string changeType,
-            string itemInfoJson = "", DateTime? date = null, string changeSummary = "")
+            string itemInfoJson = "", DateTime? date = null, string changeSummary = "",
+            string optionChangesJson = "", string itemIcon = "")
         {
             // 이름이 같더라도 옵션 변경은 기록해야 한다.
             if (oldItemName == newItemName && changeType != "옵션 변경") return;
@@ -340,12 +365,16 @@ namespace MapleHomework.Services
             var recordDate = date ?? DateTime.Now;
             var data = Load();
 
+            // 중복 체크 완화: 같은 날짜에 같은 슬롯에서 같은 아이템이 같은 변경 타입이어도
+            // 옵션 변경 내용이 다르면 기록 (옵션 변경 내용으로 구분)
             if (data.ItemChangeRecords.Any(r => r.Date.Date == recordDate.Date && 
                                                 r.CharacterId == characterId && 
                                                 r.ItemSlot == itemSlot && 
                                                 r.NewItemName == newItemName &&
-                                                r.ChangeType == changeType))
+                                                r.ChangeType == changeType &&
+                                                r.OptionChangesJson == optionChangesJson))
             {
+                // 완전히 동일한 변경 내역이면 스킵
                 return;
             }
 
@@ -359,11 +388,13 @@ namespace MapleHomework.Services
                 NewItemName = newItemName,
                 ChangeType = changeType,
                 ItemInfoJson = itemInfoJson,
-                ChangeSummary = changeSummary
+                ChangeSummary = changeSummary,
+                OptionChangesJson = optionChangesJson,
+                ItemIcon = itemIcon
             });
 
             data.ItemChangeRecords = data.ItemChangeRecords
-                .Where(r => r.Date >= DateTime.Today.AddDays(-90))
+                .Where(r => r.Date >= DateTime.Today.AddDays(-180))
                 .ToList();
 
             Save(data);

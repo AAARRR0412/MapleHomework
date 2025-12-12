@@ -258,9 +258,9 @@ namespace MapleHomework.Services
                     var charInfo = await GetCharacterInfoAsync(apiKey, ocid, dateStr);
                     var unionInfo = await GetUnionInfoAsync(apiKey, ocid, dateStr);
                     var statInfo = await GetCharacterStatAsync(apiKey, ocid, dateStr);
-                    SaveRaw(dateStr, "basic", charInfo ?? new { empty = true });
-                    SaveRaw(dateStr, "union", unionInfo ?? new { empty = true });
-                    SaveRaw(dateStr, "stat", statInfo ?? new { empty = true });
+                    SaveRaw(dateStr, "basic", (object?)charInfo ?? new { empty = true });
+                    SaveRaw(dateStr, "union", (object?)unionInfo ?? new { empty = true });
+                    SaveRaw(dateStr, "stat", (object?)statInfo ?? new { empty = true });
 
                     if (charInfo == null)
                     {
@@ -307,7 +307,11 @@ namespace MapleHomework.Services
                 try
                 {
                     var skillInfo = await GetCharacterSkillAsync(apiKey, ocid, dateStr, "6");
-                    SaveRaw(dateStr, "skill6", skillInfo ?? new { empty = true });
+                    SaveRaw(dateStr, "skill6", (object?)skillInfo ?? new { empty = true });
+                    
+                    // 헥사 스탯 정보도 함께 저장
+                    var hexaStatInfo = await GetHexaStatAsync(apiKey, ocid, dateStr);
+                    SaveRaw(dateStr, "hexamatrix", (object?)hexaStatInfo ?? new { empty = true });
                     if (skillInfo?.CharacterSkill != null)
                     {
                         var currentSkills = skillInfo.CharacterSkill
@@ -355,13 +359,30 @@ namespace MapleHomework.Services
             // 3) 장비 변경 전체 수집 (날짜 순차)
             Dictionary<string, ItemEquipmentInfo>? prevItems = null;
             HashSet<string> prevPresetNames = new();
+            
+            // 첫 날짜 이전의 데이터가 있는지 확인 (원본 데이터에서 로드)
+            if (dateList.Any())
+            {
+                var firstDate = dateList.First();
+                var prevDate = firstDate.AddDays(-1);
+                var prevItemInfo = RawDataProcessor.LoadItemInfo(prevDate);
+                if (prevItemInfo?.ItemEquipment != null)
+                {
+                    prevItems = prevItemInfo.ItemEquipment
+                        .Where(item => !string.IsNullOrEmpty(item.ItemEquipmentSlot) && !string.IsNullOrEmpty(item.ItemName))
+                        .GroupBy(item => item.ItemEquipmentSlot!)
+                        .ToDictionary(g => g.Key, g => g.First());
+                    prevPresetNames = CollectPresetNames(prevItemInfo);
+                }
+            }
+            
             foreach (var targetDate in dateList)
             {
                 string dateStr = targetDate.ToString("yyyy-MM-dd");
                 try
                 {
                     var itemInfo = await GetItemEquipmentAsync(apiKey, ocid, dateStr);
-                    SaveRaw(dateStr, "item", itemInfo ?? new { empty = true });
+                    SaveRaw(dateStr, "item", (object?)itemInfo ?? new { empty = true });
                     if (itemInfo?.ItemEquipment != null)
                     {
                         // 슬롯 중복 방지: 같은 슬롯이 여러 번 올 경우 첫 번째만 사용
@@ -391,29 +412,47 @@ namespace MapleHomework.Services
                                         if (IsSpiritPendant(newItem.ItemName) || IsSpiritPendant(oldItem.ItemName))
                                             continue;
 
-                                        string json = JsonSerializer.Serialize(newItem);
+                                        string json = SerializeItemWithClass(newItem, itemInfo.CharacterClass);
                                         string summary = BuildChangeSummary(oldItem, newItem, isReplace:true);
-                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json, summary);
+                                        
+                                        // 상세 옵션 변경 내역 생성
+                                        var optionChanges = RawDataProcessor.CompareItemOptions(oldItem, newItem);
+                                        string optionChangesJson = JsonSerializer.Serialize(optionChanges);
+                                        string itemIcon = newItem.ItemIcon ?? "";
+                                        
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json, summary, optionChangesJson, itemIcon);
                                         Log($"[{dateStr}] ITEM slot={slot} replace {oldItem.ItemName} -> {newItem.ItemName}");
                                     }
                                     else if (IsItemOptionChanged(oldItem, newItem))
                                     {
                                         if (IsSpiritPendant(newItem.ItemName)) continue;
-                                        string json = JsonSerializer.Serialize(newItem);
+                                        string json = SerializeItemWithClass(newItem, itemInfo.CharacterClass);
                                         string summary = BuildChangeSummary(oldItem, newItem);
-                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json, summary);
+                                        
+                                        // 상세 옵션 변경 내역 생성
+                                        var optionChanges = RawDataProcessor.CompareItemOptions(oldItem, newItem);
+                                        string optionChangesJson = JsonSerializer.Serialize(optionChanges);
+                                        string itemIcon = newItem.ItemIcon ?? "";
+                                        
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json, summary, optionChangesJson, itemIcon);
                                         Log($"[{dateStr}] ITEM slot={slot} option-change {newItem.ItemName}");
                                     }
                                 }
                                 else
                                 {
-                                    string json = JsonSerializer.Serialize(newItem);
+                                    string json = SerializeItemWithClass(newItem, itemInfo.CharacterClass);
                                     // 프리셋에 이미 존재하는 아이템이면 신규 장착으로 보지 않음
                                     if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(newItem.ItemName ?? ""))
                                         continue;
                                     if (IsSpiritPendant(newItem.ItemName)) continue;
                                     string summary = BuildChangeSummary(null, newItem, isNew:true);
-                                    RecordItemChangeForDate(targetDate, characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json, summary);
+                                    
+                                    // 상세 옵션 변경 내역 생성 (신규 아이템)
+                                    var optionChanges = RawDataProcessor.CompareItemOptions(null, newItem);
+                                    string optionChangesJson = JsonSerializer.Serialize(optionChanges);
+                                    string itemIcon = newItem.ItemIcon ?? "";
+                                    
+                                    RecordItemChangeForDate(targetDate, characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json, summary, optionChangesJson, itemIcon);
                                     Log($"[{dateStr}] ITEM slot={slot} equip {newItem.ItemName}");
                                 }
                             }
@@ -440,6 +479,230 @@ namespace MapleHomework.Services
                 : "수집된 데이터가 없습니다. 로그(api-collect.log)를 확인해주세요.";
 
             Log($"[END] recordsAdded={recordsAdded}");
+
+            return result;
+        }
+
+        /// <summary>
+        /// 특정 날짜들의 데이터만 수집 (누락 날짜 수집용)
+        /// </summary>
+        public async Task<GrowthHistoryResult> CollectGrowthHistoryForDatesAsync(
+            string apiKey,
+            string ocid,
+            string characterId,
+            string characterName,
+            List<DateTime> targetDates,
+            IProgress<int>? progress = null)
+        {
+            var result = new GrowthHistoryResult();
+            var recordsAdded = 0;
+
+            Log($"[START] CollectGrowthHistoryForDates count={targetDates.Count} id={characterId} name={characterName}");
+
+            // 날짜 정렬 (과거 -> 현재)
+            var dateList = targetDates.OrderBy(d => d).ToList();
+            double totalSteps = Math.Max(1, dateList.Count * 3.0);
+            double step = 0;
+            void ReportStep()
+            {
+                if (progress == null) return;
+                int pct = (int)Math.Min(100, Math.Round(step / totalSteps * 100));
+                progress.Report(Math.Max(0, pct));
+            }
+            ReportStep();
+
+            // 1) 경험치/전투력/유니온 수집
+            foreach (var targetDate in dateList)
+            {
+                string dateStr = targetDate.ToString("yyyy-MM-dd");
+                try
+                {
+                    var charInfo = await GetCharacterInfoAsync(apiKey, ocid, dateStr);
+                    var unionInfo = await GetUnionInfoAsync(apiKey, ocid, dateStr);
+                    var statInfo = await GetCharacterStatAsync(apiKey, ocid, dateStr);
+                    SaveRaw(dateStr, "basic", (object?)charInfo ?? new { empty = true });
+                    SaveRaw(dateStr, "union", (object?)unionInfo ?? new { empty = true });
+                    SaveRaw(dateStr, "stat", (object?)statInfo ?? new { empty = true });
+
+                    if (charInfo == null)
+                    {
+                        Log($"[{dateStr}] FAIL charInfo null");
+                        step++; ReportStep();
+                        continue;
+                    }
+
+                    double expRate = 0;
+                    if (!string.IsNullOrEmpty(charInfo.CharacterExpRate))
+                        double.TryParse(charInfo.CharacterExpRate.Replace("%", ""), out expRate);
+
+                    long combatPower = 0;
+                    if (statInfo?.FinalStat != null)
+                    {
+                        var cpStat = statInfo.FinalStat.Find(s => s.StatName == "전투력");
+                        if (cpStat != null) long.TryParse(cpStat.StatValue, out combatPower);
+                    }
+
+                    int unionLevel = unionInfo?.UnionLevel ?? 0;
+                    long unionPower = unionInfo?.UnionArtifactLevel ?? 0;
+
+                    StatisticsService.RecordCharacterGrowthForDate(
+                        targetDate, characterId, characterName,
+                        charInfo.CharacterLevel, 0, expRate,
+                        combatPower, unionLevel, unionPower
+                    );
+                    recordsAdded++;
+                    Log($"[{dateStr}] OK basic/union/stat lv={charInfo.CharacterLevel} exp={expRate}% cp={combatPower} union={unionLevel}");
+                }
+                catch (Exception ex)
+                {
+                    Log($"[{dateStr}] ERR basic/union/stat {ex.Message}");
+                }
+                step++; ReportStep();
+            }
+
+            // 2) 6차 스킬 수집
+            foreach (var targetDate in dateList)
+            {
+                string dateStr = targetDate.ToString("yyyy-MM-dd");
+                try
+                {
+                    var skillInfo = await GetCharacterSkillAsync(apiKey, ocid, dateStr, "6");
+                    SaveRaw(dateStr, "skill6", (object?)skillInfo ?? new { empty = true });
+                    
+                    // 헥사 스탯 정보도 함께 저장
+                    var hexaStatInfo = await GetHexaStatAsync(apiKey, ocid, dateStr);
+                    SaveRaw(dateStr, "hexamatrix", (object?)hexaStatInfo ?? new { empty = true });
+                }
+                catch (Exception ex)
+                {
+                    Log($"[{dateStr}] ERR skill {ex.Message}");
+                }
+                step++; ReportStep();
+            }
+
+            // 3) 장비 변경 전체 수집 (날짜 순차)
+            Dictionary<string, ItemEquipmentInfo>? prevItems = null;
+            HashSet<string> prevPresetNames = new();
+            
+            // 첫 날짜 이전의 데이터가 있는지 확인 (원본 데이터에서 로드)
+            if (dateList.Any())
+            {
+                var firstDate = dateList.First();
+                var prevDate = firstDate.AddDays(-1);
+                var prevItemInfo = RawDataProcessor.LoadItemInfo(prevDate);
+                if (prevItemInfo?.ItemEquipment != null)
+                {
+                    prevItems = prevItemInfo.ItemEquipment
+                        .Where(item => !string.IsNullOrEmpty(item.ItemEquipmentSlot) && !string.IsNullOrEmpty(item.ItemName))
+                        .GroupBy(item => item.ItemEquipmentSlot!)
+                        .ToDictionary(g => g.Key, g => g.First());
+                    prevPresetNames = CollectPresetNames(prevItemInfo);
+                }
+            }
+            
+            foreach (var targetDate in dateList)
+            {
+                string dateStr = targetDate.ToString("yyyy-MM-dd");
+                try
+                {
+                    var itemInfo = await GetItemEquipmentAsync(apiKey, ocid, dateStr);
+                    SaveRaw(dateStr, "item", (object?)itemInfo ?? new { empty = true });
+                    if (itemInfo?.ItemEquipment != null)
+                    {
+                        // 슬롯 중복 방지: 같은 슬롯이 여러 번 올 경우 첫 번째만 사용
+                        var currentItems = itemInfo.ItemEquipment
+                            .Where(item => !string.IsNullOrEmpty(item.ItemEquipmentSlot) && !string.IsNullOrEmpty(item.ItemName))
+                            .GroupBy(item => item.ItemEquipmentSlot!)
+                            .ToDictionary(g => g.Key, g => g.First());
+
+                        // 프리셋에 포함된 아이템 이름 집합
+                        var currentPresetNames = CollectPresetNames(itemInfo);
+
+                        if (prevItems != null)
+                        {
+                            foreach (var itemPair in currentItems)
+                            {
+                                var newItem = itemPair.Value;
+                                string slot = itemPair.Key;
+
+                                if (prevItems.TryGetValue(slot, out var oldItem))
+                                {
+                                    if (oldItem.ItemName != newItem.ItemName)
+                                    {
+                                        // 프리셋 전환만으로 인한 교체면 스킵
+                                        if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(oldItem.ItemName ?? ""))
+                                            continue;
+                                        // 정령의 펜던트는 스킵
+                                        if (IsSpiritPendant(newItem.ItemName) || IsSpiritPendant(oldItem.ItemName))
+                                            continue;
+
+                                        string json = SerializeItemWithClass(newItem, itemInfo.CharacterClass);
+                                        string summary = BuildChangeSummary(oldItem, newItem, isReplace:true);
+                                        
+                                        // 상세 옵션 변경 내역 생성
+                                        var optionChanges = RawDataProcessor.CompareItemOptions(oldItem, newItem);
+                                        string optionChangesJson = JsonSerializer.Serialize(optionChanges);
+                                        string itemIcon = newItem.ItemIcon ?? "";
+                                        
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json, summary, optionChangesJson, itemIcon);
+                                        Log($"[{dateStr}] ITEM slot={slot} replace {oldItem.ItemName} -> {newItem.ItemName}");
+                                    }
+                                    else if (IsItemOptionChanged(oldItem, newItem))
+                                    {
+                                        if (IsSpiritPendant(newItem.ItemName)) continue;
+                                        string json = SerializeItemWithClass(newItem, itemInfo.CharacterClass);
+                                        string summary = BuildChangeSummary(oldItem, newItem);
+                                        
+                                        // 상세 옵션 변경 내역 생성
+                                        var optionChanges = RawDataProcessor.CompareItemOptions(oldItem, newItem);
+                                        string optionChangesJson = JsonSerializer.Serialize(optionChanges);
+                                        string itemIcon = newItem.ItemIcon ?? "";
+                                        
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json, summary, optionChangesJson, itemIcon);
+                                        Log($"[{dateStr}] ITEM slot={slot} option-change {newItem.ItemName}");
+                                    }
+                                }
+                                else
+                                {
+                                    string json = SerializeItemWithClass(newItem, itemInfo.CharacterClass);
+                                    // 프리셋에 이미 존재하는 아이템이면 신규 장착으로 보지 않음
+                                    if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(newItem.ItemName ?? ""))
+                                        continue;
+                                    if (IsSpiritPendant(newItem.ItemName)) continue;
+                                    string summary = BuildChangeSummary(null, newItem, isNew:true);
+                                    
+                                    // 상세 옵션 변경 내역 생성 (신규 아이템)
+                                    var optionChanges = RawDataProcessor.CompareItemOptions(null, newItem);
+                                    string optionChangesJson = JsonSerializer.Serialize(optionChanges);
+                                    string itemIcon = newItem.ItemIcon ?? "";
+                                    
+                                    RecordItemChangeForDate(targetDate, characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json, summary, optionChangesJson, itemIcon);
+                                    Log($"[{dateStr}] ITEM slot={slot} equip {newItem.ItemName}");
+                                }
+                            }
+                        }
+                        prevItems = currentItems;
+                        prevPresetNames = currentPresetNames;
+                    }
+                    else
+                    {
+                        Log($"[{dateStr}] WARN itemInfo null");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log($"[{dateStr}] ITEM error {ex.Message}");
+                }
+                step++; ReportStep();
+            }
+
+            result.Success = recordsAdded > 0;
+            result.RecordsAdded = recordsAdded;
+            result.Message = recordsAdded > 0
+                ? $"{recordsAdded}일치 데이터를 수집했습니다."
+                : "수집된 데이터가 없습니다. 해당 날짜에 API 데이터가 없을 수 있습니다.";
+
+            Log($"[END] CollectGrowthHistoryForDates recordsAdded={recordsAdded}");
 
             return result;
         }
@@ -614,9 +877,31 @@ namespace MapleHomework.Services
             StatisticsService.RecordHexaSkillChange(characterId, characterName, skillName, oldLevel, newLevel, icon, date);
         }
 
-        private void RecordItemChangeForDate(DateTime date, string characterId, string characterName, string slot, string oldItem, string newItem, string type, string json, string summary)
+        private void RecordItemChangeForDate(DateTime date, string characterId, string characterName, string slot, string oldItem, string newItem, string type, string json, string summary, string optionChangesJson = "", string itemIcon = "")
         {
-            StatisticsService.RecordItemChange(characterId, characterName, slot, oldItem, newItem, type, json, date, summary);
+            StatisticsService.RecordItemChange(characterId, characterName, slot, oldItem, newItem, type, json, date, summary, optionChangesJson, itemIcon);
+        }
+
+        private static string SerializeItemWithClass(ItemEquipmentInfo item, string? characterClass)
+        {
+            var json = JsonSerializer.Serialize(item);
+            if (!string.IsNullOrEmpty(characterClass))
+            {
+                // JSON에 character_class 추가
+                using var doc = JsonDocument.Parse(json);
+                using var stream = new MemoryStream();
+                using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = false });
+                writer.WriteStartObject();
+                writer.WriteString("character_class", characterClass);
+                foreach (var prop in doc.RootElement.EnumerateObject())
+                {
+                    prop.WriteTo(writer);
+                }
+                writer.WriteEndObject();
+                writer.Flush();
+                return System.Text.Encoding.UTF8.GetString(stream.ToArray());
+            }
+            return json;
         }
     }
 

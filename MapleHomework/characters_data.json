@@ -13,7 +13,7 @@
       "UnionGrade": "\uADF8\uB79C\uB4DC \uB9C8\uC2A4\uD130 \uC720\uB2C8\uC628 2",
       "CombatPower": 0,
       "Ocid": "8ffa33eaf29f9568805583fc7ca21b42",
-      "LastUpdatedTime": "2025-12-12T13:31:26.3085388+09:00",
+      "LastUpdatedTime": "2025-12-12T17:57:40.4483148+09:00",
       "DailyTasks": [
         {
           "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C",
@@ -2709,7 +2709,7 @@
   ],
   "Groups": [],
   "SelectedCharacterId": "d8e96c63-85f3-4721-9263-87e7c104d5b1",
-  "ApiKey": "test_12278eb829753523f1b0c57b42e7a8c842e90ed302102a6dd9c93121ab8653a9efe8d04e6d233bd35cf2fabdeb93fb0d",
+  "ApiKey": "test_12278eb829753523f1b0c57b42e7a8c825d430284a1a1a670c5ece855b000231efe8d04e6d233bd35cf2fabdeb93fb0d",
   "IsDarkTheme": false,
   "AutoStartEnabled": true
 }

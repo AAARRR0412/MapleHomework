@@ -54,7 +54,30 @@ namespace MapleHomework.Converters
                 Log($"Render start: {itemInfo.ItemName}");
 
                 // 1차: MapleTooltipRenderer (WzComparerR2 포팅)로 풀 UI 렌더
-                var tooltipBitmap = MapleTooltipRenderer.RenderEquipmentTooltip(itemInfo);
+                // parameter에서 직업 정보 추출 (JSON 또는 문자열)
+                string? jobClass = null;
+                if (parameter is string jobClassStr)
+                {
+                    jobClass = jobClassStr;
+                }
+                else if (parameter is System.Text.Json.JsonElement jobClassJson && jobClassJson.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    jobClass = jobClassJson.GetString();
+                }
+                // JSON에서 character_class 추출 시도
+                if (string.IsNullOrEmpty(jobClass))
+                {
+                    try
+                    {
+                        var jsonDoc = JsonDocument.Parse(json);
+                        if (jsonDoc.RootElement.TryGetProperty("character_class", out var charClass))
+                        {
+                            jobClass = charClass.GetString();
+                        }
+                    }
+                    catch { }
+                }
+                var tooltipBitmap = MapleTooltipRenderer.RenderEquipmentTooltip(itemInfo, jobClass);
                 var tooltipImage = WpfBitmapConverter.ToImageSource(tooltipBitmap);
                 if (tooltipImage != null)
                 {

@@ -225,6 +225,25 @@ namespace MapleHomework.Services
                 _notifyIcon.ShowBalloonTip(3000, "📋 메이플 숙제 알림", "완료하지 않은 즐겨찾기 숙제가 없습니다!", Forms.ToolTipIcon.Info);
             }
         }
+
+        /// <summary>
+        /// API 데이터 수집 완료 알림
+        /// </summary>
+        public void ShowApiCollectComplete(string characterName, bool success, string message)
+        {
+            string title = success ? "📊 데이터 수집 완료" : "⚠️ 데이터 수집 실패";
+            string body = $"캐릭터: {characterName}\n{message}";
+            var icon = success ? Forms.ToolTipIcon.Info : Forms.ToolTipIcon.Warning;
+            _notifyIcon.ShowBalloonTip(5000, title, body, icon);
+        }
+
+        /// <summary>
+        /// API 데이터 수집 시작 알림
+        /// </summary>
+        public void ShowApiCollectStart(string characterName)
+        {
+            _notifyIcon.ShowBalloonTip(3000, "📊 데이터 수집 시작", $"캐릭터: {characterName}\n백그라운드에서 수집이 진행됩니다.", Forms.ToolTipIcon.Info);
+        }
     }
 }
 

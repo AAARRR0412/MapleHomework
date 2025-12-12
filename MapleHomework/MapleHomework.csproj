@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -43,6 +43,10 @@
 	  </Content>
   <Resource Include="Data\*.png" />
       <Resource Include="icon.ico" />
+      <!-- icon.ico를 출력 디렉토리에도 복사 (트레이 아이콘용) -->
+      <Content Include="icon.ico">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
 	</ItemGroup>
 
 </Project>
