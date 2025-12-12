@@ -41,6 +41,8 @@
 	  <Content Include="CharaSimResource\Resources\**\*.ttf">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
+  <Resource Include="Data\*.png" />
+      <Resource Include="icon.ico" />
 	</ItemGroup>
 
 </Project>

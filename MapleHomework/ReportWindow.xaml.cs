@@ -3,11 +3,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using WpfButton = System.Windows.Controls.Button;
 using MapleHomework.Services;
 using MapleHomework.ViewModels;
 using MapleHomework.Models;
@@ -65,6 +67,33 @@ namespace MapleHomework
         private readonly MapleApiService _apiService;
         private bool _isInitializing;
         private Popup? _itemTooltipPopup;
+        private DateTime? _collectStartTime;
+        private string _expRangeMode = "day";
+
+        private class HexaCoreItem
+        {
+            public string SkillName { get; set; } = "";
+            public string SkillIcon { get; set; } = "";
+            public int OldLevel { get; set; }
+            public int NewLevel { get; set; }
+            public int CoreLevel { get; set; }
+            public string BadgeIcon { get; set; } = "";
+            public string CoreType { get; set; } = "";
+            public string OriginalName { get; set; } = "";
+        }
+
+        private class HexaCoreGroup
+        {
+            public string TypeLabel { get; set; } = "";
+            public string TypeIcon { get; set; } = "";
+            public List<HexaCoreItem> Items { get; set; } = new();
+        }
+
+        private class HexaSkillDailyGroup
+        {
+            public DateTime Date { get; set; }
+            public List<HexaSkillRecord> Items { get; set; } = new();
+        }
 
         public ReportWindow(MainViewModel mainViewModel)
         {
@@ -83,17 +112,92 @@ namespace MapleHomework
 
             InitializeSelectors();
 
+            UpdateRangeButtonsVisual();
+
             // 팝업 위치 갱신: 창 이동/크기 변경 시 따라가도록
             this.LocationChanged += (_, __) => UpdatePopupPosition();
             this.SizeChanged += (_, __) => UpdatePopupPosition();
 
             _isInitializing = false; // 초기화 완료 플래그 해제
-            LoadDashboard(); // 초기 리포트 로드
+            _ = RefreshIfStaleAndLoadAsync(); // 자동 최신화 후 로드
         }
 
         private void OnThemeChanged()
         {
             ApplyThemeResources();
+        }
+
+        private void SetExpRange(string mode)
+        {
+            _expRangeMode = mode;
+            UpdateRangeButtonsVisual();
+            LoadGrowthReport();
+        }
+
+        private void UpdateRangeButtonsVisual()
+        {
+            void Mark(WpfButton? btn, bool active)
+            {
+                if (btn == null) return;
+                btn.FontWeight = active ? FontWeights.Bold : FontWeights.Normal;
+                btn.Opacity = active ? 1.0 : 0.7;
+            }
+
+            Mark(ExpDayBtn, _expRangeMode == "day");
+            Mark(ExpWeekBtn, _expRangeMode == "week");
+            Mark(ExpMonthBtn, _expRangeMode == "month");
+        }
+
+        private void ExpRangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is WpfButton btn && btn.Tag is string mode)
+            {
+                SetExpRange(mode);
+            }
+        }
+
+        private void PowerRangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 전투력은 단위 전환 기능을 사용하지 않음 (이벤트 미사용)
+        }
+
+        private async Task RefreshIfStaleAndLoadAsync()
+        {
+            var last = StatisticsService.GetLastUpdated();
+            bool needRefresh = (DateTime.Now - last) > TimeSpan.FromHours(1) || last.Date != DateTime.Today;
+
+            if (!needRefresh)
+            {
+                LoadDashboard();
+                return;
+            }
+
+            string? characterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
+            var character = _viewModel.Characters.FirstOrDefault(c => c.Id == characterId);
+            var apiKey = ConfigManager.Load().ApiKey;
+            if (character == null || string.IsNullOrEmpty(character.Ocid) || string.IsNullOrEmpty(apiKey))
+            {
+                LoadDashboard();
+                return;
+            }
+
+            try
+            {
+                CollectProgressBar.Visibility = Visibility.Visible;
+                CollectProgressBar.IsIndeterminate = true;
+                CollectStatusText.Text = "자동 갱신 중...";
+                await _apiService.CollectGrowthHistoryAsync(apiKey, character.Ocid, character.Id, character.Nickname, 1, null);
+            }
+            catch
+            {
+                // 무시하고 진행
+            }
+            finally
+            {
+                CollectProgressBar.Visibility = Visibility.Collapsed;
+                CollectStatusText.Text = string.Empty;
+                LoadDashboard();
+            }
         }
 
         protected override void OnClosed(EventArgs e)
@@ -208,70 +312,48 @@ namespace MapleHomework
             }
 
             // 경험치
-            var expGrowth = StatisticsService.GetExperienceGrowth(characterId, days);
+            var expGrowth = StatisticsService.GetExperienceGrowth(characterId, days, _expRangeMode);
             ExpGrowthList.ItemsSource = expGrowth;
             
-            // 주간 평균 경험치를 한국어 포맷으로 표시
-            var weeklyExpGain = StatisticsService.GetWeeklyAverageExpGain(characterId);
-            WeeklyExpGrowthText.Text = weeklyExpGain > 0 ? Data.ExpTable.FormatExpKorean(weeklyExpGain) : "-";
+            // 최근 30일 일간 평균 경험치 (경험치 + %)
+            var dailyAvg = StatisticsService.GetMonthlyDailyAverageExpGain(characterId, 30);
+            if (dailyAvg.ExpPerDay > 0 || Math.Abs(dailyAvg.PercentPerDay) > 0.001)
+            {
+                var expText = Data.ExpTable.FormatExpKorean(dailyAvg.ExpPerDay);
+                var percText = $"{dailyAvg.PercentPerDay:F2}%";
+                WeeklyExpGrowthText.Text = $"{expText} ({percText})";
+            }
+            else
+            {
+                WeeklyExpGrowthText.Text = "-";
+            }
             
             // 레벨업 예상 날짜
             EstimatedLevelUpText.Text = StatisticsService.GetEstimatedLevelUpDateFormatted(characterId);
             
             // 전투력
-            var combatPowerGrowth = StatisticsService.GetCombatPowerGrowth(characterId, days);
+            var combatPowerGrowth = StatisticsService.GetCombatPowerGrowth(characterId, days, "day", onlyNewHigh: true);
             CombatPowerList.ItemsSource = combatPowerGrowth;
             NoCombatPowerDataText.Visibility = combatPowerGrowth.Any() ? Visibility.Collapsed : Visibility.Visible;
 
-            // 6차 스킬
+            // 6차 스킬 - 상세 내역 (히스토리)
             var hexaHistory = StatisticsService.GetHexaSkillHistory(characterId, 50);
-            // 마스터리 코어 등 동시 강화되는 스킬은 날짜/레벨 기준으로 묶어서 표시
-            var groupedHexa = hexaHistory
-                .GroupBy(h => new { h.Date.Date, h.OldLevel, h.NewLevel })
-                .Select(g => new HexaSkillRecord
+            var hexaByDate = hexaHistory
+                .GroupBy(h => h.Date.Date)
+                .Select(g => new HexaSkillDailyGroup
                 {
-                    Date = g.First().Date,
-                    CharacterId = g.First().CharacterId,
-                    CharacterName = g.First().CharacterName,
-                    OldLevel = g.Key.OldLevel,
-                    NewLevel = g.Key.NewLevel,
-                    SkillName = string.Join(" / ", g.Select(x => x.SkillName).Distinct()),
-                    SkillIcon = g.FirstOrDefault(x => !string.IsNullOrEmpty(x.SkillIcon))?.SkillIcon ?? g.First().SkillIcon
+                    Date = g.Key,
+                    Items = g.OrderByDescending(x => x.NewLevel).ToList()
                 })
-                .OrderByDescending(x => x.Date)
+                .OrderByDescending(g => g.Date)
                 .ToList();
 
-            HexaSkillList.ItemsSource = groupedHexa;
-            NoHexaSkillDataText.Visibility = groupedHexa.Any() ? Visibility.Collapsed : Visibility.Visible;
+            HexaSkillList.ItemsSource = hexaByDate;
+            NoHexaSkillDataText.Visibility = hexaHistory.Any() ? Visibility.Collapsed : Visibility.Visible;
 
-            // 6차 스킬 요약(시각화용)
-            HexaSkillSummaries.Clear();
-            var summary = hexaHistory
-                .Where(h => !string.IsNullOrEmpty(h.SkillName))
-                .GroupBy(h => h.SkillName)
-                .Select(g =>
-                {
-                    int start = g.Min(x => x.OldLevel > 0 ? x.OldLevel : x.NewLevel);
-                    int current = g.Max(x => x.NewLevel);
-                    string icon = g.LastOrDefault(x => !string.IsNullOrEmpty(x.SkillIcon))?.SkillIcon ?? "";
-                    return new HexaSkillSummary
-                    {
-                        SkillName = g.Key,
-                        SkillIcon = icon,
-                        StartLevel = start,
-                        CurrentLevel = current
-                    };
-                })
-                .OrderByDescending(s => s.Gain)
-                .ThenByDescending(s => s.CurrentLevel)
-                .ToList();
-
-            double maxGain = summary.Any() ? summary.Max(s => s.Gain) : 0;
-            foreach (var s in summary)
-            {
-                s.BarRate = maxGain > 0 ? Math.Max(0.1, (double)s.Gain / maxGain) : 0.1;
-                HexaSkillSummaries.Add(s);
-            }
+            // 6차 스킬 - 현황 (현재 코어 레벨)
+            HexaCoreGroups.ItemsSource = null;
+            _ = LoadHexaCoreCurrentAsync(characterId, hexaHistory);
 
             // 장비 변경
             var itemHistory = StatisticsService.GetItemChangeHistory(characterId, 50);
@@ -283,6 +365,7 @@ namespace MapleHomework
         {
             ExpGrowthList.ItemsSource = null;
             CombatPowerList.ItemsSource = null;
+            HexaCoreGroups.ItemsSource = null;
             HexaSkillList.ItemsSource = null;
             ItemChangeList.ItemsSource = null;
             
@@ -292,6 +375,119 @@ namespace MapleHomework
             NoCombatPowerDataText.Visibility = Visibility.Visible;
             NoHexaSkillDataText.Visibility = Visibility.Visible;
             NoItemChangeDataText.Visibility = Visibility.Visible;
+        }
+
+        private async Task LoadHexaCoreCurrentAsync(string characterId, List<HexaSkillRecord> hexaHistory)
+        {
+            var character = _viewModel.Characters.FirstOrDefault(c => c.Id == characterId);
+            var apiKey = ConfigManager.Load().ApiKey;
+            if (character == null || string.IsNullOrEmpty(character.Ocid) || string.IsNullOrEmpty(apiKey))
+                return;
+
+            // 히스토리에서 아이콘 매핑 (스킬명 기준)
+            var iconMap = hexaHistory
+                .Where(h => !string.IsNullOrEmpty(h.SkillName) && !string.IsNullOrEmpty(h.SkillIcon))
+                .GroupBy(h => h.SkillName!)
+                .ToDictionary(g => g.Key, g => g.First().SkillIcon!);
+
+            try
+            {
+                // 6차 스킬 아이콘 사전 (skill API)
+                var skillResp = await _apiService.GetCharacterSkillAsync(apiKey, character.Ocid, null, "6");
+                var skillIconMap = (skillResp?.CharacterSkill ?? new List<CharacterSkillInfo>())
+                    .Where(s => !string.IsNullOrEmpty(s.SkillName) && !string.IsNullOrEmpty(s.SkillIcon))
+                    .GroupBy(s => s.SkillName!)
+                    .ToDictionary(g => g.Key, g => g.First().SkillIcon!);
+
+                var hexaStat = await _apiService.GetHexaStatAsync(apiKey, character.Ocid);
+                if (hexaStat?.HexaCoreEquipment == null) return;
+
+                string masteryBadge = "Data/Mastery.png";
+                string skillBadge = "Data/Skill.png";
+                string enhanceBadge = "Data/Enhance.png";
+                string commonBadge = "Data/Common.png";
+
+                string GetBadgeFromType(string? type) => type switch
+                {
+                    "마스터리 코어" => masteryBadge,
+                    "강화 코어" => enhanceBadge,
+                    "공용 코어" => commonBadge,
+                    _ => skillBadge
+                };
+
+                string ResolveIcon(string coreName, List<LinkedSkillInfo>? linked)
+                {
+                    if (iconMap.TryGetValue(coreName, out var icon)) return icon;
+                    if (skillIconMap.TryGetValue(coreName, out var iconSkill)) return iconSkill;
+
+                    // 마스터리 코어: "A/B" 형태 → 첫 스킬명으로 아이콘 매칭
+                    var firstName = coreName.Split(new[] { '/', ',' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
+                    if (!string.IsNullOrEmpty(firstName))
+                    {
+                        if (iconMap.TryGetValue(firstName, out var iconSplit)) return iconSplit;
+                        if (skillIconMap.TryGetValue(firstName, out var iconSkill2)) return iconSkill2;
+                    }
+
+                    if (linked != null)
+                    {
+                        foreach (var lk in linked)
+                        {
+                            var id = lk?.HexaSkillId;
+                            if (string.IsNullOrEmpty(id)) continue;
+                            if (iconMap.TryGetValue(id, out var icon2)) return icon2;
+                            if (skillIconMap.TryGetValue(id, out var icon3)) return icon3;
+                        }
+                    }
+                    return ""; // 없음
+                }
+
+                var coreItems = hexaStat.HexaCoreEquipment.Select(core => new HexaCoreItem
+                {
+                    SkillName = TrimCoreName(core.HexaCoreName ?? ""),
+                    OriginalName = core.HexaCoreName ?? "",
+                    SkillIcon = ResolveIcon(core.HexaCoreName ?? "", core.LinkedSkill),
+                    OldLevel = core.HexaCoreLevel,
+                    NewLevel = core.HexaCoreLevel,
+                    CoreLevel = core.HexaCoreLevel,
+                    BadgeIcon = GetBadgeFromType(core.HexaCoreType),
+                    CoreType = string.IsNullOrEmpty(core.HexaCoreType) ? "스킬 코어" : core.HexaCoreType!
+                }).ToList();
+
+                string[] typeOrder = { "공용 코어", "스킬 코어", "강화 코어", "마스터리 코어" };
+                var groups = coreItems
+                    .GroupBy(c => c.CoreType)
+                    .Select(g => new HexaCoreGroup
+                    {
+                        TypeLabel = g.Key,
+                        TypeIcon = GetBadgeFromType(g.Key),
+                        Items = g.OrderByDescending(x => x.CoreLevel).ToList()
+                    })
+                    .OrderBy(g =>
+                    {
+                        int idx = Array.IndexOf(typeOrder, g.TypeLabel);
+                        return idx >= 0 ? idx : int.MaxValue;
+                    })
+                    .ThenBy(g => g.TypeLabel)
+                    .ToList();
+
+                HexaCoreGroups.ItemsSource = groups;
+            }
+            catch
+            {
+                // 무시
+            }
+        }
+
+        private static string CleanCoreName(string name)
+        {
+            return string.IsNullOrEmpty(name) ? name : name.Replace("/", ",\n");
+        }
+
+        private static string TrimCoreName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return name;
+            var idx = name.IndexOf('/');
+            return idx >= 0 ? name.Substring(0, idx).Trim() : name;
         }
 
         private string? GetSelectedCharacterId()
@@ -429,11 +625,29 @@ namespace MapleHomework
             CollectProgressBar.Visibility = Visibility.Visible;
             CollectProgressBar.IsIndeterminate = true;
             CollectProgressBar.Value = 0;
-            CollectStatusText.Text = "데이터 수집 중...";
+            _collectStartTime = DateTime.Now;
+            CollectStatusText.Text = "데이터 수집 중... (예상 시간 계산 중)";
 
             try
             {
-                var progress = new Progress<int>(p => CollectProgressBar.Value = p);
+                var progress = new Progress<int>(p =>
+                {
+                    CollectProgressBar.IsIndeterminate = false;
+                    CollectProgressBar.Value = p;
+
+                    if (_collectStartTime.HasValue && p > 0 && p <= 100)
+                    {
+                        var elapsed = DateTime.Now - _collectStartTime.Value;
+                        // 남은 시간 추정: elapsed * (100 - p) / p
+                        var remaining = TimeSpan.FromSeconds(elapsed.TotalSeconds * (100 - p) / p);
+                        var etaText = $"{remaining.Minutes:D2}:{remaining.Seconds:D2}";
+                        CollectStatusText.Text = $"데이터 수집 중... {p}% · 예상 남은 {etaText}";
+                    }
+                    else
+                    {
+                        CollectStatusText.Text = $"데이터 수집 중... {p}%";
+                    }
+                });
 
                 var result = await _apiService.CollectGrowthHistoryAsync(apiKey, character.Ocid, characterId, character.Nickname, days, progress);
 
@@ -458,6 +672,7 @@ namespace MapleHomework
                 CollectProgressBar.Visibility = Visibility.Collapsed;
                 CollectProgressBar.IsIndeterminate = false;
                 CollectStatusText.Text = "";
+                _collectStartTime = null;
             }
         }
 
@@ -567,12 +782,23 @@ namespace MapleHomework
         #region Scroll Handling
         private void InnerScroll_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (MainScrollViewer == null) return;
+            // 우선 해당 ScrollViewer가 스크롤 가능하면 자신을 스크롤,
+            // 스크롤할 높이가 없으면 부모(MainScrollViewer)에 위임
+            if (sender is ScrollViewer sv)
+            {
+                if (sv.ScrollableHeight > 0)
+                {
+                    sv.ScrollToVerticalOffset(sv.VerticalOffset - e.Delta);
+                    e.Handled = true;
+                    return;
+                }
+            }
 
-            // 부모 스크롤뷰로 휠 이벤트 전달
-            e.Handled = true;
-            double offset = MainScrollViewer.VerticalOffset - e.Delta;
-            MainScrollViewer.ScrollToVerticalOffset(offset);
+            if (MainScrollViewer != null)
+            {
+                MainScrollViewer.ScrollToVerticalOffset(MainScrollViewer.VerticalOffset - e.Delta);
+                e.Handled = true;
+            }
         }
         #endregion
     }

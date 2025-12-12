@@ -105,8 +105,16 @@ namespace MapleHomework
             _notifyIcon = new Forms.NotifyIcon();
             try
             {
-                // 앱 아이콘 가져오기 (없으면 시스템 기본 아이콘)
-                _notifyIcon.Icon = SystemIcons.Application;
+                // 트레이 아이콘을 icon.ico로 설정
+                var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico");
+                if (System.IO.File.Exists(iconPath))
+                {
+                    _notifyIcon.Icon = new System.Drawing.Icon(iconPath);
+                }
+                else
+                {
+                    _notifyIcon.Icon = SystemIcons.Application;
+                }
             }
             catch
             {

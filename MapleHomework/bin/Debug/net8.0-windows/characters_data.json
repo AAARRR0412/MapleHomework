@@ -1,0 +1,910 @@
+{
+  "Characters": [
+    {
+      "Id": "ed7508d7-6bb7-4d8c-8ca2-e6282be69ba7",
+      "Nickname": "NO\uB354\uC2A4",
+      "WorldName": "",
+      "CharacterClass": "",
+      "Level": 0,
+      "ImageUrl": "",
+      "GroupId": null,
+      "SortOrder": 0,
+      "UnionLevel": 0,
+      "UnionGrade": null,
+      "CombatPower": 0,
+      "Ocid": null,
+      "LastUpdatedTime": "0001-01-01T00:00:00",
+      "DailyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uBAAC\uC2A4\uD130\uD30C\uD06C",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC18C\uBA78\uC758 \uC5EC\uB85C",
+          "Category": 0,
+          "RequiredLevel": 200,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC18C\uBA78\uC758 \uC5EC\uB85C",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE04\uCE04 \uC544\uC77C\uB79C\uB4DC",
+          "Category": 0,
+          "RequiredLevel": 210,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uCE04\uCE04 \uC544\uC77C\uB79C\uB4DC",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB808\uD5EC\uB978",
+          "Category": 0,
+          "RequiredLevel": 220,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB808\uD5EC\uB978",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uCE74\uB098",
+          "Category": 0,
+          "RequiredLevel": 225,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC544\uB974\uCE74\uB098",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBAA8\uB77C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 230,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uBAA8\uB77C\uC2A4",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uC2A4\uD398\uB77C",
+          "Category": 0,
+          "RequiredLevel": 235,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC5D0\uC2A4\uD398\uB77C",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB38\uBE0C\uB9BF\uC9C0",
+          "Category": 0,
+          "RequiredLevel": 245,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uBB38\uBE0C\uB9BF\uC9C0",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uACE0\uD1B5\uC758 \uBBF8\uAD81",
+          "Category": 0,
+          "RequiredLevel": 250,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uACE0\uD1B5\uC758 \uBBF8\uAD81",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9AC\uBA58",
+          "Category": 0,
+          "RequiredLevel": 255,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB9AC\uBA58",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC138\uB974\uB2C8\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 260,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC138\uB974\uB2C8\uC6C0",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD638\uD154 \uC544\uB974\uD06C\uC2A4",
+          "Category": 0,
+          "RequiredLevel": 265,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uD638\uD154 \uC544\uB974\uD06C\uC2A4",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC624\uB514\uC6C0",
+          "Category": 0,
+          "RequiredLevel": 270,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC624\uB514\uC6C0",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB3C4\uC6D0\uACBD",
+          "Category": 0,
+          "RequiredLevel": 275,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB3C4\uC6D0\uACBD",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uB974\uD14C\uB9AC\uC544",
+          "Category": 0,
+          "RequiredLevel": 280,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC544\uB974\uD14C\uB9AC\uC544",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB974\uC2DC\uC628",
+          "Category": 0,
+          "RequiredLevel": 285,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uCE74\uB974\uC2DC\uC628",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C8\uB77C\uD558\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 290,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uD0C8\uB77C\uD558\uD2B8",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uC77C\uB9AC \uAE30\uD504\uD2B8",
+          "Category": 0,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB370\uC77C\uB9AC \uAE30\uD504\uD2B8",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "WeeklyTasks": [
+        {
+          "Name": "\uBAAC\uC2A4\uD130\uD30C\uD06C \uC775\uC2A4\uD2B8\uB9BC",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uBAAC\uC2A4\uD130\uD30C\uD06C \uC775\uC2A4\uD2B8\uB9BC",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uC988\uBAA8\uC2A4 \uD611\uACE1",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC544\uC988\uBAA8\uC2A4 \uD611\uACE1",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uD558\uC774\uB9C8\uC6B4\uD2F4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC5D0\uD53D \uB358\uC804 : \uD558\uC774\uB9C8\uC6B4\uD2F4",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC575\uAE00\uB7EC \uCEF4\uD37C\uB2C8",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC5D0\uD53D \uB358\uC804 : \uC575\uAE00\uB7EC \uCEF4\uD37C\uB2C8",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC5D0\uD53D \uB358\uC804 : \uC545\uBABD \uC120\uACBD",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC5D0\uD53D \uB358\uC804 : \uC545\uBABD \uC120\uACBD",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBB34\uB989\uB3C4\uC7A5",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uBB34\uB989\uB3C4\uC7A5",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uC9C0\uD558\uC218\uB85C",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uAE38\uB4DC \uC9C0\uD558\uC218\uB85C",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAE38\uB4DC \uD50C\uB798\uADF8 \uB808\uC774\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uAE38\uB4DC \uD50C\uB798\uADF8 \uB808\uC774\uC2A4",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC544\uCF00\uC778 \uC8FC\uAC04 \uD018\uC2A4\uD2B8",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC544\uCF00\uC778 \uC8FC\uAC04 \uD018\uC2A4\uD2B8",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD06C\uB9AC\uD2F0\uC544\uC2A4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uD06C\uB9AC\uD2F0\uC544\uC2A4",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD0C0\uB77D\uD55C \uC138\uACC4\uC218",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uD0C0\uB77D\uD55C \uC138\uACC4\uC218",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD5E4\uC774\uBE10",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uD5E4\uC774\uBE10",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC720\uB2C8\uC628 \uC8FC\uAC04 \uB4DC\uB798\uACE4",
+          "Category": 1,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC720\uB2C8\uC628 \uC8FC\uAC04 \uB4DC\uB798\uACE4",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "BossTasks": [
+        {
+          "Name": "\uC790\uCFF0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "PartySize": 1,
+          "DisplayName": "\uC790\uCFF0 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9E4\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "PartySize": 1,
+          "DisplayName": "\uB9E4\uADF8\uB108\uC2A4 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            2
+          ],
+          "Difficulty": 2,
+          "PartySize": 1,
+          "DisplayName": "\uD790\uB77C (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD30C\uD480\uB77C\uD22C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "PartySize": 1,
+          "DisplayName": "\uD30C\uD480\uB77C\uD22C\uC2A4 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD53C\uC5D0\uB974",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "PartySize": 1,
+          "DisplayName": "\uD53C\uC5D0\uB974 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC18\uBC18",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "PartySize": 1,
+          "DisplayName": "\uBC18\uBC18 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBE14\uB7EC\uB514\uD038",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "PartySize": 1,
+          "DisplayName": "\uBE14\uB7EC\uB514\uD038 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBCA8\uB8F8",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "PartySize": 1,
+          "DisplayName": "\uBCA8\uB8F8 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uD551\uD06C\uBE48",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            3
+          ],
+          "Difficulty": 3,
+          "PartySize": 1,
+          "DisplayName": "\uD551\uD06C\uBE48 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2DC\uADF8\uB108\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            0,
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC2DC\uADF8\uB108\uC2A4 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC2A4\uC6B0",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC2A4\uC6B0 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB370\uBBF8\uC548",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB370\uBBF8\uC548 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC00\uB514\uC5B8 \uC5D4\uC824 \uC2AC\uB77C\uC784",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uAC00\uB514\uC5B8 \uC5D4\uC824 \uC2AC\uB77C\uC784 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB8E8\uC2DC\uB4DC",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB8E8\uC2DC\uB4DC (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC70C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC70C (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB354\uC2A4\uD06C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            3
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB354\uC2A4\uD06C (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC9C4 \uD790\uB77C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC9C4 \uD790\uB77C (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB4C4\uCF08",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB4C4\uCF08 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uC120\uD0DD\uBC1B\uC740 \uC138\uB80C",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uC120\uD0DD\uBC1B\uC740 \uC138\uB80C (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uAC10\uC2DC\uC790 \uCE7C\uB85C\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uAC10\uC2DC\uC790 \uCE7C\uB85C\uC2A4 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCD5C\uCD08\uC758 \uB300\uC801\uC790",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uCD5C\uCD08\uC758 \uB300\uC801\uC790 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uCE74\uB9C1",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uCE74\uB9C1 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uB9BC\uBCF4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uB9BC\uBCF4 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        },
+        {
+          "Name": "\uBC1C\uB4DC\uB9AD\uC2A4",
+          "Category": 2,
+          "RequiredLevel": 0,
+          "IsActive": false,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1,
+            2
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uBC1C\uB4DC\uB9AD\uC2A4 (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "MonthlyTasks": [
+        {
+          "Name": "\uAC80\uC740 \uB9C8\uBC95\uC0AC",
+          "Category": 3,
+          "RequiredLevel": 0,
+          "IsActive": true,
+          "IsFavorite": false,
+          "AvailableDifficulties": [
+            1
+          ],
+          "Difficulty": 1,
+          "PartySize": 1,
+          "DisplayName": "\uAC80\uC740 \uB9C8\uBC95\uC0AC (1\uC778)",
+          "IsChecked": false,
+          "LastCheckedTime": "0001-01-01T00:00:00"
+        }
+      ],
+      "IsDailyFavorite": false,
+      "IsWeeklyFavorite": false,
+      "IsBossFavorite": false,
+      "IsMonthlyFavorite": false,
+      "DailyProgress": 0,
+      "WeeklyProgress": 0,
+      "BossProgress": 0,
+      "BossCheckedCount": 0,
+      "BossActiveCount": 12,
+      "WeeklyBossReward": 0,
+      "WeeklyBossExpectedReward": 120010000,
+      "WeeklyBossRewardText": "0",
+      "WeeklyBossExpectedRewardText": "1.2\uC5B5"
+    }
+  ],
+  "Groups": [],
+  "SelectedCharacterId": "ed7508d7-6bb7-4d8c-8ca2-e6282be69ba7",
+  "ApiKey": "test_503bf08ecb8e95d486ee6871a5c2f600f4960ff73e84ae09ee5200f971058612154879837185450f9848c5494b6e2d2e",
+  "IsDarkTheme": false,
+  "AutoStartEnabled": false
+}

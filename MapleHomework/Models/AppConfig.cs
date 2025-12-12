@@ -56,7 +56,7 @@ namespace MapleHomework.Models
         // 보스 알림: n일 전 (목요일 기준)
         public bool NotifyBossTasks { get; set; } = true;
         public int BossNotifyDaysBefore { get; set; } = 1; // 기본값: 1일 전 (수요일)
-        
+
         // 시작 시 팝업 표시
         public bool ShowStartupPopup { get; set; } = true;
 

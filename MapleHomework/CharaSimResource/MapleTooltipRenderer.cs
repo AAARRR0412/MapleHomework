@@ -16,7 +16,7 @@ namespace MapleHomework.CharaSimResource
     {
         private const int TooltipWidth = 324;
         private const int DefaultPicHeight = 1000;
-        private const int Padding = 15; // 좌우 여백 (12 -> 15로 수정, 원본과 일치)
+        private const int Padding = 15; // 좌우 여백
 
         // 리소스 캐시
         private static readonly Dictionary<string, Bitmap> _resourceCache = new Dictionary<string, Bitmap>();
