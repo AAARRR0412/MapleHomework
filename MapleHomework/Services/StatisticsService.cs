@@ -84,7 +84,6 @@ namespace MapleHomework.Services
         public string NewItemName { get; set; } = "";
         public string ChangeType { get; set; } = ""; // 장착, 강화, 스타포스 등
         public string ItemInfoJson { get; set; } = ""; // 툴팁용 상세 정보 JSON
-        public string ChangeSummary { get; set; } = ""; // 옵션 차이 요약 (예: 스타포스 15성 -> 20성)
     }
 
     /// <summary>
@@ -123,21 +122,6 @@ namespace MapleHomework.Services
             WriteIndented = true,
             PropertyNameCaseInsensitive = true
         };
-
-        public static DateTime GetLastUpdated()
-        {
-            try
-            {
-                if (!File.Exists(FilePath)) return DateTime.MinValue;
-                string json = File.ReadAllText(FilePath);
-                var data = JsonSerializer.Deserialize<StatisticsData>(json, JsonOptions);
-                return data?.LastUpdated ?? DateTime.MinValue;
-            }
-            catch
-            {
-                return DateTime.MinValue;
-            }
-        }
 
         public static StatisticsData Load()
         {
@@ -331,8 +315,7 @@ namespace MapleHomework.Services
         }
 
         public static void RecordItemChange(string characterId, string characterName,
-            string itemSlot, string oldItemName, string newItemName, string changeType,
-            string itemInfoJson = "", DateTime? date = null, string changeSummary = "")
+            string itemSlot, string oldItemName, string newItemName, string changeType, string itemInfoJson = "", DateTime? date = null)
         {
             // 이름이 같더라도 옵션 변경은 기록해야 한다.
             if (oldItemName == newItemName && changeType != "옵션 변경") return;
@@ -358,8 +341,7 @@ namespace MapleHomework.Services
                 OldItemName = oldItemName,
                 NewItemName = newItemName,
                 ChangeType = changeType,
-                ItemInfoJson = itemInfoJson,
-                ChangeSummary = changeSummary
+                ItemInfoJson = itemInfoJson
             });
 
             data.ItemChangeRecords = data.ItemChangeRecords
@@ -511,7 +493,7 @@ namespace MapleHomework.Services
             return $"약 {daysRemaining / 365}년 후";
         }
 
-        public static List<ExpGrowthInfo> GetExperienceGrowth(string characterId, int days = 7, string mode = "day")
+        public static List<ExpGrowthInfo> GetExperienceGrowth(string characterId, int days = 7)
         {
             var data = Load();
             var records = data.GrowthRecords
@@ -519,18 +501,18 @@ namespace MapleHomework.Services
                 .OrderBy(r => r.Date)
                 .ToList();
 
-            // 버킷 단위(일/주/월)로 집계: 각 버킷의 마지막 기록을 사용해 구간 차이를 계산
-            var buckets = records
-                .GroupBy(r => GetBucketKey(r.Date, mode))
-                .Select(g => g.OrderBy(x => x.Date).Last())
-                .OrderBy(r => r.Date)
-                .ToList();
-
             var result = new List<ExpGrowthInfo>();
-            for (int i = 1; i < buckets.Count; i++)
+            for (int i = 1; i < records.Count; i++)
             {
-                var prev = buckets[i - 1];
-                var curr = buckets[i];
+                var prev = records[i - 1];
+                var curr = records[i];
+
+                // % 단위 성장률
+                double growth = curr.ExperienceRate - prev.ExperienceRate;
+                if (curr.Level > prev.Level)
+                {
+                    growth += 100 * (curr.Level - prev.Level);
+                }
 
                 // 실제 경험치 계산 (ExpTable 사용)
                 long prevTotalExp = curr.TotalExp > 0 ? prev.TotalExp : ExpTable.CalculateTotalExp(prev.Level, prev.ExperienceRate);
@@ -539,13 +521,6 @@ namespace MapleHomework.Services
 
                 // 현재 레벨의 필요 경험치
                 ExpTable.RequiredExp.TryGetValue(curr.Level, out long requiredExp);
-
-                // % 단위 성장률 (레벨업 포함)
-                double growth = curr.ExperienceRate - prev.ExperienceRate;
-                if (curr.Level > prev.Level)
-                {
-                    growth += 100 * (curr.Level - prev.Level);
-                }
 
                 result.Add(new ExpGrowthInfo
                 {
@@ -562,8 +537,8 @@ namespace MapleHomework.Services
             }
 
             // GraphRate: 실제 경험치 % (0~1) 기반으로 바로 반영
-            foreach (var item in result)
-            {
+                    foreach (var item in result)
+                    {
                 // 최소 높이 보정(0.05) + 상한 1.0 유지
                 item.GraphRate = Math.Max(0.05, Math.Min(1.0, item.ExperienceRate / 100.0));
             }
@@ -613,7 +588,7 @@ namespace MapleHomework.Services
             return result;
         }
 
-        public static List<CombatPowerGrowthInfo> GetCombatPowerGrowth(string characterId, int days = 30, string mode = "day", bool onlyNewHigh = false)
+        public static List<CombatPowerGrowthInfo> GetCombatPowerGrowth(string characterId, int days = 30)
         {
             var data = Load();
             var records = data.GrowthRecords
@@ -621,35 +596,22 @@ namespace MapleHomework.Services
                 .OrderBy(r => r.Date)
                 .ToList();
 
-            // 버킷 단위 집계 (일/주/월)
-            var buckets = records
-                .GroupBy(r => GetBucketKey(r.Date, mode))
-                .Select(g => g.OrderBy(x => x.Date).Last())
-                .OrderBy(r => r.Date)
-                .ToList();
-
             var result = new List<CombatPowerGrowthInfo>();
-            long runningMax = 0;
-            for (int i = 1; i < buckets.Count; i++)
+            for (int i = 1; i < records.Count; i++)
             {
-                var prev = buckets[i - 1];
-                var curr = buckets[i];
+                var prev = records[i - 1];
+                var curr = records[i];
 
-                long oldPower = onlyNewHigh ? Math.Max(runningMax, prev.CombatPower) : prev.CombatPower;
-                long newPower = curr.CombatPower;
-                if (onlyNewHigh && newPower <= runningMax)
-                    continue;
-
-                result.Add(new CombatPowerGrowthInfo
+                if (curr.CombatPower != prev.CombatPower)
                 {
-                    Date = curr.Date,
-                    OldPower = oldPower,
-                    NewPower = newPower,
-                    Change = newPower - oldPower
-                });
-
-                if (onlyNewHigh)
-                    runningMax = Math.Max(runningMax, newPower);
+                    result.Add(new CombatPowerGrowthInfo
+                    {
+                        Date = curr.Date,
+                        OldPower = prev.CombatPower,
+                        NewPower = curr.CombatPower,
+                        Change = curr.CombatPower - prev.CombatPower
+                    });
+                }
             }
 
             // GraphRate: 전투력 절대값 기준 정규화
@@ -659,30 +621,13 @@ namespace MapleHomework.Services
                 long maxPower = result.Max(x => x.NewPower);
                 long span = Math.Max(1, maxPower - minPower);
 
-                foreach (var item in result)
-                {
+                    foreach (var item in result)
+                    {
                     item.GraphRate = Math.Max(0.05, (double)(item.NewPower - minPower) / span);
                 }
             }
 
             return result;
-        }
-
-        private static DateTime GetBucketKey(DateTime date, string mode)
-        {
-            mode = (mode ?? "day").ToLowerInvariant();
-            return mode switch
-            {
-                "week" => StartOfWeek(date),
-                "month" => new DateTime(date.Year, date.Month, 1),
-                _ => date.Date
-            };
-        }
-
-        private static DateTime StartOfWeek(DateTime dt)
-        {
-            int diff = (7 + (dt.DayOfWeek - DayOfWeek.Monday)) % 7;
-            return dt.Date.AddDays(-diff);
         }
 
         public static List<HexaSkillRecord> GetHexaSkillHistory(string? characterId = null, int limit = 20)

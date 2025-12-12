@@ -18,15 +18,11 @@ namespace MapleHomework.Services
         private static readonly string LogPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "MapleHomework", "api-collect.log");
-        private static readonly string RawPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "MapleHomework", "api-raw");
 
         public MapleApiService()
         {
             _httpClient = new HttpClient();
             EnsureLogDirectory();
-            EnsureRawDirectory();
         }
 
         private static void EnsureLogDirectory()
@@ -48,27 +44,6 @@ namespace MapleHomework.Services
             {
                 EnsureLogDirectory();
                 File.AppendAllText(LogPath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
-            }
-            catch { }
-        }
-
-        private static void EnsureRawDirectory()
-        {
-            try
-            {
-                if (!Directory.Exists(RawPath))
-                    Directory.CreateDirectory(RawPath);
-            }
-            catch { }
-        }
-
-        private static void SaveRaw(string dateStr, string category, object data)
-        {
-            try
-            {
-                EnsureRawDirectory();
-                string file = Path.Combine(RawPath, $"{dateStr}-{category}.json");
-                File.WriteAllText(file, JsonSerializer.Serialize(data));
             }
             catch { }
         }
@@ -239,15 +214,6 @@ namespace MapleHomework.Services
                 .Select(i => DateTime.Now.AddDays(-i))
                 .OrderBy(d => d)
                 .ToList();
-            double totalSteps = Math.Max(1, dateList.Count * 3.0);
-            double step = 0;
-            void ReportStep()
-            {
-                if (progress == null) return;
-                int pct = (int)Math.Min(100, Math.Round(step / totalSteps * 100));
-                progress.Report(Math.Max(0, pct));
-            }
-            ReportStep();
 
             // 1) 경험치/전투력/유니온 (basic/union/stat) 전체 수집
             foreach (var targetDate in dateList)
@@ -258,14 +224,10 @@ namespace MapleHomework.Services
                     var charInfo = await GetCharacterInfoAsync(apiKey, ocid, dateStr);
                     var unionInfo = await GetUnionInfoAsync(apiKey, ocid, dateStr);
                     var statInfo = await GetCharacterStatAsync(apiKey, ocid, dateStr);
-                    SaveRaw(dateStr, "basic", charInfo ?? new { empty = true });
-                    SaveRaw(dateStr, "union", unionInfo ?? new { empty = true });
-                    SaveRaw(dateStr, "stat", statInfo ?? new { empty = true });
 
                     if (charInfo == null)
                     {
                         Log($"[{dateStr}] FAIL charInfo null");
-                        step++; ReportStep();
                         continue;
                     }
 
@@ -295,7 +257,6 @@ namespace MapleHomework.Services
                 {
                     Log($"[{dateStr}] ERR basic/union/stat {ex.Message}");
                 }
-                step++; ReportStep();
             }
 
             // 2) 6차 스킬 전체 수집 (날짜 순차)
@@ -307,7 +268,6 @@ namespace MapleHomework.Services
                 try
                 {
                     var skillInfo = await GetCharacterSkillAsync(apiKey, ocid, dateStr, "6");
-                    SaveRaw(dateStr, "skill6", skillInfo ?? new { empty = true });
                     if (skillInfo?.CharacterSkill != null)
                     {
                         var currentSkills = skillInfo.CharacterSkill
@@ -349,7 +309,6 @@ namespace MapleHomework.Services
                 {
                     Log($"[{dateStr}] ERR skill {ex.Message}");
                 }
-                step++; ReportStep();
             }
 
             // 3) 장비 변경 전체 수집 (날짜 순차)
@@ -361,7 +320,6 @@ namespace MapleHomework.Services
                 try
                 {
                     var itemInfo = await GetItemEquipmentAsync(apiKey, ocid, dateStr);
-                    SaveRaw(dateStr, "item", itemInfo ?? new { empty = true });
                     if (itemInfo?.ItemEquipment != null)
                     {
                         // 슬롯 중복 방지: 같은 슬롯이 여러 번 올 경우 첫 번째만 사용
@@ -392,16 +350,14 @@ namespace MapleHomework.Services
                                             continue;
 
                                         string json = JsonSerializer.Serialize(newItem);
-                                        string summary = BuildChangeSummary(oldItem, newItem, isReplace:true);
-                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json, summary);
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json);
                                         Log($"[{dateStr}] ITEM slot={slot} replace {oldItem.ItemName} -> {newItem.ItemName}");
                                     }
                                     else if (IsItemOptionChanged(oldItem, newItem))
                                     {
                                         if (IsSpiritPendant(newItem.ItemName)) continue;
                                         string json = JsonSerializer.Serialize(newItem);
-                                        string summary = BuildChangeSummary(oldItem, newItem);
-                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json, summary);
+                                        RecordItemChangeForDate(targetDate, characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json);
                                         Log($"[{dateStr}] ITEM slot={slot} option-change {newItem.ItemName}");
                                     }
                                 }
@@ -412,8 +368,7 @@ namespace MapleHomework.Services
                                     if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(newItem.ItemName ?? ""))
                                         continue;
                                     if (IsSpiritPendant(newItem.ItemName)) continue;
-                                    string summary = BuildChangeSummary(null, newItem, isNew:true);
-                                    RecordItemChangeForDate(targetDate, characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json, summary);
+                                    RecordItemChangeForDate(targetDate, characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json);
                                     Log($"[{dateStr}] ITEM slot={slot} equip {newItem.ItemName}");
                                 }
                             }
@@ -430,7 +385,6 @@ namespace MapleHomework.Services
                 {
                     Log($"[{dateStr}] ITEM error {ex.Message}");
                 }
-                step++; ReportStep();
             }
 
             result.Success = recordsAdded > 0;
@@ -470,93 +424,6 @@ namespace MapleHomework.Services
             if (!AreOptionsEqual(oldItem.ItemStarforceOption, newItem.ItemStarforceOption)) return true;
 
             return false;
-        }
-
-        private string BuildChangeSummary(ItemEquipmentInfo? oldItem, ItemEquipmentInfo newItem, bool isNew = false, bool isReplace = false)
-        {
-            var parts = new List<string>();
-
-            // 신규 장착/교체
-            if (isNew)
-            {
-                parts.Add("신규 장착");
-            }
-            else if (isReplace && oldItem != null && !string.IsNullOrEmpty(oldItem.ItemName) && !string.IsNullOrEmpty(newItem.ItemName) && oldItem.ItemName != newItem.ItemName)
-            {
-                parts.Add($"{oldItem.ItemName} → {newItem.ItemName}");
-            }
-
-            // 스타포스
-            int oldStar = ParseIntSafe(oldItem?.Starforce);
-            int newStar = ParseIntSafe(newItem.Starforce);
-            if (oldStar != newStar)
-            {
-                parts.Add($"스타포스 {oldStar}성 → {newStar}성");
-            }
-
-            // 잠재능력
-            if (oldItem == null || oldItem.PotentialOptionGrade != newItem.PotentialOptionGrade ||
-                oldItem.PotentialOption1 != newItem.PotentialOption1 ||
-                oldItem.PotentialOption2 != newItem.PotentialOption2 ||
-                oldItem.PotentialOption3 != newItem.PotentialOption3)
-            {
-                if (!string.IsNullOrEmpty(newItem.PotentialOptionGrade))
-                    parts.Add($"잠재 {newItem.PotentialOptionGrade}");
-                else if (oldItem != null && !string.IsNullOrEmpty(oldItem.PotentialOptionGrade))
-                    parts.Add("잠재 변경");
-            }
-
-            // 에디셔널 잠재
-            if (oldItem == null || oldItem.AdditionalPotentialOptionGrade != newItem.AdditionalPotentialOptionGrade ||
-                oldItem.AdditionalPotentialOption1 != newItem.AdditionalPotentialOption1 ||
-                oldItem.AdditionalPotentialOption2 != newItem.AdditionalPotentialOption2 ||
-                oldItem.AdditionalPotentialOption3 != newItem.AdditionalPotentialOption3)
-            {
-                if (!string.IsNullOrEmpty(newItem.AdditionalPotentialOptionGrade))
-                    parts.Add($"에디셔널 {newItem.AdditionalPotentialOptionGrade}");
-                else if (oldItem != null && !string.IsNullOrEmpty(oldItem.AdditionalPotentialOptionGrade))
-                    parts.Add("에디셔널 변경");
-            }
-
-            // 추가옵션
-            if (oldItem == null || !AreOptionsEqual(oldItem.ItemAddOption, newItem.ItemAddOption))
-            {
-                parts.Add("추가옵션 변경");
-            }
-
-            // 스타포스 옵션
-            if (oldItem == null || !AreOptionsEqual(oldItem.ItemStarforceOption, newItem.ItemStarforceOption))
-            {
-                if (!parts.Contains($"스타포스 {oldStar}성 → {newStar}성")) // avoid duplicate
-                    parts.Add("스타포스 옵션 변경");
-            }
-
-            // 주문서 옵션 (etc)
-            if (oldItem == null || !AreOptionsEqual(oldItem.ItemEtcOption, newItem.ItemEtcOption))
-            {
-                parts.Add("주문서 옵션 변경");
-            }
-
-            // 소울
-            if (oldItem == null || oldItem.SoulOption != newItem.SoulOption)
-            {
-                if (!string.IsNullOrEmpty(newItem.SoulOption))
-                    parts.Add("소울 변경");
-            }
-
-            // fallback
-            if (parts.Count == 0)
-                parts.Add("옵션 변경");
-
-            return string.Join(" / ", parts);
-        }
-
-        private static int ParseIntSafe(string? s)
-        {
-            if (string.IsNullOrWhiteSpace(s)) return 0;
-            var cleaned = s.Replace(",", "").Trim();
-            return int.TryParse(cleaned, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var v)
-                ? v : 0;
         }
 
         private static HashSet<string> CollectPresetNames(ItemEquipmentResponse info)
@@ -614,9 +481,9 @@ namespace MapleHomework.Services
             StatisticsService.RecordHexaSkillChange(characterId, characterName, skillName, oldLevel, newLevel, icon, date);
         }
 
-        private void RecordItemChangeForDate(DateTime date, string characterId, string characterName, string slot, string oldItem, string newItem, string type, string json, string summary)
+        private void RecordItemChangeForDate(DateTime date, string characterId, string characterName, string slot, string oldItem, string newItem, string type, string json)
         {
-            StatisticsService.RecordItemChange(characterId, characterName, slot, oldItem, newItem, type, json, date, summary);
+            StatisticsService.RecordItemChange(characterId, characterName, slot, oldItem, newItem, type, json, date);
         }
     }
 

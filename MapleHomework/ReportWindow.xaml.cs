@@ -9,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using WpfButton = System.Windows.Controls.Button;
 using MapleHomework.Services;
 using MapleHomework.ViewModels;
 using MapleHomework.Models;
@@ -68,7 +67,6 @@ namespace MapleHomework
         private bool _isInitializing;
         private Popup? _itemTooltipPopup;
         private DateTime? _collectStartTime;
-        private string _expRangeMode = "day";
 
         private class HexaCoreItem
         {
@@ -112,92 +110,17 @@ namespace MapleHomework
 
             InitializeSelectors();
 
-            UpdateRangeButtonsVisual();
-
             // 팝업 위치 갱신: 창 이동/크기 변경 시 따라가도록
             this.LocationChanged += (_, __) => UpdatePopupPosition();
             this.SizeChanged += (_, __) => UpdatePopupPosition();
 
             _isInitializing = false; // 초기화 완료 플래그 해제
-            _ = RefreshIfStaleAndLoadAsync(); // 자동 최신화 후 로드
+            LoadDashboard(); // 초기 리포트 로드
         }
 
         private void OnThemeChanged()
         {
             ApplyThemeResources();
-        }
-
-        private void SetExpRange(string mode)
-        {
-            _expRangeMode = mode;
-            UpdateRangeButtonsVisual();
-            LoadGrowthReport();
-        }
-
-        private void UpdateRangeButtonsVisual()
-        {
-            void Mark(WpfButton? btn, bool active)
-            {
-                if (btn == null) return;
-                btn.FontWeight = active ? FontWeights.Bold : FontWeights.Normal;
-                btn.Opacity = active ? 1.0 : 0.7;
-            }
-
-            Mark(ExpDayBtn, _expRangeMode == "day");
-            Mark(ExpWeekBtn, _expRangeMode == "week");
-            Mark(ExpMonthBtn, _expRangeMode == "month");
-        }
-
-        private void ExpRangeButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is WpfButton btn && btn.Tag is string mode)
-            {
-                SetExpRange(mode);
-            }
-        }
-
-        private void PowerRangeButton_Click(object sender, RoutedEventArgs e)
-        {
-            // 전투력은 단위 전환 기능을 사용하지 않음 (이벤트 미사용)
-        }
-
-        private async Task RefreshIfStaleAndLoadAsync()
-        {
-            var last = StatisticsService.GetLastUpdated();
-            bool needRefresh = (DateTime.Now - last) > TimeSpan.FromHours(1) || last.Date != DateTime.Today;
-
-            if (!needRefresh)
-            {
-                LoadDashboard();
-                return;
-            }
-
-            string? characterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
-            var character = _viewModel.Characters.FirstOrDefault(c => c.Id == characterId);
-            var apiKey = ConfigManager.Load().ApiKey;
-            if (character == null || string.IsNullOrEmpty(character.Ocid) || string.IsNullOrEmpty(apiKey))
-            {
-                LoadDashboard();
-                return;
-            }
-
-            try
-            {
-                CollectProgressBar.Visibility = Visibility.Visible;
-                CollectProgressBar.IsIndeterminate = true;
-                CollectStatusText.Text = "자동 갱신 중...";
-                await _apiService.CollectGrowthHistoryAsync(apiKey, character.Ocid, character.Id, character.Nickname, 1, null);
-            }
-            catch
-            {
-                // 무시하고 진행
-            }
-            finally
-            {
-                CollectProgressBar.Visibility = Visibility.Collapsed;
-                CollectStatusText.Text = string.Empty;
-                LoadDashboard();
-            }
         }
 
         protected override void OnClosed(EventArgs e)
@@ -312,7 +235,7 @@ namespace MapleHomework
             }
 
             // 경험치
-            var expGrowth = StatisticsService.GetExperienceGrowth(characterId, days, _expRangeMode);
+            var expGrowth = StatisticsService.GetExperienceGrowth(characterId, days);
             ExpGrowthList.ItemsSource = expGrowth;
             
             // 최근 30일 일간 평균 경험치 (경험치 + %)
@@ -332,7 +255,7 @@ namespace MapleHomework
             EstimatedLevelUpText.Text = StatisticsService.GetEstimatedLevelUpDateFormatted(characterId);
             
             // 전투력
-            var combatPowerGrowth = StatisticsService.GetCombatPowerGrowth(characterId, days, "day", onlyNewHigh: true);
+            var combatPowerGrowth = StatisticsService.GetCombatPowerGrowth(characterId, days);
             CombatPowerList.ItemsSource = combatPowerGrowth;
             NoCombatPowerDataText.Visibility = combatPowerGrowth.Any() ? Visibility.Collapsed : Visibility.Visible;
 
@@ -782,23 +705,11 @@ namespace MapleHomework
         #region Scroll Handling
         private void InnerScroll_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            // 우선 해당 ScrollViewer가 스크롤 가능하면 자신을 스크롤,
-            // 스크롤할 높이가 없으면 부모(MainScrollViewer)에 위임
-            if (sender is ScrollViewer sv)
-            {
-                if (sv.ScrollableHeight > 0)
-                {
-                    sv.ScrollToVerticalOffset(sv.VerticalOffset - e.Delta);
-                    e.Handled = true;
-                    return;
-                }
-            }
+            if (MainScrollViewer == null) return;
 
-            if (MainScrollViewer != null)
-            {
-                MainScrollViewer.ScrollToVerticalOffset(MainScrollViewer.VerticalOffset - e.Delta);
-                e.Handled = true;
-            }
+            e.Handled = true;
+            double offset = MainScrollViewer.VerticalOffset - e.Delta;
+            MainScrollViewer.ScrollToVerticalOffset(offset);
         }
         #endregion
     }
