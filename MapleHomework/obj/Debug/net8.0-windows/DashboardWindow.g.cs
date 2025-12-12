@@ -58,7 +58,7 @@ namespace MapleHomework {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MapleHomework;V1.0.0.0;component/dashboardwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MapleHomework;component/dashboardwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\DashboardWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
