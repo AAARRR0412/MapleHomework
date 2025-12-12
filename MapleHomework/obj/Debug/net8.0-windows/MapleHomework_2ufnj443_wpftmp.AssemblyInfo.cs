@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MapleHomework")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d9b6c8cc6e232f9bb0606ec0c023819029b535c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+47efc5a1d1a1748db3846ceac774cb1a791077a9")]
 [assembly: System.Reflection.AssemblyProductAttribute("MapleHomework")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MapleHomework")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
