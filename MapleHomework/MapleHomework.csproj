@@ -7,6 +7,21 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
+		<!-- 배포 설정 -->
+		<ApplicationIcon>icon.ico</ApplicationIcon>
+		<AssemblyName>MapleHomework</AssemblyName>
+		<RootNamespace>MapleHomework</RootNamespace>
+		<!-- 버전 정보 (필요시 수정) -->
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<!-- 단일 exe 배포 설정 -->
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>true</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,23 +45,13 @@
 	  <Resource Include="Fonts\Pretendard-SemiBold.ttf" />
 	</ItemGroup>
 
-	<!-- CharaSimResource 이미지 리소스 (출력 폴더에 복사) -->
+	<!-- CharaSimResource 이미지 리소스 (임베디드 리소스로 exe에 포함) -->
 	<ItemGroup>
-	  <Content Include="CharaSimResource\Resources\**\*.png">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="CharaSimResource\Resources\**\*.bmp">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="CharaSimResource\Resources\**\*.ttf">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+		<EmbeddedResource Include="CharaSimResource\Resources\**\*.png" />
+		<EmbeddedResource Include="CharaSimResource\Resources\**\*.bmp" />
+		<EmbeddedResource Include="CharaSimResource\Resources\**\*.ttf" />
   <Resource Include="Data\*.png" />
       <Resource Include="icon.ico" />
-      <!-- icon.ico를 출력 디렉토리에도 복사 (트레이 아이콘용) -->
-      <Content Include="icon.ico">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
 	</ItemGroup>
 
 </Project>

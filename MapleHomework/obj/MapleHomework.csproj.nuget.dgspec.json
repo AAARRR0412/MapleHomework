@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MapleHomework.csproj": {}
+    "C:\\AR\\work\\MapleHomework\\MapleHomework\\MapleHomework.csproj": {}
   },
   "projects": {
-    "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MapleHomework.csproj": {
+    "C:\\AR\\work\\MapleHomework\\MapleHomework\\MapleHomework.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MapleHomework.csproj",
+        "projectUniqueName": "C:\\AR\\work\\MapleHomework\\MapleHomework\\MapleHomework.csproj",
         "projectName": "MapleHomework",
-        "projectPath": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\MapleHomework.csproj",
+        "projectPath": "C:\\AR\\work\\MapleHomework\\MapleHomework\\MapleHomework.csproj",
         "packagesPath": "C:\\Users\\qkr94\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\qkr94\\source\\repos\\MapleHomework\\MapleHomework\\obj\\",
+        "outputPath": "C:\\AR\\work\\MapleHomework\\MapleHomework\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,6 +50,12 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
+            "Microsoft.NET.ILLink.Tasks": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.22, )",
+              "autoReferenced": true
+            },
             "WPF-UI": {
               "target": "Package",
               "version": "[3.0.5, )"
@@ -76,6 +82,10 @@
               "version": "[8.0.22, 8.0.22]"
             },
             {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
               "name": "Microsoft.NETCore.App.Host.win-x64",
               "version": "[8.0.22, 8.0.22]"
             },
@@ -84,7 +94,15 @@
               "version": "[8.0.22, 8.0.22]"
             },
             {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
               "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.22, 8.0.22]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
               "version": "[8.0.22, 8.0.22]"
             }
           ],
@@ -97,6 +115,11 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }

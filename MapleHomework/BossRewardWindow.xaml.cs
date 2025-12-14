@@ -86,6 +86,7 @@ namespace MapleHomework
             
             ApplyThemeResources();
             _viewModel.ThemeChanged += OnThemeChanged;
+            _viewModel.DataChanged += OnDataChanged;
             
             CmbCharacter.ItemsSource = appData.Characters;
             if (appData.Characters.Any())
@@ -99,48 +100,43 @@ namespace MapleHomework
 
         private void OnThemeChanged()
         {
-            ApplyThemeResources();
+            Dispatcher.Invoke(() => ApplyThemeResources());
+        }
+
+        private void OnDataChanged()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                // 캐릭터 목록 새로고침
+                CmbCharacter.ItemsSource = null;
+                CmbCharacter.ItemsSource = _appData.Characters;
+                if (_appData.Characters.Any())
+                {
+                    if (_selectedCharacter != null && _appData.Characters.Contains(_selectedCharacter))
+                        CmbCharacter.SelectedItem = _selectedCharacter;
+                    else
+                        CmbCharacter.SelectedIndex = 0;
+                }
+                TxtTotalCharacters.Text = $"총 {_appData.Characters.Count}개 캐릭터";
+                RefreshData();
+            });
         }
 
         protected override void OnClosed(System.EventArgs e)
         {
             _viewModel.ThemeChanged -= OnThemeChanged;
+            _viewModel.DataChanged -= OnDataChanged;
             base.OnClosed(e);
         }
         
         /// <summary>
         /// 테마 리소스 적용 (다크/라이트 모드)
+        /// 새 디자인은 DynamicResource를 사용하므로 App.xaml의 리소스만 업데이트하면 자동 적용됨
         /// </summary>
         public void ApplyThemeResources()
         {
-            var settings = ConfigManager.Load();
-            bool isDark = ThemeService.ShouldUseDarkTheme(settings);
-            
-            if (isDark)
-            {
-                // 다크 모드
-                MainGrid.Background = new SolidColorBrush(Color.FromRgb(61, 74, 92));
-                TitleBarBorder.Background = new SolidColorBrush(Color.FromRgb(61, 74, 92));
-                LeftPanelBorder.Background = new SolidColorBrush(Color.FromRgb(74, 90, 110));
-                CharacterSelectBorder.Background = new SolidColorBrush(Color.FromRgb(74, 90, 110));
-                WeeklyRewardBorder.Background = new SolidColorBrush(Color.FromRgb(74, 90, 110));
-                MonthlyRewardBorder.Background = new SolidColorBrush(Color.FromRgb(74, 90, 110));
-                CharacterSelectLabel.Foreground = new SolidColorBrush(Color.FromRgb(176, 190, 197));
-            }
-            else
-            {
-                // 라이트 모드
-                MainGrid.Background = new SolidColorBrush(Color.FromRgb(245, 247, 250));
-                TitleBarBorder.Background = new SolidColorBrush(Color.FromRgb(90, 103, 120));
-                // 카드 톤 통일 (밝은 그레이/화이트 믹스)
-                var lightPanel = Color.FromRgb(240, 244, 249);   // 좌측 리스트
-                var lightCard = Colors.White;                    // 우측 카드
-                LeftPanelBorder.Background = new SolidColorBrush(lightPanel);
-                CharacterSelectBorder.Background = new SolidColorBrush(lightCard);
-                WeeklyRewardBorder.Background = new SolidColorBrush(lightCard);
-                MonthlyRewardBorder.Background = new SolidColorBrush(lightCard);
-                CharacterSelectLabel.Foreground = new SolidColorBrush(Color.FromRgb(80, 90, 100));
-            }
+            // DynamicResource를 사용하므로 별도의 수동 적용 불필요
+            // App.xaml의 테마 리소스가 자동으로 적용됨
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

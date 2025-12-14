@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Title="Maple Scheduler"
         Icon="icon.ico"
-        Height="950" Width="560"
+        Height="950" Width="820"
         WindowStyle="None"
         AllowsTransparency="True" 
         Background="Transparent"
@@ -94,7 +94,9 @@
         </EventTrigger>
     </Window.Triggers>
 
-    <Border CornerRadius="12" ClipToBounds="True" Margin="10">
+    <Grid>
+        <!-- 메인 컨텐츠 -->
+        <Border ClipToBounds="True" Margin="10" CornerRadius="12">
         <Border.Effect>
             <DropShadowEffect BlurRadius="16" ShadowDepth="2" Opacity="0.3" Color="Black"/>
         </Border.Effect>
@@ -103,13 +105,33 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- 메이플 스타일 타이틀바 (다크 슬레이트) -->
-            <Border Grid.Row="0" Background="#3D4A5C" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Border Grid.Row="0" Background="#3D4A5C" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" CornerRadius="12,12,0,0">
                 <Grid>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <!-- 사이드바 토글 버튼 -->
+                            <Button Command="{Binding ToggleSidebarCommand}" Width="40" Height="32" Padding="0"
+                                    Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="전체 캐릭터 현황"
+                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="8,0,0,0">
+                                <ui:SymbolIcon FontSize="18" Foreground="#5AC8FA">
+                                    <ui:SymbolIcon.Style>
+                                        <Style TargetType="ui:SymbolIcon">
+                                            <Setter Property="Symbol" Value="ChevronLeft24"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSidebarOpen}" Value="True">
+                                                    <Setter Property="Symbol" Value="ChevronRight24"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ui:SymbolIcon.Style>
+                                </ui:SymbolIcon>
+                            </Button>
                     <TextBlock Text="MAPLE SCHEDULER" Foreground="White" FontWeight="Bold" FontSize="13" 
-                               VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+                                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,4,0">
                         <Button Click="MinimizeButton_Click" Width="46" Height="32" Padding="0"
                                 Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="최소화"
@@ -147,7 +169,7 @@
             <!-- 메인 컨텐츠 영역 -->
             <Border Grid.Row="1" Background="{Binding Surface}">
                 <Grid>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,4,0" Margin="0,0,0,44">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,4,0">
                         <StackPanel Margin="16,12,16,16">
 
                             <!-- 캐릭터 정보 카드 + 원형 진행률 게이지 -->
@@ -907,100 +929,7 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <!-- 하단 푸터 -->
-                    <Border VerticalAlignment="Bottom" Background="#3D4A5C" Padding="12,10">
-                        <Grid>
-                            <!-- 편집 모드일 때: 왼쪽에 취소/저장 버튼 -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center"
-                                        Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}">
-                                <Button Command="{Binding CancelEditCommand}" Height="32" Padding="16,0"
-                                        Background="#FF6B6B" Foreground="White" BorderThickness="0" 
-                                        Cursor="Hand" Margin="0,0,8,0">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#FF5252"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                    <StackPanel Orientation="Horizontal">
-                                        <ui:SymbolIcon Symbol="Dismiss24" FontSize="14" Foreground="White" Margin="0,0,6,0"/>
-                                        <TextBlock Text="취소" FontWeight="SemiBold" FontSize="13"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding SaveEditCommand}" Height="32" Padding="16,0"
-                                        Background="#4CD964" Foreground="White" BorderThickness="0" Cursor="Hand">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#34C759"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                    <StackPanel Orientation="Horizontal">
-                                        <ui:SymbolIcon Symbol="Checkmark24" FontSize="14" Foreground="White" Margin="0,0,6,0"/>
-                                        <TextBlock Text="저장" FontWeight="SemiBold" FontSize="13"/>
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
-                            
-                            <!-- 오른쪽: 기존 버튼들 -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <Button Command="{Binding OpenReportCommand}" Width="36" Height="36" Padding="0"
-                                        Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="통계 리포트"
-                                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                    <ui:SymbolIcon Symbol="DataHistogram24" FontSize="18" Foreground="#B0BEC5" Margin="0"/>
-                                </Button>
-                            <Button Command="{Binding OpenDashboardCommand}" Width="36" Height="36" Padding="0"
-                                    Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="전체 현황"
-                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                <ui:SymbolIcon Symbol="DataBarVertical24" FontSize="18" Foreground="#B0BEC5" Margin="0"/>
-                            </Button>
-                                <Button Command="{Binding OpenBossRewardCommand}" Width="36" Height="36" Padding="0"
-                                        Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="보스 수익 계산기"
-                                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                    <ui:SymbolIcon Symbol="Money24" FontSize="18" Foreground="#B0BEC5" Margin="0"/>
-                                </Button>
-                            <Button Command="{Binding ToggleEditModeCommand}" Width="36" Height="36" Padding="0"
-                                    Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="편집 모드"
-                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                <ui:SymbolIcon Symbol="Edit24" FontSize="18" Foreground="#B0BEC5" Margin="0"/>
-                            </Button>
-                            <Button Command="{Binding ToggleThemeCommand}" Width="36" Height="36" Padding="0"
-                                    Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="테마 전환"
-                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                <ui:SymbolIcon Symbol="{Binding ThemeIcon}" FontSize="18" Foreground="#B0BEC5" Margin="0"/>
-                            </Button>
-                            <Button Click="SettingsButton_Click" Width="36" Height="36" Padding="0" 
-                                    Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="API 설정"
-                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-                                <ui:SymbolIcon Symbol="Settings24" FontSize="18" Foreground="#B0BEC5" Margin="0"/>
-                            </Button>
-                        </StackPanel>
-                        </Grid>
-                    </Border>
+                    <!-- 기존 하단바 삭제됨 - 새 하단바는 Grid.Row="2"에 있음 -->
                 </Grid>
             </Border>
 
@@ -1195,6 +1124,285 @@
                     </Grid>
                 </Border>
             </Border>
+
+            <!-- 하단바 -->
+            <Border Grid.Row="2" Background="#2D3748" CornerRadius="0,0,12,12" Padding="12,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- 왼쪽: 버전 정보 -->
+                    <TextBlock Grid.Column="0" Text="v1.0.0" Foreground="#64748B" FontSize="11" 
+                               VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    
+                    <!-- 오른쪽: 다크/라이트 모드 토글 (ViewModel 바인딩) -->
+                    <Button Grid.Column="2" Command="{Binding ToggleThemeCommand}" 
+                            Width="36" Height="36" Padding="0" Margin="0,0,12,0"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
+                            ToolTip="다크/라이트 모드 전환">
+                        <ui:SymbolIcon Symbol="{Binding ThemeIcon}" FontSize="18" Foreground="#94A3B8"/>
+                    </Button>
+                    
+                    <!-- 메뉴 버튼 -->
+                    <Button x:Name="BottomMenuButton" Grid.Column="3" Click="BottomMenuButton_Click" 
+                            Cursor="Hand" Padding="14,8">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Bd" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                        <GradientStop Color="#5AC8FA" Offset="0"/>
+                                                        <GradientStop Color="#4ECDC4" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Opacity" Value="0.9"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Navigation24" FontSize="16" Foreground="White" Margin="0,0,8,0"/>
+                            <TextBlock Text="메뉴" Foreground="White" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ui:SymbolIcon Symbol="ChevronUp24" FontSize="14" Foreground="White" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
         </Grid>
     </Border>
+    
+    <!-- 드롭업 메뉴 팝업 -->
+    <Popup x:Name="BottomMenuPopup" Placement="Top" PlacementTarget="{Binding ElementName=BottomMenuButton}"
+           StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
+        <Border Margin="8,0,8,8" CornerRadius="16" Padding="8"
+                BorderBrush="#3D4A5C" BorderThickness="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#2D3748" Offset="0"/>
+                    <GradientStop Color="#1A202C" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.4" Color="Black"/>
+            </Border.Effect>
+            <StackPanel Width="260">
+                <!-- 통계 리포트 -->
+                <Button Click="OpenStatisticsReport_Click" Cursor="Hand" Margin="0,0,0,4">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" CornerRadius="12" Padding="12,10" Background="Transparent">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#374151"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,12,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#7C3AED" Offset="0"/>
+                                    <GradientStop Color="#A855F7" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ui:SymbolIcon Symbol="DataHistogram24" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="통계 리포트" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock Text="성장 기록 및 장비 변경 내역" Foreground="#94A3B8" FontSize="10" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                
+                <!-- 전체 캐릭터 현황 (DashboardWindow) -->
+                <Button Click="OpenDashboard_Click" Cursor="Hand" Margin="0,0,0,4">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" CornerRadius="12" Padding="12,10" Background="Transparent">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#374151"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,12,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#5AC8FA" Offset="0"/>
+                                    <GradientStop Color="#818CF8" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ui:SymbolIcon Symbol="DataBarVertical24" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="전체 캐릭터 현황" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock Text="모든 캐릭터 숙제 진행도" Foreground="#94A3B8" FontSize="10" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                
+                <!-- 보스 수익 계산기 -->
+                <Button Click="OpenBossCalculator_Click" Cursor="Hand" Margin="0,0,0,4">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" CornerRadius="12" Padding="12,10" Background="Transparent">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#374151"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,12,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#F59E0B" Offset="0"/>
+                                    <GradientStop Color="#FBBF24" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ui:SymbolIcon Symbol="Calculator24" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="보스 수익 계산기" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock Text="주간 보스 결정석 수익 계산" Foreground="#94A3B8" FontSize="10" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                
+                <!-- 캐릭터 검색 -->
+                <Button Click="OpenCharacterSearch_Click" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" CornerRadius="12" Padding="12,10" Background="Transparent">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#374151"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,12,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#0EA5E9" Offset="0"/>
+                                    <GradientStop Color="#6366F1" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ui:SymbolIcon Symbol="PersonSearch24" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="캐릭터 검색" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock Text="다른 캐릭터 장비/코어 조회" Foreground="#94A3B8" FontSize="10" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+                
+                <!-- 구분선 -->
+                <Border Height="1" Background="#374151" Margin="12,8"/>
+                
+                <!-- 설정 -->
+                <Button Click="OpenSettings_Click" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" CornerRadius="12" Padding="12,10" Background="Transparent">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#374151"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,12,0" Background="#475569">
+                            <ui:SymbolIcon Symbol="Settings24" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="설정" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            <TextBlock Text="API 키 및 앱 설정" Foreground="#94A3B8" FontSize="10" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Popup>
+    </Grid>
 </Window>

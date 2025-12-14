@@ -11,7 +11,14 @@ namespace MapleHomework.Services
     /// </summary>
     public static class CharacterRepository
     {
-        private const string FilePath = "characters_data.json";
+        private static readonly string DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
+        private static readonly string FilePath = Path.Combine(DataFolder, "characters_data.json");
+        
+        static CharacterRepository()
+        {
+            if (!Directory.Exists(DataFolder))
+                Directory.CreateDirectory(DataFolder);
+        }
         private const int MaxCharacters = 10;
 
         /// <summary>

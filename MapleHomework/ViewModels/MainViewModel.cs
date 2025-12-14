@@ -44,12 +44,23 @@ namespace MapleHomework.ViewModels
         // 테마 변경 이벤트 (다른 윈도우들에게 알림)
         public event Action? ThemeChanged;
         
+        // 데이터 변경 이벤트 (캐릭터 추가/삭제, 즐겨찾기 변경 등)
+        public event Action? DataChanged;
+        
         /// <summary>
         /// 테마 변경 이벤트 발생
         /// </summary>
         public void NotifyThemeChanged()
         {
             ThemeChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// 데이터 변경 이벤트 발생
+        /// </summary>
+        public void NotifyDataChanged()
+        {
+            DataChanged?.Invoke();
         }
 
         // 캐릭터 리스트
@@ -87,6 +98,16 @@ namespace MapleHomework.ViewModels
             get => _isCharacterSelectorOpen;
             set { _isCharacterSelectorOpen = value; OnPropertyChanged(); }
         }
+
+        // 사이드바 표시 여부
+        private bool _isSidebarOpen = false;
+        public bool IsSidebarOpen
+        {
+            get => _isSidebarOpen;
+            set { _isSidebarOpen = value; OnPropertyChanged(); }
+        }
+
+        public ICommand ToggleSidebarCommand => new RelayCommand(_ => IsSidebarOpen = !IsSidebarOpen);
 
         // 캐릭터 추가 UI 상태
         private bool _isAddingCharacter = false;
@@ -377,6 +398,7 @@ namespace MapleHomework.ViewModels
                         SelectedCharacter = newChar;
                         CharacterRepository.Save(_appData);
                         OnPropertyChanged(nameof(CanAddCharacter));
+                        NotifyDataChanged(); // 다른 창에 알림
                     }
                     IsAddingCharacter = false;
                     NewCharacterName = "";
@@ -401,6 +423,7 @@ namespace MapleHomework.ViewModels
                     }
                     CharacterRepository.Save(_appData);
                     OnPropertyChanged(nameof(CanAddCharacter));
+                    NotifyDataChanged(); // 다른 창에 알림
                 }
             });
 
@@ -474,6 +497,7 @@ namespace MapleHomework.ViewModels
                     SelectedCharacter.IsDailyFavorite = !SelectedCharacter.IsDailyFavorite;
                     SaveData();
                     OnPropertyChanged(nameof(IsDailyFavorite));
+                    NotifyDataChanged();
                 }
             });
 
@@ -484,6 +508,7 @@ namespace MapleHomework.ViewModels
                     SelectedCharacter.IsWeeklyFavorite = !SelectedCharacter.IsWeeklyFavorite;
                     SaveData();
                     OnPropertyChanged(nameof(IsWeeklyFavorite));
+                    NotifyDataChanged();
                 }
             });
 
@@ -494,6 +519,7 @@ namespace MapleHomework.ViewModels
                     SelectedCharacter.IsBossFavorite = !SelectedCharacter.IsBossFavorite;
                     SaveData();
                     OnPropertyChanged(nameof(IsBossFavorite));
+                    NotifyDataChanged();
                 }
             });
 
@@ -504,6 +530,7 @@ namespace MapleHomework.ViewModels
                     SelectedCharacter.IsMonthlyFavorite = !SelectedCharacter.IsMonthlyFavorite;
                     SaveData();
                     OnPropertyChanged(nameof(IsMonthlyFavorite));
+                    NotifyDataChanged();
                 }
             });
 
@@ -662,12 +689,12 @@ namespace MapleHomework.ViewModels
 
         private async Task CheckAndUpdateCharacterInfo(CharacterProfile character)
         {
-            if (string.IsNullOrEmpty(_appData.ApiKey) || string.IsNullOrEmpty(character.Nickname)) return;
+            if (string.IsNullOrEmpty(character.Nickname)) return;
             if (character.Nickname == "새 캐릭터") return;
 
             if ((DateTime.Now - character.LastUpdatedTime).TotalMinutes < 10) return;
 
-            await LoadCharacterDataFromApi(_appData.ApiKey, character.Nickname);
+            await LoadCharacterDataFromApi(character.Nickname);
         }
 
         private bool FilterTask(object obj)
@@ -736,16 +763,16 @@ namespace MapleHomework.ViewModels
             }
         }
 
-        public async Task LoadCharacterDataFromApi(string apiKey, string nickname)
+        public async Task LoadCharacterDataFromApi(string nickname)
         {
-            if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(nickname)) return;
+            if (string.IsNullOrEmpty(nickname)) return;
             if (SelectedCharacter == null) return;
 
             string? ocid = SelectedCharacter.Ocid;
             
             if (string.IsNullOrEmpty(ocid))
             {
-                ocid = await _apiService.GetOcidAsync(apiKey, nickname);
+                ocid = await _apiService.GetOcidAsync(nickname);
             }
 
             if (string.IsNullOrEmpty(ocid)) 
@@ -757,7 +784,7 @@ namespace MapleHomework.ViewModels
             try
             {
                 // 1. 기본 정보 (이미지, 레벨 등)
-            var basicInfo = await _apiService.GetCharacterInfoAsync(apiKey, ocid);
+            var basicInfo = await _apiService.GetCharacterInfoAsync(ocid);
             if (basicInfo != null)
             {
                 SelectedCharacter.Nickname = basicInfo.CharacterName ?? "알 수 없음";
@@ -778,12 +805,12 @@ namespace MapleHomework.ViewModels
                     
                     _characterLevelInt = SelectedCharacter.Level;
                     ApplyLevelRestrictions(basicInfo.CharacterLevel);
-                    await LoadSymbolDataAndAutoDisable(apiKey, ocid);
+                    await LoadSymbolDataAndAutoDisable(ocid);
                 }
                 }
 
                 // 2. 유니온 정보 (GetUnionInfoAsync 사용)
-                var unionInfo = await _apiService.GetUnionInfoAsync(apiKey, ocid);
+                var unionInfo = await _apiService.GetUnionInfoAsync(ocid);
                 if (unionInfo != null)
                 {
                     SelectedCharacter.UnionLevel = unionInfo.UnionLevel;
@@ -791,7 +818,7 @@ namespace MapleHomework.ViewModels
                 }
 
                 // 3. 전투력 정보
-                var statInfo = await _apiService.GetCharacterStatAsync(apiKey, ocid);
+                var statInfo = await _apiService.GetCharacterStatAsync(ocid);
                 if (statInfo?.FinalStat != null)
                 {
                     // 전투력 정보는 현재 사용되지 않으므로 제거
@@ -887,9 +914,9 @@ namespace MapleHomework.ViewModels
         }
         */
 
-        public async Task LoadCharacterData(string apiKey, string nickname)
+        public async Task LoadCharacterData(string nickname)
         {
-            await LoadCharacterDataFromApi(apiKey, nickname);
+            await LoadCharacterDataFromApi(nickname);
         }
 
         private int _characterLevelInt = 0;
@@ -935,9 +962,9 @@ namespace MapleHomework.ViewModels
         private const int ArcaneMaxLevel = 20;
         private const int AuthenticMaxLevel = 11;
 
-        private async Task LoadSymbolDataAndAutoDisable(string apiKey, string ocid)
+        private async Task LoadSymbolDataAndAutoDisable(string ocid)
         {
-            var symbolData = await _apiService.GetSymbolEquipmentAsync(apiKey, ocid);
+            var symbolData = await _apiService.GetSymbolEquipmentAsync(ocid);
             if (symbolData?.Symbol == null) return;
 
             foreach (var symbol in symbolData.Symbol)
@@ -1003,14 +1030,44 @@ namespace MapleHomework.ViewModels
         }
 
         /// <summary>
-        /// API 키와 자동 시작 설정을 ViewModel의 AppData와 함께 동기화
+        /// 자동 시작 설정을 ViewModel의 AppData와 함께 동기화
         /// (설정 창에서 저장 시 in-memory 데이터가 덮어써지는 문제 방지)
         /// </summary>
-        public void UpdateApiKeyAndAutoStart(string apiKey, bool autoStartEnabled)
+        public void UpdateAutoStart(bool autoStartEnabled)
         {
-            _appData.ApiKey = apiKey;
             _appData.AutoStartEnabled = autoStartEnabled;
             CharacterRepository.Save(_appData);
+        }
+
+        /// <summary>
+        /// 닉네임과 자동 시작 설정을 함께 저장
+        /// </summary>
+        public void UpdateNicknameAndAutoStart(string nickname, bool autoStartEnabled)
+        {
+            _appData.AutoStartEnabled = autoStartEnabled;
+            
+            // 현재 선택된 캐릭터의 닉네임도 저장
+            if (SelectedCharacter != null)
+            {
+                SelectedCharacter.Nickname = nickname;
+            }
+            
+            CharacterRepository.Save(_appData);
+        }
+
+        /// <summary>
+        /// 새 캐릭터를 닉네임으로 추가하고 선택
+        /// </summary>
+        public void AddNewCharacterWithNickname(string nickname)
+        {
+            var newChar = CharacterRepository.AddCharacter(_appData, nickname);
+            if (newChar != null)
+            {
+                Characters.Add(newChar);
+                SelectedCharacter = newChar;
+                _appData.SelectedCharacterId = newChar.Id;
+                CharacterRepository.Save(_appData);
+            }
         }
 
         /// <summary>
@@ -1119,6 +1176,8 @@ namespace MapleHomework.ViewModels
 
         private void UpdateThemeColors()
         {
+            var resources = System.Windows.Application.Current.Resources;
+            
             if (IsDarkTheme)
             {
                 ThemeIcon = "WeatherMoon24";
@@ -1130,6 +1189,26 @@ namespace MapleHomework.ViewModels
                 Primary = new SolidColorBrush(Color.FromRgb(90, 200, 250));
                 Outline = new SolidColorBrush(Color.FromRgb(100, 110, 125));
                 CompletedSurface = new SolidColorBrush(Color.FromRgb(70, 85, 100));
+                
+                // Application Resources 업데이트 (다크 모드)
+                resources["WindowBackground"] = new SolidColorBrush(Color.FromRgb(26, 29, 46));
+                resources["CardBackground"] = new SolidColorBrush(Color.FromRgb(40, 45, 65));
+                resources["CardBackgroundHover"] = new SolidColorBrush(Color.FromRgb(50, 55, 75));
+                resources["CardBackgroundAlt"] = new SolidColorBrush(Color.FromRgb(35, 40, 58));
+                resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(240, 240, 245));
+                resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(180, 185, 195));
+                resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(140, 145, 155));
+                resources["TextInverse"] = new SolidColorBrush(Color.FromRgb(30, 35, 45));
+                resources["DividerColor"] = new SolidColorBrush(Color.FromRgb(60, 65, 85));
+                resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(70, 75, 95));
+                resources["ApiCardBackground"] = new SolidColorBrush(Color.FromRgb(50, 45, 40));
+                resources["ApiCardBorder"] = new SolidColorBrush(Color.FromRgb(90, 75, 55));
+                resources["ItemCardBackground"] = new SolidColorBrush(Color.FromRgb(45, 50, 70));
+                resources["ItemCardBorder"] = new SolidColorBrush(Color.FromRgb(65, 70, 90));
+                resources["ItemCardHover"] = new SolidColorBrush(Color.FromRgb(55, 60, 80));
+                resources["BadgeBackground"] = new SolidColorBrush(Color.FromRgb(45, 50, 75));
+                resources["BadgeText"] = new SolidColorBrush(Color.FromRgb(165, 180, 255));
+                resources["DetailViewBackground"] = new SolidColorBrush(Color.FromRgb(26, 29, 46));
             }
             else
             {
@@ -1142,6 +1221,26 @@ namespace MapleHomework.ViewModels
                 Primary = new SolidColorBrush(Color.FromRgb(90, 200, 250));
                 Outline = new SolidColorBrush(Color.FromRgb(210, 215, 220));
                 CompletedSurface = new SolidColorBrush(Color.FromRgb(245, 248, 250));
+                
+                // Application Resources 업데이트 (라이트 모드)
+                resources["WindowBackground"] = new SolidColorBrush(Color.FromRgb(245, 247, 251));
+                resources["CardBackground"] = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                resources["CardBackgroundHover"] = new SolidColorBrush(Color.FromRgb(238, 242, 247));
+                resources["CardBackgroundAlt"] = new SolidColorBrush(Color.FromRgb(248, 250, 252));
+                resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(15, 23, 42));
+                resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(71, 85, 105));
+                resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(100, 116, 139));
+                resources["TextInverse"] = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                resources["DividerColor"] = new SolidColorBrush(Color.FromRgb(226, 232, 240));
+                resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(226, 232, 240));
+                resources["ApiCardBackground"] = new SolidColorBrush(Color.FromRgb(255, 246, 236));
+                resources["ApiCardBorder"] = new SolidColorBrush(Color.FromRgb(255, 227, 194));
+                resources["ItemCardBackground"] = new SolidColorBrush(Color.FromRgb(250, 251, 252));
+                resources["ItemCardBorder"] = new SolidColorBrush(Color.FromRgb(229, 233, 240));
+                resources["ItemCardHover"] = new SolidColorBrush(Color.FromRgb(240, 244, 248));
+                resources["BadgeBackground"] = new SolidColorBrush(Color.FromRgb(238, 242, 255));
+                resources["BadgeText"] = new SolidColorBrush(Color.FromRgb(99, 102, 241));
+                resources["DetailViewBackground"] = new SolidColorBrush(Color.FromRgb(26, 29, 46));
             }
         }
 

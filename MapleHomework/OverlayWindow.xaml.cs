@@ -85,6 +85,99 @@ namespace MapleHomework
         public bool AllDone => !Tasks.Any();
         public int TaskCount => Tasks.Count;
 
+        // 현재 선택된 캐릭터 정보
+        private string _characterName = "";
+        public string CharacterName
+        {
+            get => _characterName;
+            set { _characterName = value; OnPropertyChanged(); }
+        }
+
+        private int _characterLevel = 0;
+        public int CharacterLevel
+        {
+            get => _characterLevel;
+            set { _characterLevel = value; OnPropertyChanged(); }
+        }
+
+        private string? _characterImage;
+        public string? CharacterImage
+        {
+            get => _characterImage;
+            set { _characterImage = value; OnPropertyChanged(); }
+        }
+
+        // 진행률
+        private double _dailyProgress = 0;
+        public double DailyProgress
+        {
+            get => _dailyProgress;
+            set { _dailyProgress = value; OnPropertyChanged(); OnPropertyChanged(nameof(DailyProgressWidth)); }
+        }
+
+        private double _weeklyProgress = 0;
+        public double WeeklyProgress
+        {
+            get => _weeklyProgress;
+            set { _weeklyProgress = value; OnPropertyChanged(); OnPropertyChanged(nameof(WeeklyProgressWidth)); }
+        }
+
+        private double _bossProgress = 0;
+        public double BossProgress
+        {
+            get => _bossProgress;
+            set { _bossProgress = value; OnPropertyChanged(); OnPropertyChanged(nameof(BossProgressWidth)); }
+        }
+
+        // 완료/총개수 표시용
+        private int _dailyCompleted = 0;
+        public int DailyCompleted
+        {
+            get => _dailyCompleted;
+            set { _dailyCompleted = value; OnPropertyChanged(); }
+        }
+
+        private int _dailyTotal = 0;
+        public int DailyTotal
+        {
+            get => _dailyTotal;
+            set { _dailyTotal = value; OnPropertyChanged(); }
+        }
+
+        private int _weeklyCompleted = 0;
+        public int WeeklyCompleted
+        {
+            get => _weeklyCompleted;
+            set { _weeklyCompleted = value; OnPropertyChanged(); }
+        }
+
+        private int _weeklyTotal = 0;
+        public int WeeklyTotal
+        {
+            get => _weeklyTotal;
+            set { _weeklyTotal = value; OnPropertyChanged(); }
+        }
+
+        private int _bossCompleted = 0;
+        public int BossCompleted
+        {
+            get => _bossCompleted;
+            set { _bossCompleted = value; OnPropertyChanged(); }
+        }
+
+        private int _bossTotal = 0;
+        public int BossTotal
+        {
+            get => _bossTotal;
+            set { _bossTotal = value; OnPropertyChanged(); }
+        }
+
+        // 게이지 바 너비 (최대 150px 기준)
+        private const double MaxGaugeWidth = 150;
+        public double DailyProgressWidth => (DailyProgress / 100) * MaxGaugeWidth;
+        public double WeeklyProgressWidth => (WeeklyProgress / 100) * MaxGaugeWidth;
+        public double BossProgressWidth => (BossProgress / 100) * MaxGaugeWidth;
+
         private double _overlayOpacity = 0.8;
         public double OverlayOpacity
         {
@@ -286,45 +379,77 @@ namespace MapleHomework
             var appData = CharacterRepository.Load();
             var settings = ConfigManager.Load();
 
-            foreach (var character in appData.Characters)
+            // 현재 선택된 캐릭터 찾기
+            var selectedCharacter = appData.Characters
+                .FirstOrDefault(c => c.Id == appData.SelectedCharacterId) 
+                ?? appData.Characters.FirstOrDefault();
+
+            if (selectedCharacter != null)
             {
+                // 캐릭터 정보 업데이트
+                CharacterName = selectedCharacter.Nickname;
+                CharacterLevel = selectedCharacter.Level;
+                CharacterImage = selectedCharacter.ImageUrl;
+
+                // 진행률 계산 및 완료/총개수 업데이트
+                var (dailyProg, dailyComp, dailyTot) = CalculateProgressWithCounts(selectedCharacter.DailyTasks);
+                DailyProgress = dailyProg;
+                DailyCompleted = dailyComp;
+                DailyTotal = dailyTot;
+
+                var (weeklyProg, weeklyComp, weeklyTot) = CalculateProgressWithCounts(selectedCharacter.WeeklyTasks);
+                WeeklyProgress = weeklyProg;
+                WeeklyCompleted = weeklyComp;
+                WeeklyTotal = weeklyTot;
+
+                var (bossProg, bossComp, bossTot) = CalculateProgressWithCounts(selectedCharacter.BossTasks);
+                BossProgress = bossProg;
+                BossCompleted = bossComp;
+                BossTotal = bossTot;
+
+                // 미완료 숙제 수집
                 var allTasks = new List<HomeworkTask>();
                 
-                // 즐겨찾기 카테고리 기준으로 필터링
-                if (!settings.ShowOnlyFavorites || character.IsDailyFavorite)
-                    allTasks.AddRange(character.DailyTasks.Where(t => t.IsActive && !t.IsChecked));
+                if (!settings.ShowOnlyFavorites || selectedCharacter.IsDailyFavorite)
+                    allTasks.AddRange(selectedCharacter.DailyTasks.Where(t => t.IsActive && !t.IsChecked));
                 
-                if (!settings.ShowOnlyFavorites || character.IsWeeklyFavorite)
-                    allTasks.AddRange(character.WeeklyTasks.Where(t => t.IsActive && !t.IsChecked));
+                if (!settings.ShowOnlyFavorites || selectedCharacter.IsWeeklyFavorite)
+                    allTasks.AddRange(selectedCharacter.WeeklyTasks.Where(t => t.IsActive && !t.IsChecked));
                 
-                if (!settings.ShowOnlyFavorites || character.IsBossFavorite)
-                    allTasks.AddRange(character.BossTasks.Where(t => t.IsActive && !t.IsChecked));
+                if (!settings.ShowOnlyFavorites || selectedCharacter.IsBossFavorite)
+                    allTasks.AddRange(selectedCharacter.BossTasks.Where(t => t.IsActive && !t.IsChecked));
                 
-                if (!settings.ShowOnlyFavorites || character.IsMonthlyFavorite)
-                    allTasks.AddRange(character.MonthlyTasks.Where(t => t.IsActive && !t.IsChecked));
+                if (!settings.ShowOnlyFavorites || selectedCharacter.IsMonthlyFavorite)
+                    allTasks.AddRange(selectedCharacter.MonthlyTasks.Where(t => t.IsActive && !t.IsChecked));
 
-                var pendingTasks = allTasks.Take(5); // 캐릭터당 최대 5개
-
-                foreach (var task in pendingTasks)
+                foreach (var task in allTasks.Take(10))
                 {
                     Tasks.Add(new OverlayTaskItem
                     {
-                        CharacterName = character.Nickname,
+                        CharacterName = selectedCharacter.Nickname,
                         TaskName = task.DisplayName,
                         Category = task.Category
                     });
                 }
             }
 
-            // 전체 최대 10개로 제한
-            while (Tasks.Count > 10)
-            {
-                Tasks.RemoveAt(Tasks.Count - 1);
-            }
-
             OnPropertyChanged(nameof(HasTasks));
             OnPropertyChanged(nameof(AllDone));
             OnPropertyChanged(nameof(TaskCount));
+        }
+
+        /// <summary>
+        /// 진행률 및 완료/총개수 계산
+        /// </summary>
+        private (double progress, int completed, int total) CalculateProgressWithCounts(IEnumerable<HomeworkTask> tasks)
+        {
+            var activeTasks = tasks.Where(t => t.IsActive).ToList();
+            int total = activeTasks.Count;
+            if (total == 0) return (100, 0, 0);
+            
+            int completed = activeTasks.Count(t => t.IsChecked);
+            double progress = (double)completed / total * 100;
+            return (progress, completed, total);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

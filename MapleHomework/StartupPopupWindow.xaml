@@ -8,7 +8,6 @@
         AllowsTransparency="True"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
-        Topmost="True"
         ShowInTaskbar="True">
 
     <Window.Resources>

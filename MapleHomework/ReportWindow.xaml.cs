@@ -100,6 +100,8 @@ namespace MapleHomework
         private DateTime _calendarDisplayMonth = DateTime.Today;
         private HashSet<DateTime> _collectedDates = new(); // 데이터 수집된 날짜
         private HashSet<DateTime> _selectedDates = new(); // 사용자가 선택한 날짜
+        private DateTime? _firstClickDate = null; // 오셀로 스타일: 첫 번째 클릭 날짜
+        private DateTime? _lastCollectedDate = null; // 마지막 수집된 날짜 (연속 수집용)
         
         // 장비 변경 내역 필터 상태
         private List<ItemChangeRecord> _allItemChangeRecords = new(); // 전체 장비 변경 내역 (필터링 전)
@@ -194,12 +196,13 @@ namespace MapleHomework
             if (sender is WpfButton btn && btn.Tag is string mode)
             {
                 SetExpRange(mode);
+                
+                // 1일 선택 시에만 기간 드롭다운 표시
+                if (ChartDaysCombo != null)
+                {
+                    ChartDaysCombo.Visibility = mode == "day" ? Visibility.Visible : Visibility.Collapsed;
+                }
             }
-        }
-
-        private void PowerRangeButton_Click(object sender, RoutedEventArgs e)
-        {
-            // 전투력은 단위 전환 기능을 사용하지 않음 (이벤트 미사용)
         }
 
         private void ChartDaysCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -216,33 +219,43 @@ namespace MapleHomework
             }
         }
 
-        // 레거시 코드 - 더 이상 사용하지 않음 (캘린더 UI로 대체)
-        private void CollectMode_Changed(object sender, RoutedEventArgs e)
-        {
-            // 캘린더 UI로 대체됨
-        }
-
-        private void UpdateMissingDatesList()
-        {
-            // 캘린더 UI로 대체됨 - UpdateDataSummary에서 캘린더 업데이트
-        }
-
         private void UpdateDataSummary()
         {
-            var summary = RawDataProcessor.GetDataSummary();
+            // 현재 선택된 캐릭터 ID 가져오기
+            string? characterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
+            
+            if (string.IsNullOrEmpty(characterId))
+            {
+                // 캐릭터가 선택되지 않은 경우 빈 데이터 표시
+                if (DataSummaryText != null)
+                {
+                    DataSummaryText.Text = "0일";
+                }
+                if (MissingDaysText != null)
+                {
+                    MissingDaysText.Text = "-";
+                }
+                _collectedDates = new HashSet<DateTime>();
+                _lastCollectedDate = null;
+                RenderCalendar();
+                return;
+            }
+            
+            // 캐릭터별 수집된 날짜 목록 가져오기 (검증된 데이터만)
+            _collectedDates = GetVerifiedCollectedDates(characterId);
+            
+            // 마지막 수집 날짜 설정 (연속 수집 검증용)
+            _lastCollectedDate = _collectedDates.Count > 0 ? _collectedDates.Max() : (DateTime?)null;
             
             if (DataSummaryText != null)
             {
-                DataSummaryText.Text = $"{summary.TotalDays}일";
+                DataSummaryText.Text = $"{_collectedDates.Count}일";
             }
-            
-            // 수집된 날짜 목록 가져오기
-            _collectedDates = RawDataProcessor.GetCollectedDates();
             
             // 최근 90일 기준 누락 날짜 수
             var endDate = DateTime.Today.AddDays(-1);
             var startDate = endDate.AddDays(-89);
-            var missingDates = RawDataProcessor.GetMissingDates(startDate, endDate);
+            var missingDates = StatisticsService.GetMissingDatesForCharacter(characterId, startDate, endDate);
             
             if (MissingDaysText != null)
             {
@@ -251,6 +264,31 @@ namespace MapleHomework
             
             // 캘린더 업데이트
             RenderCalendar();
+        }
+        
+        /// <summary>
+        /// 검증된 수집 날짜 목록 반환 (부분 데이터 제거)
+        /// </summary>
+        private HashSet<DateTime> GetVerifiedCollectedDates(string characterId)
+        {
+            var allDates = StatisticsService.GetCollectedDatesForCharacter(characterId);
+            var verifiedDates = new HashSet<DateTime>();
+            
+            foreach (var date in allDates)
+            {
+                // 필수 데이터가 있는지 확인 (basic, stat 등)
+                if (StatisticsService.HasCompleteDataForDate(characterId, date))
+                {
+                    verifiedDates.Add(date);
+                }
+                else
+                {
+                    // 부분 데이터는 삭제 (오염된 데이터 정리)
+                    StatisticsService.RemoveIncompleteDataForDate(characterId, date);
+                }
+            }
+            
+            return verifiedDates;
         }
 
         #region 캘린더 관련 메서드
@@ -320,20 +358,22 @@ namespace MapleHomework
                 textBlock.Foreground = new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
                 border.IsEnabled = false;
             }
+            else if (isCollected)
+            {
+                // 데이터 있음 - 파란색 (선택 불가 - API 중복 호출 방지)
+                border.Background = new SolidColorBrush(Color.FromRgb(59, 130, 246)); // #3B82F6
+                textBlock.Foreground = System.Windows.Media.Brushes.White;
+                border.Cursor = System.Windows.Input.Cursors.Arrow; // 일반 커서
+                border.ToolTip = "이미 수집된 날짜입니다";
+                // 이벤트 연결하지 않음 - 선택 불가
+            }
             else if (isSelected)
             {
                 // 선택됨 - 초록색
                 border.Background = new SolidColorBrush(Color.FromRgb(16, 185, 129)); // #10B981
                 textBlock.Foreground = System.Windows.Media.Brushes.White;
                 textBlock.FontWeight = FontWeights.Bold;
-                border.MouseLeftButtonDown += CalendarDay_Click;
-            }
-            else if (isCollected)
-            {
-                // 데이터 있음 - 파란색
-                border.Background = new SolidColorBrush(Color.FromRgb(59, 130, 246)); // #3B82F6
-                textBlock.Foreground = System.Windows.Media.Brushes.White;
-                border.MouseLeftButtonDown += CalendarDay_Click;
+                AttachCalendarDayEvents(border);
             }
             else
             {
@@ -341,7 +381,7 @@ namespace MapleHomework
                 border.Background = new SolidColorBrush(Color.FromArgb(60, 244, 63, 94)); // #F43F5E 30%
                 textBlock.Foreground = new SolidColorBrush(Color.FromRgb(244, 63, 94));
                 textBlock.FontWeight = FontWeights.SemiBold;
-                border.MouseLeftButtonDown += CalendarDay_Click;
+                AttachCalendarDayEvents(border);
             }
             
             // 오늘 표시
@@ -355,19 +395,81 @@ namespace MapleHomework
             return border;
         }
         
-        private void CalendarDay_Click(object sender, MouseButtonEventArgs e)
+        private void AttachCalendarDayEvents(Border border)
+        {
+            border.MouseLeftButtonDown += CalendarDay_MouseDown;
+        }
+        
+        private void CalendarDay_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is Border border && border.Tag is DateTime date)
             {
-                if (_selectedDates.Contains(date))
+                // 이미 수집된 날짜는 선택 불가
+                if (_collectedDates.Contains(date)) return;
+                
+                // 오셀로 스타일 선택
+                if (_firstClickDate == null)
                 {
-                    _selectedDates.Remove(date);
+                    // 첫 번째 클릭: 시작점 설정
+                    _firstClickDate = date;
+                    _selectedDates.Clear();
+                    _selectedDates.Add(date);
                 }
                 else
                 {
-                    _selectedDates.Add(date);
+                    // 두 번째 클릭: 범위 선택
+                    var startDate = _firstClickDate.Value < date ? _firstClickDate.Value : date;
+                    var endDate = _firstClickDate.Value > date ? _firstClickDate.Value : date;
+                    
+                    // 선택 범위 계산 (수집되지 않은 날짜만)
+                    var newSelection = new HashSet<DateTime>();
+                    for (var d = startDate; d <= endDate; d = d.AddDays(1))
+                    {
+                        // 어제까지만 선택 가능
+                        if (d >= DateTime.Today) continue;
+                        // 이미 수집된 날짜 제외
+                        if (_collectedDates.Contains(d)) continue;
+                        
+                        newSelection.Add(d);
+                    }
+                    
+                    // 연속성 검증: 선택 범위 + 기존 수집 날짜가 연속되어야 함
+                    if (_collectedDates.Any() && newSelection.Any())
+                    {
+                        var allDates = _collectedDates.Union(newSelection).OrderBy(d => d).ToList();
+                        bool isContinuous = true;
+                        for (int i = 1; i < allDates.Count; i++)
+                        {
+                            if ((allDates[i] - allDates[i - 1]).Days > 1)
+                            {
+                                isContinuous = false;
+                                break;
+                            }
+                        }
+                        
+                        if (!isContinuous)
+                        {
+                            System.Windows.MessageBox.Show(
+                                "선택한 날짜 범위가 기존 수집된 날짜와 연속되지 않습니다.\n빈 날짜 없이 연속된 범위만 선택할 수 있습니다.", 
+                                "알림", 
+                                MessageBoxButton.OK, 
+                                MessageBoxImage.Information);
+                            _firstClickDate = null;
+                            return;
+                        }
+                    }
+                    
+                    _selectedDates.Clear();
+                    foreach (var d in newSelection)
+                    {
+                        _selectedDates.Add(d);
+                    }
+                    
+                    _firstClickDate = null; // 리셋
                 }
+                
                 RenderCalendar();
+                UpdateSelectedDatesCount();
             }
         }
         
@@ -385,9 +487,23 @@ namespace MapleHomework
         
         private void UpdateSelectedDatesCount()
         {
-            if (SelectedDatesCountText != null)
+            if (_selectedDates.Count == 0)
             {
-                SelectedDatesCountText.Text = $"{_selectedDates.Count}일";
+                if (SelectedStartDateText != null) SelectedStartDateText.Text = "-";
+                if (SelectedEndDateText != null) SelectedEndDateText.Text = "-";
+            }
+            else if (_selectedDates.Count == 1)
+            {
+                var date = _selectedDates.First();
+                if (SelectedStartDateText != null) SelectedStartDateText.Text = $"{date:yyyy-MM-dd}";
+                if (SelectedEndDateText != null) SelectedEndDateText.Text = $"{date:yyyy-MM-dd}";
+            }
+            else
+            {
+                var minDate = _selectedDates.Min();
+                var maxDate = _selectedDates.Max();
+                if (SelectedStartDateText != null) SelectedStartDateText.Text = $"{minDate:yyyy-MM-dd}";
+                if (SelectedEndDateText != null) SelectedEndDateText.Text = $"{maxDate:yyyy-MM-dd}";
             }
         }
         
@@ -395,15 +511,25 @@ namespace MapleHomework
 
         private void SelectAllMissing_Click(object sender, RoutedEventArgs e)
         {
-            // 누락된 날짜만 선택
-            var endDate = DateTime.Today.AddDays(-1);
-            var startDate = endDate.AddDays(-89); // 최근 90일
-            var missingDates = RawDataProcessor.GetMissingDates(startDate, endDate);
+            // 현재 보고 있는 달의 누락된 날짜만 선택
+            var firstDayOfMonth = new DateTime(_calendarDisplayMonth.Year, _calendarDisplayMonth.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             
-            _selectedDates.Clear();
-            foreach (var date in missingDates)
+            // 어제까지만 (오늘과 미래는 제외)
+            var yesterday = DateTime.Today.AddDays(-1);
+            if (lastDayOfMonth > yesterday) lastDayOfMonth = yesterday;
+            
+            // 1년 이상 오래된 날짜도 제외
+            var oneYearAgo = DateTime.Today.AddDays(-365);
+            if (firstDayOfMonth < oneYearAgo) firstDayOfMonth = oneYearAgo;
+            
+            // 해당 달의 누락된 날짜만 선택 (이미 수집된 날짜 제외)
+            for (var date = firstDayOfMonth; date <= lastDayOfMonth; date = date.AddDays(1))
             {
-                _selectedDates.Add(date);
+                if (!_collectedDates.Contains(date))
+                {
+                    _selectedDates.Add(date);
+                }
             }
             RenderCalendar();
         }
@@ -420,7 +546,10 @@ namespace MapleHomework
             UpdateDataSummary();
             
             var last = StatisticsService.GetLastUpdated();
-            bool needRefresh = (DateTime.Now - last) > TimeSpan.FromHours(1) || last.Date != DateTime.Today;
+            
+            // statistics_data.json 파일이 없을 때만 자동 새로고침 실행
+            // (last가 DateTime.MinValue이면 파일이 없거나 비어있음)
+            bool needRefresh = last == DateTime.MinValue;
 
             if (!needRefresh)
             {
@@ -430,8 +559,7 @@ namespace MapleHomework
 
             string? characterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
             var character = _viewModel.Characters.FirstOrDefault(c => c.Id == characterId);
-            var apiKey = ConfigManager.Load().ApiKey;
-            if (character == null || string.IsNullOrEmpty(character.Ocid) || string.IsNullOrEmpty(apiKey))
+            if (character == null || string.IsNullOrEmpty(character.Ocid))
             {
                 LoadDashboard();
                 return;
@@ -442,7 +570,7 @@ namespace MapleHomework
                 CollectProgressBar.Visibility = Visibility.Visible;
                 CollectProgressBar.IsIndeterminate = true;
                 CollectStatusText.Text = "자동 갱신 중...";
-                await _apiService.CollectGrowthHistoryAsync(apiKey, character.Ocid, character.Id, character.Nickname, 1, null);
+                await _apiService.CollectGrowthHistoryAsync(character.Ocid, character.Id, character.Nickname, 1, null);
             }
             catch
             {
@@ -508,7 +636,6 @@ namespace MapleHomework
         {
             // 캐릭터 필터: 현재 ViewModel의 캐릭터 목록 사용
             CharacterFilterCombo.Items.Clear();
-            CharacterFilterCombo.Items.Add(new ComboBoxItem { Content = "전체 캐릭터", Tag = null });
 
             foreach (var character in _viewModel.Characters)
             {
@@ -525,18 +652,14 @@ namespace MapleHomework
                 {
                     CharacterFilterCombo.SelectedItem = target;
                 }
-                else if (CharacterFilterCombo.Items.Count > 1)
+                else if (CharacterFilterCombo.Items.Count > 0)
                 {
-                    CharacterFilterCombo.SelectedIndex = 1; // 첫 번째 캐릭터
+                    CharacterFilterCombo.SelectedIndex = 0; // 첫 번째 캐릭터
                 }
             }
-            else if (CharacterFilterCombo.Items.Count > 1)
+            else if (CharacterFilterCombo.Items.Count > 0)
             {
-                CharacterFilterCombo.SelectedIndex = 1;
-            }
-            else
-            {
-                CharacterFilterCombo.SelectedIndex = 0; // 전체 캐릭터
+                CharacterFilterCombo.SelectedIndex = 0;
             }
         }
 
@@ -590,10 +713,21 @@ namespace MapleHomework
             // 레벨업 예상 날짜
             EstimatedLevelUpText.Text = StatisticsService.GetEstimatedLevelUpDateFormatted(characterId);
             
-            // 전투력
-            var combatPowerGrowth = StatisticsService.GetCombatPowerGrowth(characterId, chartDays, "day", onlyNewHigh: true);
+            // 전투력 (항상 전체 기간 조회 - 최고 기록 갱신 시점을 모두 표시)
+            var combatPowerGrowth = StatisticsService.GetCombatPowerGrowth(characterId, 365, "day", onlyNewHigh: true);
             CombatPowerList.ItemsSource = combatPowerGrowth;
             NoCombatPowerDataText.Visibility = combatPowerGrowth.Any() ? Visibility.Collapsed : Visibility.Visible;
+            
+            // 전투력 최고 기록
+            if (combatPowerGrowth.Any())
+            {
+                var maxPower = combatPowerGrowth.Max(c => c.NewPower);
+                MaxCombatPowerText.Text = maxPower.ToString("N0");
+            }
+            else
+            {
+                MaxCombatPowerText.Text = "-";
+            }
 
             // 6차 스킬 - 상세 내역 (히스토리)
             var hexaHistory = StatisticsService.GetHexaSkillHistory(characterId, 50);
@@ -711,7 +845,7 @@ namespace MapleHomework
                     CoreType = string.IsNullOrEmpty(core.HexaCoreType) ? "스킬 코어" : core.HexaCoreType!
                 }).ToList();
 
-                string[] typeOrder = { "공용 코어", "스킬 코어", "강화 코어", "마스터리 코어" };
+                string[] typeOrder = { "마스터리 코어", "스킬 코어", "강화 코어", "공용 코어" };
                 var groups = coreItems
                     .GroupBy(c => c.CoreType)
                     .Select(g => new HexaCoreGroup
@@ -729,6 +863,9 @@ namespace MapleHomework
                     .ToList();
 
                 HexaCoreGroups.ItemsSource = groups;
+                
+                // HEXA 스탯 로드
+                LoadHexaStats();
             }
             catch
             {
@@ -736,6 +873,103 @@ namespace MapleHomework
             }
             
             return Task.CompletedTask;
+        }
+        
+        private void LoadHexaStats()
+        {
+            try
+            {
+                // HEXA 스탯 코어 정보 가져오기 (hexamatrix-stat API 데이터)
+                var hexaStatCore = RawDataProcessor.LoadLatestHexaMatrixStatInfo();
+                
+                var statCoreItems = new List<HexaStatCoreItem>();
+                
+                if (hexaStatCore != null)
+                {
+                    // character_hexa_stat_core
+                    if (hexaStatCore.CharacterHexaStatCore?.Any() == true)
+                    {
+                        var core = hexaStatCore.CharacterHexaStatCore.First();
+                        statCoreItems.Add(new HexaStatCoreItem
+                        {
+                            CoreLabel = "스탯 코어 1",
+                            MainStatName = core.MainStatName ?? "-",
+                            SubStatName1 = core.SubStatName1 ?? "-",
+                            SubStatName2 = core.SubStatName2 ?? "-",
+                            MainStatLevel = core.MainStatLevel,
+                            SubStatLevel1 = core.SubStatLevel1,
+                            SubStatLevel2 = core.SubStatLevel2,
+                            StatGrade = core.StatGrade
+                        });
+                    }
+                    
+                    // character_hexa_stat_core_2
+                    if (hexaStatCore.CharacterHexaStatCore2?.Any() == true)
+                    {
+                        var core = hexaStatCore.CharacterHexaStatCore2.First();
+                        statCoreItems.Add(new HexaStatCoreItem
+                        {
+                            CoreLabel = "스탯 코어 2",
+                            MainStatName = core.MainStatName ?? "-",
+                            SubStatName1 = core.SubStatName1 ?? "-",
+                            SubStatName2 = core.SubStatName2 ?? "-",
+                            MainStatLevel = core.MainStatLevel,
+                            SubStatLevel1 = core.SubStatLevel1,
+                            SubStatLevel2 = core.SubStatLevel2,
+                            StatGrade = core.StatGrade
+                        });
+                    }
+                    
+                    // character_hexa_stat_core_3
+                    if (hexaStatCore.CharacterHexaStatCore3?.Any() == true)
+                    {
+                        var core = hexaStatCore.CharacterHexaStatCore3.First();
+                        statCoreItems.Add(new HexaStatCoreItem
+                        {
+                            CoreLabel = "스탯 코어 3",
+                            MainStatName = core.MainStatName ?? "-",
+                            SubStatName1 = core.SubStatName1 ?? "-",
+                            SubStatName2 = core.SubStatName2 ?? "-",
+                            MainStatLevel = core.MainStatLevel,
+                            SubStatLevel1 = core.SubStatLevel1,
+                            SubStatLevel2 = core.SubStatLevel2,
+                            StatGrade = core.StatGrade
+                        });
+                    }
+                }
+                
+                if (HexaStatCoreList != null)
+                {
+                    HexaStatCoreList.ItemsSource = statCoreItems;
+                }
+                
+                if (NoHexaStatText != null)
+                {
+                    NoHexaStatText.Visibility = statCoreItems.Any() ? Visibility.Collapsed : Visibility.Visible;
+                }
+            }
+            catch
+            {
+                if (NoHexaStatText != null) NoHexaStatText.Visibility = Visibility.Visible;
+            }
+        }
+        
+        private class HexaStatItem
+        {
+            public string StatName { get; set; } = "";
+            public string StatValue { get; set; } = "";
+        }
+        
+        private class HexaStatCoreItem
+        {
+            public string CoreLabel { get; set; } = "";
+            public string MainStatName { get; set; } = "";
+            public string SubStatName1 { get; set; } = "";
+            public string SubStatName2 { get; set; } = "";
+            public int MainStatLevel { get; set; }
+            public int SubStatLevel1 { get; set; }
+            public int SubStatLevel2 { get; set; }
+            public int StatGrade { get; set; }
         }
 
         private static string CleanCoreName(string name)
@@ -803,6 +1037,7 @@ namespace MapleHomework
         private void CharacterFilterCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (_isInitializing) return;
+            UpdateDataSummary(); // 캐릭터별 데이터 수집 현황 업데이트
             LoadDashboard();
         }
 
@@ -824,6 +1059,14 @@ namespace MapleHomework
                 if (summary.OldestDate.HasValue && summary.NewestDate.HasValue)
                 {
                     var characterName = _viewModel.SelectedCharacter?.Nickname ?? "";
+                    
+                    // 1. 기존 분석 데이터 초기화 (장비, 스킬 내역 삭제)
+                    StatisticsService.ClearAnalysisData(characterId);
+                    
+                    // 2. 전투력 데이터 갱신 (raw stat 파일에서 다시 로드)
+                    RawDataProcessor.RefreshCombatPowerFromRaw(characterId, characterName);
+                    
+                    // 3. 전체 기간에 대해 장비 변경 재분석 수행
                     RawDataProcessor.ProcessItemChangesFromRaw(
                         characterId, 
                         characterName, 
@@ -863,9 +1106,51 @@ namespace MapleHomework
             if (confirm != MessageBoxResult.Yes) return;
 
             StatisticsService.ClearGrowthData();
+            
+            // 캘린더 및 UI 업데이트
+            _collectedDates.Clear();
+            _selectedDates.Clear();
+            _lastCollectedDate = null;
+            UpdateDataSummary();
             LoadDashboard();
+            
             MessageBox.Show("성장 리포트 캐시가 삭제되었습니다.", "완료", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+        
+        #region Quick Navigation
+        
+        private void NavExpPower_Click(object sender, RoutedEventArgs e)
+        {
+            ScrollToElement("ExpPowerSection");
+        }
+        
+        private void NavEquipment_Click(object sender, RoutedEventArgs e)
+        {
+            ScrollToElement("EquipmentSection");
+        }
+        
+        private void NavHexaCore_Click(object sender, RoutedEventArgs e)
+        {
+            ScrollToElement("HexaCoreSection");
+        }
+        
+        private void NavHexaSkill_Click(object sender, RoutedEventArgs e)
+        {
+            ScrollToElement("HexaSkillSection");
+        }
+        
+        private void ScrollToElement(string elementName)
+        {
+            var element = this.FindName(elementName) as FrameworkElement;
+            if (element != null && MainScrollViewer != null)
+            {
+                var transform = element.TransformToAncestor(MainScrollViewer);
+                var point = transform.Transform(new System.Windows.Point(0, 0));
+                MainScrollViewer.ScrollToVerticalOffset(MainScrollViewer.VerticalOffset + point.Y - 20);
+            }
+        }
+        
+        #endregion
 
         private void CollectHistoryButton_Click(object sender, RoutedEventArgs e)
         {
@@ -876,22 +1161,11 @@ namespace MapleHomework
                 return;
             }
 
-            var appData = CharacterRepository.Load();
-            string? apiKey = appData.ApiKey;
             string? characterId = (CharacterFilterCombo.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Tag as string;
 
-            // config.json과 characters_data.json의 API 키가 다를 경우 최신 설정값으로 동기화
-            var settings = ConfigManager.Load();
-            if (!string.IsNullOrWhiteSpace(settings.ApiKey) && settings.ApiKey != apiKey)
+            if (string.IsNullOrEmpty(characterId))
             {
-                apiKey = settings.ApiKey;
-                appData.ApiKey = apiKey;
-                CharacterRepository.Save(appData);
-            }
-
-            if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(characterId))
-            {
-                MessageBox.Show("API 키가 설정되어 있고, 캐릭터가 선택되어 있는지 확인해주세요.", "알림", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("캐릭터가 선택되어 있는지 확인해주세요.", "알림", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -919,7 +1193,7 @@ namespace MapleHomework
             CollectProgressBar.IsIndeterminate = true;
             CollectProgressBar.Value = 0;
             _collectStartTime = DateTime.Now;
-            CollectStatusText.Text = "백그라운드에서 수집 중... (창을 닫아도 계속 진행됩니다)";
+            CollectStatusText.Text = "0% (예상 완료 시간 계산 중...)";
 
             // 이벤트 구독
             App.CollectProgressChanged += OnCollectProgressChanged;
@@ -930,7 +1204,6 @@ namespace MapleHomework
 
             // 백그라운드 수집 시작
             App.StartBackgroundCollect(
-                apiKey,
                 character.Ocid,
                 characterId,
                 character.Nickname,
@@ -955,11 +1228,11 @@ namespace MapleHomework
                     var elapsed = DateTime.Now - _collectStartTime.Value;
                     var remaining = TimeSpan.FromSeconds(elapsed.TotalSeconds * (100 - progress) / progress);
                     var etaText = $"{remaining.Minutes:D2}:{remaining.Seconds:D2}";
-                    CollectStatusText.Text = $"백그라운드 수집 중... {progress}% · 예상 남은 {etaText}";
+                    CollectStatusText.Text = $"{progress}% (예상 남은 시간: {etaText})";
                 }
                 else
                 {
-                    CollectStatusText.Text = $"백그라운드 수집 중... {progress}%";
+                    CollectStatusText.Text = $"{progress}%";
                 }
             });
         }
@@ -996,7 +1269,8 @@ namespace MapleHomework
                     // 완료 애니메이션 표시
                     ShowCollectCompleteAnimation(true);
                     
-                    LoadGrowthReport();
+                    // 전체 대시보드 새로고침 (장비 변경 내역 포함)
+                    LoadDashboard();
                     UpdateDataSummary();
                     
                     // 선택된 날짜 초기화
@@ -1021,33 +1295,465 @@ namespace MapleHomework
         {
             if (CollectCompleteOverlay == null || CollectCompleteText == null) return;
             
+            // 토스트 아이콘 배경 및 텍스트 설정
+            var iconBorder = CollectCompleteOverlay.FindName("ToastIconBorder") as Border 
+                             ?? this.FindName("ToastIconBorder") as Border;
+            var toastIcon = CollectCompleteOverlay.FindName("ToastIcon") as TextBlock
+                            ?? this.FindName("ToastIcon") as TextBlock;
+            
             if (success)
             {
-                CollectCompleteOverlay.Background = new SolidColorBrush(Color.FromArgb(50, 16, 185, 129)); // 초록색
                 CollectCompleteText.Text = "수집 완료!";
-                CollectCompleteText.Foreground = new SolidColorBrush(Color.FromRgb(16, 185, 129));
+                if (toastIcon != null) toastIcon.Text = "✓";
+                if (iconBorder != null)
+                {
+                    iconBorder.Background = new LinearGradientBrush(
+                        Color.FromRgb(52, 211, 153), // #34D399
+                        Color.FromRgb(16, 185, 129), // #10B981
+                        45);
+                }
+                
+                // 성공 시 추가 효과들 시작
+                StartSheenEffect();
+                StartGlowEffect();
+                StartParticleEffect();
+                StartRippleEffect();        // 원형 파동 효과
+                StartBurstSparkleEffect();  // 폭발 스파클 효과
             }
             else
             {
-                CollectCompleteOverlay.Background = new SolidColorBrush(Color.FromArgb(50, 244, 63, 94)); // 빨간색
                 CollectCompleteText.Text = "수집 실패";
-                CollectCompleteText.Foreground = new SolidColorBrush(Color.FromRgb(244, 63, 94));
+                if (toastIcon != null) toastIcon.Text = "✕";
+                if (iconBorder != null)
+                {
+                    iconBorder.Background = new LinearGradientBrush(
+                        Color.FromRgb(251, 113, 133), // #FB7185
+                        Color.FromRgb(244, 63, 94),   // #F43F5E
+                        45);
+                }
             }
             
             CollectCompleteOverlay.Visibility = Visibility.Visible;
             
+            // iOS 스타일 스프링 애니메이션 (Scale + Opacity)
+            var scaleTransform = CollectCompleteOverlay.RenderTransform as System.Windows.Media.ScaleTransform;
+            if (scaleTransform == null)
+            {
+                scaleTransform = new System.Windows.Media.ScaleTransform(0.8, 0.8);
+                CollectCompleteOverlay.RenderTransform = scaleTransform;
+            }
+            
+            // 스케일 애니메이션 (0.8 → 1.0, 바운스 효과)
+            var scaleAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0.8,
+                To = 1.0,
+                Duration = TimeSpan.FromMilliseconds(350),
+                EasingFunction = new System.Windows.Media.Animation.BackEase 
+                { 
+                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut,
+                    Amplitude = 0.3
+                }
+            };
+            
             // 페이드 인 애니메이션
-            var fadeIn = new System.Windows.Media.Animation.DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300));
+            var fadeIn = new System.Windows.Media.Animation.DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200));
+            
+            scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleAnim);
+            scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleAnim);
             CollectCompleteOverlay.BeginAnimation(OpacityProperty, fadeIn);
         }
+        
+        #region 수집 완료 애니메이션 효과
+        
+        private System.Windows.Threading.DispatcherTimer? _particleTimer;
+        private Random _particleRandom = new Random();
+        
+        /// <summary>
+        /// 쉬머링(Sheen) 효과 - 하얀색 그라데이션이 대각선으로 지나감 (2번 반복)
+        /// </summary>
+        private void StartSheenEffect()
+        {
+            if (SheenRect == null || SheenTransform == null) return;
+            
+            SheenRect.Opacity = 1;
+            
+            var sheenAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = -300,
+                To = 400,
+                Duration = TimeSpan.FromMilliseconds(600),
+                RepeatBehavior = new System.Windows.Media.Animation.RepeatBehavior(2),
+                EasingFunction = new System.Windows.Media.Animation.QuadraticEase { EasingMode = System.Windows.Media.Animation.EasingMode.EaseInOut }
+            };
+            sheenAnim.Completed += (s, e) => SheenRect.Opacity = 0;
+            
+            SheenTransform.BeginAnimation(System.Windows.Media.TranslateTransform.XProperty, sheenAnim);
+        }
+        
+        /// <summary>
+        /// 아우터 글로우(Pulsing) 효과 - 테두리가 강하게 빛남
+        /// </summary>
+        private void StartGlowEffect()
+        {
+            if (ApiCollectCard == null) return;
+            
+            var glowEffect = ApiCollectCard.Effect as System.Windows.Media.Effects.DropShadowEffect;
+            if (glowEffect == null) return;
+            
+            // BlurRadius 펄스 애니메이션 (더 강하게)
+            var blurAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 5,
+                To = 45,
+                Duration = TimeSpan.FromMilliseconds(350),
+                AutoReverse = true,
+                RepeatBehavior = new System.Windows.Media.Animation.RepeatBehavior(4)
+            };
+            
+            // Opacity 펄스 애니메이션 (더 밝게)
+            var opacityAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0.3,
+                To = 1.0,
+                Duration = TimeSpan.FromMilliseconds(350),
+                AutoReverse = true,
+                RepeatBehavior = new System.Windows.Media.Animation.RepeatBehavior(4)
+            };
+            
+            glowEffect.BeginAnimation(System.Windows.Media.Effects.DropShadowEffect.BlurRadiusProperty, blurAnim);
+            glowEffect.BeginAnimation(System.Windows.Media.Effects.DropShadowEffect.OpacityProperty, opacityAnim);
+        }
+        
+        /// <summary>
+        /// 반짝이(Sparkle) 파티클 효과 시작 - 더 자주, 더 오래
+        /// </summary>
+        private void StartParticleEffect()
+        {
+            if (ParticleCanvas == null) return;
+            
+            _particleTimer = new System.Windows.Threading.DispatcherTimer();
+            _particleTimer.Interval = TimeSpan.FromMilliseconds(70); // 150 → 100ms (더 자주)
+            _particleTimer.Tick += (s, e) => SpawnParticle();
+            _particleTimer.Start();
+            
+            // 2.5초 후 파티클 생성 중지
+            Task.Delay(2500).ContinueWith(_ => 
+            {
+                Dispatcher.Invoke(() => _particleTimer?.Stop());
+            });
+        }
+        
+        /// <summary>
+        /// 원형 파동(Ripple) 효과 - 버튼에서 팡 하고 원형으로 퍼져나감
+        /// </summary>
+        private void StartRippleEffect()
+        {
+            if (ParticleCanvas == null || ApiCollectCard == null) return;
+            
+            double centerX = ApiCollectCard.ActualWidth / 2;
+            double centerY = ApiCollectCard.ActualHeight / 2;
+            
+            // 3개의 파동을 시간차로 생성
+            for (int wave = 0; wave < 3; wave++)
+            {
+                int delay = wave * 150; // 150ms 간격
+                
+                Task.Delay(delay).ContinueWith(_ => 
+                {
+                    Dispatcher.Invoke(() => SpawnRipple(centerX, centerY));
+                });
+            }
+        }
+        
+        private void SpawnRipple(double centerX, double centerY)
+        {
+            if (ParticleCanvas == null) return;
+            
+            // 원형 파동 (Ellipse)
+            var ripple = new System.Windows.Shapes.Ellipse
+            {
+                Width = 20,
+                Height = 20,
+                StrokeThickness = 3,
+                Stroke = new System.Windows.Media.LinearGradientBrush(
+                    Color.FromRgb(52, 211, 153),   // #34D399
+                    Color.FromRgb(16, 185, 129),   // #10B981
+                    45),
+                Fill = System.Windows.Media.Brushes.Transparent,
+                RenderTransformOrigin = new System.Windows.Point(0.5, 0.5)
+            };
+            
+            // 중앙에 위치
+            System.Windows.Controls.Canvas.SetLeft(ripple, centerX - 10);
+            System.Windows.Controls.Canvas.SetTop(ripple, centerY - 10);
+            
+            ParticleCanvas.Children.Add(ripple);
+            
+            // 스케일 + 투명도 애니메이션
+            var scaleTransform = new System.Windows.Media.ScaleTransform(1, 1);
+            ripple.RenderTransform = scaleTransform;
+            
+            // 탄력있는 확대 (0 → 최대 크기)
+            var scaleAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 1,
+                To = 15, // 크게 확대
+                Duration = TimeSpan.FromMilliseconds(700),
+                EasingFunction = new System.Windows.Media.Animation.QuadraticEase 
+                { 
+                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut 
+                }
+            };
+            
+            // 투명도 페이드아웃
+            var opacityAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0.9,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(700),
+                EasingFunction = new System.Windows.Media.Animation.QuadraticEase 
+                { 
+                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseIn 
+                }
+            };
+            opacityAnim.Completed += (s, e) => ParticleCanvas.Children.Remove(ripple);
+            
+            scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleAnim);
+            scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleAnim);
+            ripple.BeginAnimation(OpacityProperty, opacityAnim);
+        }
+        
+        /// <summary>
+        /// 폭발 스파클 효과 - 중심에서 바깥으로 별들이 퍼져나감
+        /// </summary>
+        private void StartBurstSparkleEffect()
+        {
+            if (ParticleCanvas == null || ApiCollectCard == null) return;
+            
+            double centerX = ApiCollectCard.ActualWidth / 2;
+            double centerY = ApiCollectCard.ActualHeight / 2;
+            
+            // 12개의 스파클을 원형으로 배치
+            int sparkleCount = 12;
+            for (int i = 0; i < sparkleCount; i++)
+            {
+                double angle = (360.0 / sparkleCount) * i * Math.PI / 180;
+                SpawnBurstSparkle(centerX, centerY, angle);
+            }
+        }
+        
+        private void SpawnBurstSparkle(double centerX, double centerY, double angle)
+        {
+            if (ParticleCanvas == null) return;
+            
+            // 별 모양 파티클
+            var star = new System.Windows.Shapes.Path
+            {
+                Data = System.Windows.Media.Geometry.Parse("M 8,0 L 10,6 L 16,8 L 10,10 L 8,16 L 6,10 L 0,8 L 6,6 Z"),
+                Fill = new System.Windows.Media.SolidColorBrush(Color.FromRgb(255, 223, 107)), // 밝은 골드
+                Width = 14,
+                Height = 14,
+                Opacity = 1,
+                RenderTransformOrigin = new System.Windows.Point(0.5, 0.5)
+            };
+            
+            // 중앙에서 시작
+            System.Windows.Controls.Canvas.SetLeft(star, centerX - 7);
+            System.Windows.Controls.Canvas.SetTop(star, centerY - 7);
+            
+            ParticleCanvas.Children.Add(star);
+            
+            // 이동 거리 계산
+            double distance = Math.Max(ApiCollectCard.ActualWidth, ApiCollectCard.ActualHeight) * 0.6;
+            double targetX = Math.Cos(angle) * distance;
+            double targetY = Math.Sin(angle) * distance;
+            
+            // Transform 그룹
+            var transformGroup = new System.Windows.Media.TransformGroup();
+            var translateTransform = new System.Windows.Media.TranslateTransform(0, 0);
+            var scaleTransform = new System.Windows.Media.ScaleTransform(0.3, 0.3);
+            var rotateTransform = new System.Windows.Media.RotateTransform(_particleRandom.Next(0, 360));
+            transformGroup.Children.Add(scaleTransform);
+            transformGroup.Children.Add(rotateTransform);
+            transformGroup.Children.Add(translateTransform);
+            star.RenderTransform = transformGroup;
+            
+            // 이동 애니메이션 (탄력있게)
+            var moveXAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0,
+                To = targetX,
+                Duration = TimeSpan.FromMilliseconds(600),
+                EasingFunction = new System.Windows.Media.Animation.QuadraticEase 
+                { 
+                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut 
+                }
+            };
+            
+            var moveYAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0,
+                To = targetY,
+                Duration = TimeSpan.FromMilliseconds(600),
+                EasingFunction = new System.Windows.Media.Animation.QuadraticEase 
+                { 
+                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut 
+                }
+            };
+            
+            // 크기 확대 후 축소
+            var scaleAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0.3,
+                To = 1.5,
+                Duration = TimeSpan.FromMilliseconds(300),
+                AutoReverse = true
+            };
+            
+            // 회전
+            var rotateAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = rotateTransform.Angle,
+                To = rotateTransform.Angle + 180,
+                Duration = TimeSpan.FromMilliseconds(600)
+            };
+            
+            // 투명도
+            var opacityAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 1,
+                To = 0,
+                BeginTime = TimeSpan.FromMilliseconds(300),
+                Duration = TimeSpan.FromMilliseconds(400)
+            };
+            opacityAnim.Completed += (s, e) => ParticleCanvas.Children.Remove(star);
+            
+            translateTransform.BeginAnimation(System.Windows.Media.TranslateTransform.XProperty, moveXAnim);
+            translateTransform.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, moveYAnim);
+            scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleAnim);
+            scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleAnim);
+            rotateTransform.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, rotateAnim);
+            star.BeginAnimation(OpacityProperty, opacityAnim);
+        }
+        
+        /// <summary>
+        /// 개별 파티클 생성 - 더 크고 눈에 띄는 골드 색상
+        /// </summary>
+        private void SpawnParticle()
+        {
+            if (ParticleCanvas == null || ApiCollectCard == null) return;
+            
+            // 십자가 모양 별 (더 크게, 진한 앤틱 골드 색상)
+            var starPath = new System.Windows.Shapes.Path
+            {
+                Data = System.Windows.Media.Geometry.Parse("M 8,0 L 10,6 L 16,8 L 10,10 L 8,16 L 6,10 L 0,8 L 6,6 Z"),
+                Fill = new System.Windows.Media.SolidColorBrush(Color.FromRgb(218, 165, 32)), // Goldenrod (더 진한 골드)
+                Width = 16,
+                Height = 16,
+                Opacity = 0,
+                RenderTransformOrigin = new System.Windows.Point(0.5, 0.5)
+            };
+            
+            var transformGroup = new System.Windows.Media.TransformGroup();
+            var scaleTransform = new System.Windows.Media.ScaleTransform(0.5, 0.5);
+            var rotateTransform = new System.Windows.Media.RotateTransform(_particleRandom.Next(0, 360));
+            transformGroup.Children.Add(scaleTransform);
+            transformGroup.Children.Add(rotateTransform);
+            starPath.RenderTransform = transformGroup;
+            
+            // 랜덤 위치
+            double x = _particleRandom.Next(10, (int)Math.Max(50, ApiCollectCard.ActualWidth - 20));
+            double y = _particleRandom.Next(10, (int)Math.Max(50, ApiCollectCard.ActualHeight - 20));
+            System.Windows.Controls.Canvas.SetLeft(starPath, x);
+            System.Windows.Controls.Canvas.SetTop(starPath, y);
+            
+            ParticleCanvas.Children.Add(starPath);
+            
+            // 애니메이션 스토리보드
+            var story = new System.Windows.Media.Animation.Storyboard();
+            
+            // 투명도 (나타났다 사라짐) - 더 오래 유지
+            var opacityAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0, To = 1,
+                Duration = TimeSpan.FromMilliseconds(500),
+                AutoReverse = true
+            };
+            System.Windows.Media.Animation.Storyboard.SetTarget(opacityAnim, starPath);
+            System.Windows.Media.Animation.Storyboard.SetTargetProperty(opacityAnim, new PropertyPath("Opacity"));
+            
+            // 크기 X - 더 크게 확대
+            var scaleXAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0.3, To = 1.5,
+                Duration = TimeSpan.FromMilliseconds(1000)
+            };
+            System.Windows.Media.Animation.Storyboard.SetTarget(scaleXAnim, starPath);
+            System.Windows.Media.Animation.Storyboard.SetTargetProperty(scaleXAnim, 
+                new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"));
+            
+            // 크기 Y - 더 크게 확대
+            var scaleYAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0.3, To = 1.5,
+                Duration = TimeSpan.FromMilliseconds(1000)
+            };
+            System.Windows.Media.Animation.Storyboard.SetTarget(scaleYAnim, starPath);
+            System.Windows.Media.Animation.Storyboard.SetTargetProperty(scaleYAnim, 
+                new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"));
+            
+            // 회전 - 더 많이 회전
+            var rotateAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = rotateTransform.Angle,
+                To = rotateTransform.Angle + 120,
+                Duration = TimeSpan.FromMilliseconds(1000)
+            };
+            System.Windows.Media.Animation.Storyboard.SetTarget(rotateAnim, starPath);
+            System.Windows.Media.Animation.Storyboard.SetTargetProperty(rotateAnim, 
+                new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)"));
+            
+            story.Children.Add(opacityAnim);
+            story.Children.Add(scaleXAnim);
+            story.Children.Add(scaleYAnim);
+            story.Children.Add(rotateAnim);
+            
+            // 애니메이션 완료 시 제거 (메모리 누수 방지)
+            story.Completed += (s, e) => ParticleCanvas.Children.Remove(starPath);
+            
+            story.Begin();
+        }
+        
+        #endregion
         
         private void HideCollectCompleteAnimation()
         {
             if (CollectCompleteOverlay == null) return;
             
+            var scaleTransform = CollectCompleteOverlay.RenderTransform as System.Windows.Media.ScaleTransform;
+            
+            // 스케일 축소 애니메이션 (1.0 → 0.8)
+            var scaleAnim = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.8,
+                Duration = TimeSpan.FromMilliseconds(200),
+                EasingFunction = new System.Windows.Media.Animation.QuadraticEase 
+                { 
+                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseIn
+                }
+            };
+            
             // 페이드 아웃 애니메이션
-            var fadeOut = new System.Windows.Media.Animation.DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300));
+            var fadeOut = new System.Windows.Media.Animation.DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(200));
             fadeOut.Completed += (s, e) => CollectCompleteOverlay.Visibility = Visibility.Collapsed;
+            
+            if (scaleTransform != null)
+            {
+                scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleAnim);
+                scaleTransform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleAnim);
+            }
             CollectCompleteOverlay.BeginAnimation(OpacityProperty, fadeOut);
         }
 
@@ -1204,6 +1910,18 @@ namespace MapleHomework
                 e.Handled = true;
             }
         }
+
+        /// <summary>
+        /// 장비 상세 보기 영역 스크롤 - 항상 부모로 전달 (자체 스크롤 없음)
+        /// </summary>
+        private void DetailView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (MainScrollViewer != null)
+            {
+                MainScrollViewer.ScrollToVerticalOffset(MainScrollViewer.VerticalOffset - e.Delta);
+                e.Handled = true;
+            }
+        }
         #endregion
 
         #region 장비 변경 내역 필터링
@@ -1244,6 +1962,7 @@ namespace MapleHomework
             // 필터 초기화
             if (FilterPresetItems != null) FilterPresetItems.IsChecked = false;
             if (FilterSpiritPendant != null) FilterSpiritPendant.IsChecked = false;
+            if (FilterMedalTitle != null) FilterMedalTitle.IsChecked = true; // 훈장/칭호 기본 표시
             if (FilterTypeEquip != null) FilterTypeEquip.IsChecked = true;
             if (FilterTypeReplace != null) FilterTypeReplace.IsChecked = true;
             if (FilterTypeOption != null) FilterTypeOption.IsChecked = true;
@@ -1269,6 +1988,8 @@ namespace MapleHomework
             
             if (FilterSpiritPendant != null)
                 _showSpiritPendant = FilterSpiritPendant.IsChecked == true;
+            
+            bool showMedalTitle = FilterMedalTitle?.IsChecked == true;
 
             // 변경 타입 필터 업데이트
             _enabledChangeTypes.Clear();
@@ -1300,6 +2021,13 @@ namespace MapleHomework
                     !r.NewItemName.Contains("정령의 펜던트"));
             }
             
+            // 훈장/칭호 필터
+            if (!showMedalTitle)
+            {
+                filtered = filtered.Where(r => 
+                    !IsMedalOrTitle(r.ItemSlot));
+            }
+            
             // 프리셋 아이템 필터 (아이템 이름에 "프리셋" 포함 여부)
             // 참고: 프리셋 아이템은 데이터 수집 시 이미 필터링되어 저장되지 않으므로
             // 이 필터는 현재 저장된 데이터에서는 효과가 제한적일 수 있음
@@ -1308,8 +2036,16 @@ namespace MapleHomework
             ItemChangeList.ItemsSource = filteredList;
             NoItemChangeDataText.Visibility = filteredList.Any() ? Visibility.Collapsed : Visibility.Visible;
         }
+        
+        /// <summary>
+        /// 훈장 또는 칭호 슬롯인지 확인
+        /// </summary>
+        private static bool IsMedalOrTitle(string? slot)
+        {
+            if (string.IsNullOrEmpty(slot)) return false;
+            return slot.Contains("훈장") || slot.Contains("칭호");
+        }
 
         #endregion
     }
-
 }

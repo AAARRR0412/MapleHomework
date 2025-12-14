@@ -30,10 +30,10 @@ namespace MapleHomework
         };
         public string CategoryColor => Category switch
         {
-            TaskCategory.Daily => "#5AC8FA",
-            TaskCategory.Weekly => "#FF9500",
-            TaskCategory.Boss => "#FF3B30",
-            TaskCategory.Monthly => "#AF52DE",
+            TaskCategory.Daily => "#A2E1DB",
+            TaskCategory.Weekly => "#FFDBCC",
+            TaskCategory.Boss => "#FEE1E8",
+            TaskCategory.Monthly => "#CBAACB",
             _ => "#888888"
         };
     }
@@ -101,6 +101,7 @@ namespace MapleHomework
             // 테마 적용
             ApplyThemeResources();
             _viewModel.ThemeChanged += OnThemeChanged;
+            _viewModel.DataChanged += OnDataChanged;
             
             RefreshTodayTasks();
             
@@ -111,12 +112,28 @@ namespace MapleHomework
 
         private void OnThemeChanged()
         {
-            ApplyThemeResources();
+            Dispatcher.Invoke(() => ApplyThemeResources());
+        }
+
+        private void OnDataChanged()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                // 캐릭터 목록 새로고침
+                Characters.Clear();
+                foreach (var c in _appData.Characters)
+                {
+                    Characters.Add(c);
+                }
+                RefreshTodayTasks();
+                OnPropertyChanged(nameof(CharacterCount));
+            });
         }
 
         protected override void OnClosed(System.EventArgs e)
         {
             _viewModel.ThemeChanged -= OnThemeChanged;
+            _viewModel.DataChanged -= OnDataChanged;
             base.OnClosed(e);
         }
 
@@ -126,19 +143,20 @@ namespace MapleHomework
         public void ApplyThemeResources()
         {
             var settings = ConfigManager.Load();
-            bool isDark = ThemeService.ShouldUseDarkTheme(settings);
+            bool isDark = settings.ThemeMode == ThemeMode.Dark || 
+                         (settings.ThemeMode == ThemeMode.System && 
+                          System.Windows.SystemParameters.HighContrast == false);
             
+            // 윈도우 배경색 직접 설정
             if (isDark)
             {
-                // 다크 모드 - 현재 디자인 유지
                 this.Background = new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(61, 74, 92));
+                    System.Windows.Media.Color.FromRgb(0x0F, 0x17, 0x2A)); // #0F172A
             }
             else
             {
-                // 라이트 모드
                 this.Background = new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(245, 247, 250));
+                    System.Windows.Media.Color.FromRgb(0xF5, 0xF7, 0xFB)); // #F5F7FB
             }
         }
 

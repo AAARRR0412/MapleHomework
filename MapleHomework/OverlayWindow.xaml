@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         Title="OverlayWindow"
-        Width="300" Height="Auto" SizeToContent="Height"
+        Width="320" Height="Auto" SizeToContent="Height"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -16,54 +16,199 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
 
-    <Border CornerRadius="12" Padding="16" Margin="5" Opacity="{Binding OverlayOpacity}">
+    <Border CornerRadius="16" Padding="20" Margin="5" Opacity="{Binding OverlayOpacity}">
         <Border.Background>
-            <SolidColorBrush Color="#1E1E2E"/>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#1A1D2E" Offset="0"/>
+                <GradientStop Color="#252A3D" Offset="1"/>
+            </LinearGradientBrush>
         </Border.Background>
         <Border.Effect>
-            <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.5" Color="Black"/>
+            <DropShadowEffect BlurRadius="25" ShadowDepth="0" Opacity="0.6" Color="#000000"/>
         </Border.Effect>
         
         <StackPanel>
-            <!-- 헤더 -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                <ui:SymbolIcon Symbol="ClipboardTask24" FontSize="20" Foreground="#5AC8FA" Margin="0,0,10,0"/>
-                <TextBlock Text="오늘의 숙제" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
-                <Border Background="#FF3B30" CornerRadius="8" Padding="8,3" Margin="10,0,0,0" VerticalAlignment="Center"
-                        Visibility="{Binding HasTasks, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Text="{Binding TaskCount}" Foreground="White" FontSize="12" FontWeight="Bold"/>
+            <!-- 헤더: 캐릭터 정보 -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- 캐릭터 아바타 -->
+                <Border Width="56" Height="56" CornerRadius="28" ClipToBounds="True"
+                        BorderThickness="2">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#5AC8FA" Offset="0"/>
+                            <GradientStop Color="#A78BFA" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                    <Border.Background>
+                        <ImageBrush Stretch="UniformToFill"
+                                    ImageSource="{Binding CharacterImage, TargetNullValue={x:Null}, FallbackValue={x:Null}}">
+                            <ImageBrush.RelativeTransform>
+                                <ScaleTransform CenterX="0.5" CenterY="0.55" ScaleX="3.5" ScaleY="3.5"/>
+                            </ImageBrush.RelativeTransform>
+                        </ImageBrush>
+                    </Border.Background>
                 </Border>
+                
+                <!-- 캐릭터 정보 -->
+                <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CharacterName}" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <TextBlock Text="Lv." Foreground="#5AC8FA" FontSize="11" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding CharacterLevel}" Foreground="#A0B0C0" FontSize="12" FontWeight="SemiBold" Margin="2,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- 구분선 -->
+            <Border Height="1" Margin="0,0,0,16">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#305AC8FA" Offset="0"/>
+                        <GradientStop Color="#10FFFFFF" Offset="0.5"/>
+                        <GradientStop Color="#30A78BFA" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!-- 숙제 게이지들 -->
+            <StackPanel>
+                <!-- 일일 숙제 게이지 -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Orientation="Horizontal" Width="60">
+                        <Border Width="8" Height="8" CornerRadius="4" Margin="0,0,8,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#5AC8FA" Offset="0"/>
+                                    <GradientStop Color="#4ECDC4" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <TextBlock Text="일일" Foreground="#5AC8FA" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <!-- 게이지 바 -->
+                    <Border Grid.Column="1" Height="14" CornerRadius="7" Background="#15FFFFFF" Margin="8,0">
+                        <Border CornerRadius="7" HorizontalAlignment="Left"
+                                Width="{Binding DailyProgressWidth}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#5AC8FA" Offset="0"/>
+                                    <GradientStop Color="#4ECDC4" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </Border>
+                    
+                    <TextBlock Grid.Column="2" Foreground="#5AC8FA" FontSize="13" FontWeight="Bold" Width="55" TextAlignment="Right">
+                        <Run Text="{Binding DailyCompleted}"/><Run Text="/"/><Run Text="{Binding DailyTotal}"/>
+                    </TextBlock>
+                </Grid>
+
+                <!-- 주간 숙제 게이지 -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Orientation="Horizontal" Width="60">
+                        <Border Width="8" Height="8" CornerRadius="4" Margin="0,0,8,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#FF9500" Offset="0"/>
+                                    <GradientStop Color="#FFCC00" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <TextBlock Text="주간" Foreground="#FF9500" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <Border Grid.Column="1" Height="14" CornerRadius="7" Background="#15FFFFFF" Margin="8,0">
+                        <Border CornerRadius="7" HorizontalAlignment="Left"
+                                Width="{Binding WeeklyProgressWidth}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#FF9500" Offset="0"/>
+                                    <GradientStop Color="#FFCC00" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </Border>
+                    
+                    <TextBlock Grid.Column="2" Foreground="#FF9500" FontSize="13" FontWeight="Bold" Width="55" TextAlignment="Right">
+                        <Run Text="{Binding WeeklyCompleted}"/><Run Text="/"/><Run Text="{Binding WeeklyTotal}"/>
+                    </TextBlock>
+                </Grid>
+
+                <!-- 보스 숙제 게이지 -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Orientation="Horizontal" Width="60">
+                        <Border Width="8" Height="8" CornerRadius="4" Margin="0,0,8,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#FF3B30" Offset="0"/>
+                                    <GradientStop Color="#FF6B6B" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <TextBlock Text="보스" Foreground="#FF3B30" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <Border Grid.Column="1" Height="14" CornerRadius="7" Background="#15FFFFFF" Margin="8,0">
+                        <Border CornerRadius="7" HorizontalAlignment="Left"
+                                Width="{Binding BossProgressWidth}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#FF3B30" Offset="0"/>
+                                    <GradientStop Color="#FF6B6B" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </Border>
+                    
+                    <TextBlock Grid.Column="2" Foreground="#FF3B30" FontSize="13" FontWeight="Bold" Width="55" TextAlignment="Right">
+                        <Run Text="{Binding BossCompleted}"/><Run Text="/"/><Run Text="{Binding BossTotal}"/>
+                    </TextBlock>
+                </Grid>
             </StackPanel>
 
-            <!-- 숙제 목록 -->
-            <ItemsControl ItemsSource="{Binding Tasks}" MaxHeight="250">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Background="#33FFFFFF" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <!-- 카테고리 색상 인디케이터 -->
-                                <Border Width="4" CornerRadius="2" Background="{Binding CategoryColor}" Margin="0,0,10,0"/>
-                                
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="{Binding CharacterName}" Foreground="#AABBCC" FontSize="11"/>
-                                    <TextBlock Text="{Binding TaskName}" Foreground="White" FontSize="13" FontWeight="Medium"
-                                               TextTrimming="CharacterEllipsis"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!-- 모두 완료 메시지 -->
-            <TextBlock Text="✨ 모든 숙제 완료!" Foreground="#4CD964" FontSize="14" FontWeight="Medium"
-                       HorizontalAlignment="Center" Margin="0,5,0,0"
-                       Visibility="{Binding AllDone, Converter={StaticResource BoolToVis}}"/>
+            <!-- 미완료 숙제 요약 -->
+            <Border Margin="0,18,0,0" CornerRadius="10" Padding="14,10"
+                    Visibility="{Binding HasTasks, Converter={StaticResource BoolToVis}}">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#15FF3B30" Offset="0"/>
+                        <GradientStop Color="#15FF6B6B" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="AlertOn24" FontSize="16" Foreground="#FF6B6B" Margin="0,0,10,0"/>
+                        <TextBlock Text="남은 숙제" Foreground="#FF6B6B" FontSize="13" FontWeight="Medium"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding TaskCount, StringFormat='{}{0}개'}" 
+                               Foreground="#FF6B6B" FontSize="15" FontWeight="Bold"
+                               HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
         </StackPanel>
     </Border>
 </Window>

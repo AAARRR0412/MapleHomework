@@ -16,7 +16,14 @@ namespace MapleHomework.Services
 
     public static class TaskRepository
     {
-        private const string FilePath = "homework_data.json";
+        private static readonly string DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
+        private static readonly string FilePath = Path.Combine(DataFolder, "homework_data.json");
+        
+        static TaskRepository()
+        {
+            if (!Directory.Exists(DataFolder))
+                Directory.CreateDirectory(DataFolder);
+        }
 
         // 데이터 저장
         public static void Save(ObservableCollection<HomeworkTask> daily, ObservableCollection<HomeworkTask> weekly)

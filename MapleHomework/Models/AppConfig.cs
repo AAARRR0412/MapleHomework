@@ -86,12 +86,24 @@ namespace MapleHomework.Models
     // 2. 파일 저장/불러오기 담당
     public static class ConfigManager
     {
-        private static string FilePath = "config.json"; // 실행 파일 옆에 생김
-        private const string AppName = "MapleHomework";
+        private static readonly string DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
+        private static readonly string FilePath = Path.Combine(DataFolder, "config.json");
+        private const string AppName = "MapleScheduler";
+        
+        static ConfigManager()
+        {
+            // 데이터 폴더가 없으면 생성
+            if (!Directory.Exists(DataFolder))
+                Directory.CreateDirectory(DataFolder);
+        }
 
         public static void Save(AppSettings settings)
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions 
+            { 
+                WriteIndented = true,
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals
+            };
             string jsonString = JsonSerializer.Serialize(settings, options);
             File.WriteAllText(FilePath, jsonString);
         }
@@ -104,7 +116,11 @@ namespace MapleHomework.Models
             try
             {
                 string jsonString = File.ReadAllText(FilePath);
-                var settings = JsonSerializer.Deserialize<AppSettings>(jsonString) ?? new AppSettings();
+                var options = new JsonSerializerOptions
+                {
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals
+                };
+                var settings = JsonSerializer.Deserialize<AppSettings>(jsonString, options) ?? new AppSettings();
 
                 // 레거시 IsDarkTheme 값 마이그레이션
                 if (settings.ThemeMode == ThemeMode.System && settings.IsDarkTheme)

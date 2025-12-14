@@ -109,6 +109,30 @@ namespace MapleHomework.Services
 
             // Boolean 플래그도 설정
             app.Resources["IsDarkTheme"] = isDark;
+
+            // CharacterSearchWindow용 DynamicResource 리소스 업데이트
+            if (isDark)
+            {
+                app.Resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(0xFF, 0xFF, 0xFF));
+                app.Resources["TextSecondary"] = new SolidColorBrush(Color.FromArgb(0xAA, 0xFF, 0xFF, 0xFF));
+                app.Resources["TextMuted"] = new SolidColorBrush(Color.FromArgb(0x80, 0xFF, 0xFF, 0xFF));
+                app.Resources["ExpGraphBarBg"] = new SolidColorBrush(Color.FromArgb(0x15, 0x00, 0x00, 0x00));
+                app.Resources["HexaCoreBg"] = new SolidColorBrush(Color.FromArgb(0x18, 0x00, 0x00, 0x00));
+                app.Resources["HexaCoreBorder"] = new SolidColorBrush(Color.FromArgb(0x25, 0xFF, 0xFF, 0xFF));
+                app.Resources["CardBackground"] = new SolidColorBrush(Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF));
+                app.Resources["BorderColor"] = new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF));
+            }
+            else
+            {
+                app.Resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(0x1E, 0x29, 0x3B));
+                app.Resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(0x47, 0x55, 0x69));
+                app.Resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(0x64, 0x74, 0x8B));
+                app.Resources["ExpGraphBarBg"] = new SolidColorBrush(Color.FromRgb(0xE2, 0xE8, 0xF0));
+                app.Resources["HexaCoreBg"] = new SolidColorBrush(Color.FromRgb(0xF8, 0xFA, 0xFC));
+                app.Resources["HexaCoreBorder"] = new SolidColorBrush(Color.FromRgb(0xE2, 0xE8, 0xF0));
+                app.Resources["CardBackground"] = new SolidColorBrush(Color.FromRgb(0xFF, 0xFF, 0xFF));
+                app.Resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(0xE2, 0xE8, 0xF0));
+            }
         }
 
         /// <summary>

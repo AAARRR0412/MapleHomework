@@ -97,7 +97,6 @@ namespace MapleHomework
         /// 백그라운드에서 API 데이터 수집 시작
         /// </summary>
         public static void StartBackgroundCollect(
-            string apiKey,
             string ocid,
             string characterId,
             string characterName,
@@ -133,11 +132,16 @@ namespace MapleHomework
                     GrowthHistoryResult result;
                     if (specificDates != null && specificDates.Any())
                     {
-                        result = await apiService.CollectGrowthHistoryForDatesAsync(apiKey, ocid, characterId, characterName, specificDates, progress);
+                        // 배치 API 사용 (Workers 호출 최소화)
+                        result = await apiService.CollectGrowthHistoryBatchAsync(ocid, characterId, characterName, specificDates, progress);
                     }
                     else
                     {
-                        result = await apiService.CollectGrowthHistoryAsync(apiKey, ocid, characterId, characterName, days, progress);
+                        // 날짜 목록 생성 후 배치 수집
+                        var dateList = Enumerable.Range(1, days)
+                            .Select(i => DateTime.Now.AddDays(-i))
+                            .ToList();
+                        result = await apiService.CollectGrowthHistoryBatchAsync(ocid, characterId, characterName, dateList, progress);
                     }
 
                     // 완료 알림 (UI 스레드에서 실행)

@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="Settings" Height="850" Width="480"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
-        ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
-        Topmost="True">
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
 
     <Border CornerRadius="20" Margin="15">
         <Border.Background>
@@ -54,25 +53,14 @@
 
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
                 <StackPanel Margin="5,0">
-                    <!-- API 설정 섹션 -->
-                    <TextBlock Text="API 설정" Foreground="#5AC8FA" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
-                    
-                <TextBlock Text="NEXON API Key" Foreground="#AAAAAA" Margin="0,0,0,6" FontSize="12" FontWeight="SemiBold"/>
-                <ui:TextBox x:Name="TxtApiKey" PlaceholderText="api.nexon.com에서 발급받은 키 입력" 
-                            Margin="0,0,0,15" Padding="10"/>
+                    <!-- 캐릭터 설정 섹션 -->
+                    <TextBlock Text="캐릭터 설정" Foreground="#5AC8FA" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
 
                 <TextBlock Text="대표 캐릭터 닉네임" Foreground="#AAAAAA" Margin="0,0,0,6" FontSize="12" FontWeight="SemiBold"/>
-                <ui:TextBox x:Name="TxtNickname" PlaceholderText="캐릭터 닉네임 입력" Padding="10"/>
-
-                <!-- API / 닉네임 저장 버튼 -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,18">
-                    <Button Content="저장" Padding="16,8" Click="SaveButton_Click"
-                            Background="#5AC8FA" Foreground="White" BorderThickness="0"
-                            MinWidth="80" Cursor="Hand"/>
-                </StackPanel>
+                    <ui:TextBox x:Name="TxtNickname" PlaceholderText="캐릭터 닉네임 입력" Padding="10" Margin="0,0,0,15"/>
 
                 <!-- 구분선 -->
-                <Border Height="1" Background="#33FFFFFF" Margin="0,18,0,15"/>
+                    <Border Height="1" Background="#33FFFFFF" Margin="0,3,0,15"/>
 
                     <!-- 테마 설정 섹션 -->
                     <TextBlock Text="테마 설정" Foreground="#4CD964" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,10 +26,6 @@ namespace MapleHomework
             InitializeComboBoxes();
 
             // 현재 선택된 캐릭터의 닉네임 표시
-            var appData = CharacterRepository.Load();
-            TxtApiKey.Text = appData.ApiKey ?? "";
-            
-            // 현재 선택된 캐릭터의 닉네임
             if (_viewModel.SelectedCharacter != null)
             {
                 TxtNickname.Text = _viewModel.SelectedCharacter.Nickname ?? "";
@@ -89,7 +86,18 @@ namespace MapleHomework
             // 알림 패널 활성화 상태
             UpdateNotificationDetailPanel();
             
+            // 엔터 키로 저장
+            this.KeyDown += SettingsWindow_KeyDown;
+            
             _isInitializing = false;
+        }
+        
+        private void SettingsWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SaveButton_Click(sender, e);
+            }
         }
 
         private void InitializeComboBoxes()
@@ -313,40 +321,72 @@ namespace MapleHomework
             _viewModel.ApplyThemeAndPersist(settings.IsDarkTheme);
         }
 
+        private bool _isSaving = false;
+
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            string apiKey = TxtApiKey.Text.Trim();
+            // 중복 실행 방지
+            if (_isSaving) return;
+            _isSaving = true;
+            
+            try
+            {
             string nickname = TxtNickname.Text.Trim();
 
-            if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(nickname))
+                if (string.IsNullOrEmpty(nickname))
             {
-                MessageBox.Show("API 키와 닉네임을 모두 입력해주세요.", "오류");
+                    MessageBox.Show("대표 닉네임을 입력해주세요.", "오류");
                 return;
             }
 
-            // 현재 선택된 캐릭터의 닉네임 업데이트
-            if (_viewModel.SelectedCharacter != null)
+                // 1. 먼저 기존 캐릭터 목록에서 해당 닉네임 검색
+                var existingChar = _viewModel.Characters.FirstOrDefault(c => 
+                    c.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase));
+
+                if (existingChar != null)
+                {
+                    // 기존 캐릭터가 있으면 선택
+                    _viewModel.SelectedCharacter = existingChar;
+                }
+                else if (_viewModel.SelectedCharacter == null)
             {
+                    // 캐릭터가 없으면 새로 추가
+                    _viewModel.AddNewCharacterWithNickname(nickname);
+                }
+                else
+                {
+                    // 현재 선택된 캐릭터의 닉네임 변경 (새 닉네임으로 API 호출)
                 _viewModel.SelectedCharacter.Nickname = nickname;
             }
 
-            // ViewModel 및 AppData 동기화 (in-memory 데이터가 오래된 값을 덮어쓰지 않도록)
-            _viewModel.UpdateApiKeyAndAutoStart(apiKey, AutoStartToggle.IsChecked == true);
+                // ViewModel 및 AppData 동기화 (닉네임 포함)
+                _viewModel.UpdateNicknameAndAutoStart(nickname, AutoStartToggle.IsChecked == true);
 
-            // config.json에도 동기화 (API 키 / 대표 캐릭터)
+                // config.json에도 동기화 (대표 캐릭터)
             var settings = ConfigManager.Load();
-            settings.ApiKey = apiKey;
             settings.CharacterName = nickname;
             ConfigManager.Save(settings);
 
             // 설정도 저장
             SaveSettings();
 
-            // API에서 캐릭터 정보 로드
-            await _viewModel.LoadCharacterDataFromApi(apiKey, nickname);
+                // API에서 캐릭터 정보 로드 (내장 API 키 사용)
+                await _viewModel.LoadCharacterDataFromApi(nickname);
+                
+                // 데이터 변경 알림 (다른 창들 업데이트)
+                _viewModel.NotifyDataChanged();
             
             MessageBox.Show("성공적으로 저장되었습니다!", "알림");
             this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"오류 발생: {ex.Message}\n\n{ex.StackTrace}", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                _isSaving = false;
+            }
         }
     }
 }

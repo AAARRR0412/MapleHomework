@@ -43,6 +43,15 @@
             <SolidColorBrush x:Key="BadgeText" Color="#6366F1"/>
             <SolidColorBrush x:Key="DetailViewBackground" Color="#1A1D2E"/>
             
+            <!-- 캐릭터 검색 창 전용 리소스 -->
+            <SolidColorBrush x:Key="ExpGraphBarBg" Color="#15000000"/>
+            <SolidColorBrush x:Key="HexaCoreBg" Color="#18000000"/>
+            <SolidColorBrush x:Key="HexaCoreBorder" Color="#25FFFFFF"/>
+            
+            <!-- 메이플 캐릭터 검색 창 테마 색상 -->
+            <Color x:Key="MapleWindowBgStart">#1E1E2E</Color>
+            <Color x:Key="MapleWindowBgEnd">#14141E</Color>
+            
             <!-- 대시보드용 컨버터 -->
             <converters:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
             <converters:TasksToTooltipConverter x:Key="TasksToTooltipConverter"/>
@@ -56,8 +65,50 @@
                 <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
             </Style>
 
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+            </Style>
+
             <Style TargetType="{x:Type CheckBox}">
                 <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+            </Style>
+
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+            </Style>
+
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+            </Style>
+
+            <Style TargetType="{x:Type RadioButton}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+            </Style>
+
+            <!-- ComboBox 드롭다운 텍스트 색상 (다크모드 대응) -->
+            <Style TargetType="{x:Type ComboBoxItem}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Padding" Value="8,6"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource CardBackgroundHover}"/>
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource AccentCyan}"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="{x:Type ComboBox}">
+                <Setter Property="FontFamily" Value="{StaticResource PretendardFont}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,6"/>
             </Style>
 
             <Style TargetType="{x:Type ToolTip}">

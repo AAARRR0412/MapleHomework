@@ -3,836 +3,934 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using MapleHomework.Models;
 
 namespace MapleHomework.Services
 {
-    /// <summary>
-    /// 원본 API 데이터 처리를 위한 서비스
-    /// raw_api/ 폴더에서 원본 데이터를 읽어 실시간으로 가공
-    /// </summary>
     public static class RawDataProcessor
     {
         private static readonly string RawPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "MapleHomework", "api-raw");
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "MapleScheduler", "api-raw");
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true
         };
 
-        #region 데이터 존재 여부 확인
-
-        /// <summary>
-        /// 특정 날짜에 데이터가 존재하는지 확인
-        /// </summary>
-        public static bool HasDataForDate(DateTime date)
-        {
-            string dateStr = date.ToString("yyyy-MM-dd");
-            string basicFile = Path.Combine(RawPath, $"{dateStr}-basic.json");
-            return File.Exists(basicFile);
-        }
-
-        /// <summary>
-        /// 수집된 날짜 목록 반환 (캘린더용)
-        /// </summary>
-        public static HashSet<DateTime> GetCollectedDates()
-        {
-            return GetDatesWithData();
-        }
+        #region 로컬 전용 데이터 모델
         
-        /// <summary>
-        /// 데이터가 존재하는 날짜 목록 반환
-        /// </summary>
-        public static HashSet<DateTime> GetDatesWithData()
+        // 링 익스체인지 API 응답은 단일 객체 (배열 아님)
+        private class LocalRingResponse
         {
-            var dates = new HashSet<DateTime>();
+            [JsonPropertyName("special_ring_exchange_name")]
+            public string? SpecialRingExchangeName { get; set; }
+
+            [JsonPropertyName("special_ring_exchange_level")]
+            public int SpecialRingExchangeLevel { get; set; }
+
+            [JsonPropertyName("special_ring_exchange_icon")]
+            public string? SpecialRingExchangeIcon { get; set; }
+
+            [JsonPropertyName("special_ring_exchange_description")]
+            public string? SpecialRingExchangeDescription { get; set; }
             
-            if (!Directory.Exists(RawPath))
-                return dates;
-
-            foreach (var file in Directory.GetFiles(RawPath, "*-basic.json"))
-            {
-                var fileName = Path.GetFileNameWithoutExtension(file);
-                // fileName: "2024-12-01-basic"
-                var dateStr = fileName.Replace("-basic", "");
-                if (DateTime.TryParse(dateStr, out var date))
-                {
-                    dates.Add(date.Date);
-                }
-            }
-
-            return dates;
-        }
-
-        /// <summary>
-        /// 특정 기간 내 데이터 없는 날짜 목록 반환
-        /// </summary>
-        public static List<DateTime> GetMissingDates(DateTime startDate, DateTime endDate)
-        {
-            var existingDates = GetDatesWithData();
-            var missingDates = new List<DateTime>();
-
-            for (var date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
-            {
-                // 미래 날짜 제외
-                if (date > DateTime.Today)
-                    continue;
-                    
-                if (!existingDates.Contains(date))
-                {
-                    missingDates.Add(date);
-                }
-            }
-
-            return missingDates.OrderBy(d => d).ToList();
-        }
-
-        /// <summary>
-        /// 데이터 현황 요약 (캘린더 표시용)
-        /// </summary>
-        public static DataCollectionSummary GetDataSummary()
-        {
-            var existingDates = GetDatesWithData();
-            
-            return new DataCollectionSummary
-            {
-                TotalDays = existingDates.Count,
-                OldestDate = existingDates.Any() ? existingDates.Min() : null,
-                NewestDate = existingDates.Any() ? existingDates.Max() : null,
-                ExistingDates = existingDates
-            };
+            public bool HasRing => !string.IsNullOrEmpty(SpecialRingExchangeName) && SpecialRingExchangeLevel > 0;
         }
 
         #endregion
 
-        #region 원본 데이터 로드
+        #region 데이터 로드 및 헬퍼
 
-        /// <summary>
-        /// 특정 날짜의 기본 정보 로드
-        /// </summary>
-        public static CharacterBasicResponse? LoadBasicInfo(DateTime date)
+        public static bool HasDataForDate(DateTime date)
         {
-            return LoadRawData<CharacterBasicResponse>(date, "basic");
+            string dateStr = date.ToString("yyyy-MM-dd");
+            return File.Exists(Path.Combine(RawPath, $"{dateStr}-basic.json"));
         }
 
-        /// <summary>
-        /// 특정 날짜의 유니온 정보 로드
-        /// </summary>
-        public static UnionResponse? LoadUnionInfo(DateTime date)
+        public static DataCollectionSummary GetDataSummary()
         {
-            return LoadRawData<UnionResponse>(date, "union");
+            var dates = new HashSet<DateTime>();
+            if (Directory.Exists(RawPath))
+            {
+                foreach (var file in Directory.GetFiles(RawPath, "*-basic.json"))
+                {
+                    var dateStr = Path.GetFileNameWithoutExtension(file).Replace("-basic", "");
+                    if (DateTime.TryParse(dateStr, out var date)) dates.Add(date.Date);
+                }
+            }
+
+            return new DataCollectionSummary
+            {
+                TotalDays = dates.Count,
+                OldestDate = dates.Count > 0 ? dates.Min() : null,
+                NewestDate = dates.Count > 0 ? dates.Max() : null,
+                ExistingDates = dates
+            };
         }
 
-        /// <summary>
-        /// 특정 날짜의 스탯 정보 로드
-        /// </summary>
-        public static CharacterStatResponse? LoadStatInfo(DateTime date)
+        public static ItemEquipmentResponse? LoadItemInfo(DateTime date) => LoadRawData<ItemEquipmentResponse>(date, "item");
+        
+        public static RingExchangeResponse? LoadRingInfo(DateTime date) => LoadRawData<RingExchangeResponse>(date, "ring");
+        
+        private static LocalRingResponse? LoadLocalRingInfo(DateTime date)
         {
-            return LoadRawData<CharacterStatResponse>(date, "stat");
+            try
+            {
+                string file = Path.Combine(RawPath, $"{date:yyyy-MM-dd}-ring.json");
+                if (!File.Exists(file)) return null;
+                string json = File.ReadAllText(file);
+                if (json.Contains("\"empty\":true")) return null;
+                return JsonSerializer.Deserialize<LocalRingResponse>(json, JsonOptions);
+            }
+            catch { return null; }
         }
 
-        /// <summary>
-        /// 특정 날짜의 장비 정보 로드
-        /// </summary>
-        public static ItemEquipmentResponse? LoadItemInfo(DateTime date)
-        {
-            return LoadRawData<ItemEquipmentResponse>(date, "item");
-        }
-
-        /// <summary>
-        /// 특정 날짜의 6차 스킬 정보 로드
-        /// </summary>
-        public static CharacterSkillResponse? LoadSkill6Info(DateTime date)
-        {
-            return LoadRawData<CharacterSkillResponse>(date, "skill6");
-        }
-
-        /// <summary>
-        /// 특정 날짜의 헥사 스탯 정보 로드
-        /// </summary>
-        public static HexaStatResponse? LoadHexaStatInfo(DateTime date)
-        {
-            return LoadRawData<HexaStatResponse>(date, "hexamatrix");
-        }
-
-        /// <summary>
-        /// 가장 최근 날짜의 헥사 스탯 정보 로드
-        /// </summary>
-        public static HexaStatResponse? LoadLatestHexaStatInfo()
-        {
-            var dates = GetDatesWithData();
-            if (!dates.Any())
-                return null;
-
-            var latestDate = dates.Max();
-            return LoadHexaStatInfo(latestDate);
-        }
-
-        /// <summary>
-        /// 가장 최근 날짜의 6차 스킬 정보 로드
-        /// </summary>
+        public static CharacterSkillResponse? LoadSkill6Info(DateTime date) => LoadRawData<CharacterSkillResponse>(date, "skill6");
+        
         public static CharacterSkillResponse? LoadLatestSkill6Info()
         {
-            var dates = GetDatesWithData();
-            if (!dates.Any())
-                return null;
+            var summary = GetDataSummary();
+            return summary.NewestDate.HasValue ? LoadRawData<CharacterSkillResponse>(summary.NewestDate.Value, "skill6") : null;
+        }
 
-            var latestDate = dates.Max();
-            return LoadSkill6Info(latestDate);
+        public static HexaStatResponse? LoadLatestHexaStatInfo()
+        {
+            var summary = GetDataSummary();
+            return summary.NewestDate.HasValue ? LoadRawData<HexaStatResponse>(summary.NewestDate.Value, "hexamatrix") : null;
+        }
+        
+        public static HexaMatrixStatResponse? LoadLatestHexaMatrixStatInfo()
+        {
+            var summary = GetDataSummary();
+            return summary.NewestDate.HasValue ? LoadRawData<HexaMatrixStatResponse>(summary.NewestDate.Value, "hexastat") : null;
         }
 
         private static T? LoadRawData<T>(DateTime date, string category) where T : class
         {
             try
             {
-                string dateStr = date.ToString("yyyy-MM-dd");
-                string file = Path.Combine(RawPath, $"{dateStr}-{category}.json");
-                
-                if (!File.Exists(file))
-                    return null;
-
+                string file = Path.Combine(RawPath, $"{date:yyyy-MM-dd}-{category}.json");
+                if (!File.Exists(file)) return null;
                 string json = File.ReadAllText(file);
-                
-                // empty 체크
-                if (json.Contains("\"empty\":true"))
-                    return null;
-
+                if (json.Contains("\"empty\":true")) return null;
                 return JsonSerializer.Deserialize<T>(json, JsonOptions);
             }
-            catch
+            catch { return null; }
+        }
+
+        /// <summary>
+        /// raw stat 데이터에서 전투력 정보를 다시 로드하여 GrowthRecords 업데이트
+        /// </summary>
+        public static int RefreshCombatPowerFromRaw(string characterId, string characterName)
+        {
+            var summary = GetDataSummary();
+            if (!summary.ExistingDates.Any()) return 0;
+            
+            int updated = 0;
+            foreach (var date in summary.ExistingDates.OrderBy(d => d))
             {
-                return null;
+                var stat = LoadRawData<CharacterStatResponse>(date, "stat");
+                var basic = LoadRawData<CharacterBasicResponse>(date, "basic");
+                
+                if (stat?.FinalStat == null || basic == null) continue;
+                
+                var cpStat = stat.FinalStat.Find(s => s.StatName == "전투력");
+                if (cpStat == null || string.IsNullOrEmpty(cpStat.StatValue)) continue;
+                
+                if (!long.TryParse(cpStat.StatValue, out long combatPower) || combatPower <= 0) continue;
+                
+                double expRate = 0;
+                if (basic.CharacterExpRate != null) 
+                    double.TryParse(basic.CharacterExpRate.Replace("%", ""), out expRate);
+                
+                var union = LoadRawData<UnionResponse>(date, "union");
+                
+                StatisticsService.RecordCharacterGrowthForDate(
+                    date, characterId, characterName,
+                    basic.CharacterLevel, 0, expRate, combatPower,
+                    union?.UnionLevel ?? 0, union?.UnionArtifactLevel ?? 0
+                );
+                updated++;
+            }
+            
+            return updated;
+        }
+
+        #endregion
+
+        #region 핵심 로직: 아이템 변경 감지 및 기록
+
+        public static void ProcessItemChangesFromRaw(string characterId, string characterName, DateTime startDate, DateTime endDate)
+        {
+            var allExistingDates = GetDataSummary().ExistingDates.OrderBy(d => d).ToList();
+            
+            var targetDates = allExistingDates
+                .Where(d => d >= startDate.Date && d <= endDate.Date && d <= DateTime.Today)
+                .ToList();
+
+            if (targetDates.Count == 0) return;
+
+            var seenItemHashes = new HashSet<string>();
+            var seenSeedRingHashes = new HashSet<string>(); // 시드링 전용 (슬롯 간 이동 추적)
+            var pastDates = allExistingDates.Where(d => d < targetDates[0]).ToList();
+
+            foreach (var pastDate in pastDates)
+            {
+                var raw = LoadItemInfo(pastDate);
+                var ring = LoadLocalRingInfo(pastDate);
+                if (raw == null) continue;
+
+                var snapshot = new InventorySnapshot(raw, ring);
+                foreach (var list in snapshot.ItemsBySlot.Values)
+                {
+                    foreach (var item in list) seenItemHashes.Add(GenerateItemHash(item));
+                }
+                // 시드링 해시도 수집 (장비+링익스체인지 통합)
+                foreach (var hash in snapshot.AllSeedRingHashes)
+                    seenSeedRingHashes.Add(hash);
+            }
+
+            InventorySnapshot? prevSnapshot = null;
+            var prevDate = targetDates[0].AddDays(-1);
+            if (HasDataForDate(prevDate))
+            {
+                var prevRaw = LoadItemInfo(prevDate);
+                var prevRing = LoadLocalRingInfo(prevDate);
+                if (prevRaw != null) 
+                {
+                    prevSnapshot = new InventorySnapshot(prevRaw, prevRing);
+                    foreach(var list in prevSnapshot.ItemsBySlot.Values)
+                        foreach(var item in list) seenItemHashes.Add(GenerateItemHash(item));
+                    foreach (var hash in prevSnapshot.AllSeedRingHashes)
+                        seenSeedRingHashes.Add(hash);
+                }
+            }
+
+            foreach (var date in targetDates)
+            {
+                var currentRaw = LoadItemInfo(date);
+                var currentRing = LoadLocalRingInfo(date);
+                
+                if (currentRaw == null) continue;
+
+                var currentSnapshot = new InventorySnapshot(currentRaw, currentRing);
+
+                if (prevSnapshot != null)
+                {
+                    DetectAndRecordChanges(characterId, characterName, date, prevSnapshot, currentSnapshot, 
+                        currentRaw.CharacterClass, seenItemHashes, seenSeedRingHashes);
+                }
+                
+                foreach(var list in currentSnapshot.ItemsBySlot.Values)
+                    foreach(var item in list) seenItemHashes.Add(GenerateItemHash(item));
+                foreach (var hash in currentSnapshot.AllSeedRingHashes)
+                    seenSeedRingHashes.Add(hash);
+
+                prevSnapshot = currentSnapshot;
+            }
+        }
+
+        private static void DetectAndRecordChanges(string charId, string charName, DateTime date, 
+            InventorySnapshot prev, InventorySnapshot curr, string? charClass, 
+            HashSet<string> seenHashes, HashSet<string> seenSeedRingHashes)
+        {
+            var allSlots = prev.ItemsBySlot.Keys.Union(curr.ItemsBySlot.Keys).ToList();
+
+            foreach (var slot in allSlots)
+            {
+                var prevItems = prev.ItemsBySlot.ContainsKey(slot) ? new List<ItemEquipmentInfo>(prev.ItemsBySlot[slot]) : new List<ItemEquipmentInfo>();
+                var currItems = curr.ItemsBySlot.ContainsKey(slot) ? new List<ItemEquipmentInfo>(curr.ItemsBySlot[slot]) : new List<ItemEquipmentInfo>();
+
+                for (int i = currItems.Count - 1; i >= 0; i--)
+                {
+                    var matchIndex = prevItems.FindIndex(p => IsExactMatch(p, currItems[i]));
+                    if (matchIndex != -1)
+                    {
+                        currItems.RemoveAt(i);
+                        prevItems.RemoveAt(matchIndex);
+                    }
+                }
+
+                foreach (var newItem in currItems)
+                {
+                    // 시드링은 슬롯 간 이동 (장비 <-> 링 익스체인지) 시 신규로 감지되지 않도록 처리
+                    if (IsSeedRing(newItem))
+                    {
+                        string seedHash = GenerateSeedRingHash(newItem);
+                        
+                        // 이전 스냅샷의 전체 시드링 중에 같은 해시가 있으면 슬롯 간 이동으로 판단
+                        if (prev.AllSeedRingHashes.Contains(seedHash))
+                        {
+                            continue; // 슬롯 간 이동은 변경으로 기록하지 않음
+                        }
+                        
+                        // 과거 데이터에서 이미 본 시드링이면 skip
+                        if (seenSeedRingHashes.Contains(seedHash))
+                        {
+                            continue;
+                        }
+                        
+                        // 시드링 레벨 변경 감지 (같은 이름, 다른 레벨)
+                        var sameName = prevItems.Find(p => IsSeedRing(p) && NormalizeName(p.ItemName) == NormalizeName(newItem.ItemName));
+                        if (sameName != null)
+                        {
+                            var changes = CompareItemOptions(sameName, newItem);
+                            if (changes.Any())
+                            {
+                                string summary = GetChangeSummary(changes);
+                                string json = SerializeItem(newItem, charClass);
+                                string changeJson = JsonSerializer.Serialize(changes);
+                                
+                                StatisticsService.RecordItemChange(charId, charName, slot, 
+                                    sameName.ItemName!, newItem.ItemName!, "옵션 변경", 
+                                    json, date, summary, changeJson, newItem.ItemIcon ?? "");
+                            }
+                            prevItems.Remove(sameName);
+                            continue;
+                        }
+                        
+                        // 진짜 신규 시드링
+                        string type = "장착";
+                        string oldName = "없음";
+                        string summaryNew = "신규 장착";
+                        var changesNew = CompareItemOptions(null, newItem);
+                        string changeJsonNew = JsonSerializer.Serialize(changesNew);
+                        string jsonNew = SerializeItem(newItem, charClass);
+
+                        StatisticsService.RecordItemChange(charId, charName, slot, 
+                            oldName, newItem.ItemName!, type, 
+                            jsonNew, date, summaryNew, changeJsonNew, newItem.ItemIcon ?? "");
+                        continue;
+                    }
+
+                    var bestMatch = FindBestMatch(newItem, prevItems);
+
+                    if (bestMatch != null)
+                    {
+                        if (!IsSpiritPendant(newItem.ItemName))
+                        {
+                            var changes = CompareItemOptions(bestMatch, newItem);
+                            if (changes.Any())
+                            {
+                                string summary = GetChangeSummary(changes);
+                                string json = SerializeItem(newItem, charClass);
+                                string changeJson = JsonSerializer.Serialize(changes);
+                                
+                                StatisticsService.RecordItemChange(charId, charName, slot, 
+                                    bestMatch.ItemName!, newItem.ItemName!, "옵션 변경", 
+                                    json, date, summary, changeJson, newItem.ItemIcon ?? "");
+                            }
+                        }
+                        prevItems.Remove(bestMatch);
+                    }
+                    else
+                    {
+                        if (!IsSpiritPendant(newItem.ItemName))
+                        {
+                            string type = "장착";
+                            string oldName = "없음";
+                            
+                            if (prevItems.Count > 0)
+                            {
+                                type = "교체";
+                                var oldItem = prevItems[0];
+                                oldName = oldItem.ItemName ?? "알 수 없음";
+                            }
+                            else
+                            {
+                                string currentHash = GenerateItemHash(newItem);
+                                if (seenHashes.Contains(currentHash))
+                                {
+                                    continue; 
+                                }
+                            }
+
+                            string summary = type == "교체" ? $"{oldName} → {newItem.ItemName}" : "신규 장착";
+                            var changes = CompareItemOptions(null, newItem);
+                            string changeJson = JsonSerializer.Serialize(changes);
+                            string json = SerializeItem(newItem, charClass);
+
+                            StatisticsService.RecordItemChange(charId, charName, slot, 
+                                oldName, newItem.ItemName!, type, 
+                                json, date, summary, changeJson, newItem.ItemIcon ?? "");
+                        }
+                    }
+                }
             }
         }
 
         #endregion
 
-        #region 장비 옵션 상세 비교
+        #region 매칭 및 비교 알고리즘
 
-        /// <summary>
-        /// 두 장비 아이템의 상세 옵션 변경 내역 생성
-        /// </summary>
+        private static bool IsSeedRing(ItemEquipmentInfo? item)
+        {
+            if (item == null) return false;
+            if (GetSpecialRingLevel(item) > 0) return true;
+            
+            var name = NormalizeName(item.ItemName);
+            if (string.IsNullOrEmpty(name)) return false;
+
+            return name.Contains("리스트레인트") || name.Contains("웨폰퍼프") || 
+                   name.Contains("리스크테이커") || name.Contains("크라이시스") || 
+                   name.Contains("링 오브 썸") || name.Contains("오버패스") ||
+                   name.Contains("얼티메이텀") || name.Contains("헬스컷") || 
+                   name.Contains("리밋 브레이커") || name.Contains("마나컷") || 
+                   name.Contains("듀라빌리티") || name.Contains("맥스") || 
+                   name.Contains("크리디펜스") || name.Contains("크리쉬프트") || 
+                   name.Contains("스탠스 쉬프트") || name.Contains("레벨퍼프") || 
+                   name.Contains("타워인핸스") || name.Contains("컨티뉴어스");
+        }
+
+        private static string NormalizeName(string? name)
+        {
+            if (string.IsNullOrEmpty(name)) return "";
+            return Regex.Replace(name, @"\s*\d+레벨$", "").Trim();
+        }
+
+        private static string GenerateItemHash(ItemEquipmentInfo item)
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.Append(NormalizeName(item.ItemName));
+            
+            if (IsSeedRing(item))
+            {
+                sb.Append($"|SeedRing|Lv{GetSpecialRingLevel(item)}");
+                return sb.ToString();
+            }
+
+            sb.Append($"|{item.Starforce}");
+            sb.Append($"|{item.PotentialOptionGrade}");
+            sb.Append($"|{item.AdditionalPotentialOptionGrade}");
+            sb.Append($"|{item.PotentialOption1}|{item.PotentialOption2}|{item.PotentialOption3}");
+            sb.Append($"|{item.AdditionalPotentialOption1}|{item.AdditionalPotentialOption2}|{item.AdditionalPotentialOption3}");
+            AppendOptionHash(sb, item.ItemAddOption);
+            AppendOptionHash(sb, item.ItemEtcOption);
+            AppendOptionHash(sb, item.ItemStarforceOption);
+            
+            return sb.ToString();
+        }
+
+        private static void AppendOptionHash(System.Text.StringBuilder sb, ItemOptionInfo? opt)
+        {
+            sb.Append('|').Append(ParseInt(opt?.Str));
+            sb.Append('|').Append(ParseInt(opt?.Dex));
+            sb.Append('|').Append(ParseInt(opt?.Int));
+            sb.Append('|').Append(ParseInt(opt?.Luk));
+            sb.Append('|').Append(ParseInt(opt?.AttackPower));
+            sb.Append('|').Append(ParseInt(opt?.MagicPower));
+        }
+
+        private static ItemEquipmentInfo? FindBestMatch(ItemEquipmentInfo target, List<ItemEquipmentInfo> candidates)
+        {
+            string targetName = NormalizeName(target.ItemName);
+            var sameNameCandidates = candidates
+                .Where(c => NormalizeName(c.ItemName) == targetName)
+                .ToList();
+
+            if (sameNameCandidates.Count == 0) return null;
+            if (sameNameCandidates.Count == 1) return sameNameCandidates[0];
+            
+            return sameNameCandidates.OrderByDescending(c => CalculateSimilarityScore(target, c)).First();
+        }
+
+        private static int CalculateSimilarityScore(ItemEquipmentInfo a, ItemEquipmentInfo b)
+        {
+            if (IsSeedRing(a) && IsSeedRing(b))
+            {
+                return GetSpecialRingLevel(a) == GetSpecialRingLevel(b) ? 100 : 0;
+            }
+
+            int score = 0;
+            if (IsOptionEqual(a.ItemAddOption, b.ItemAddOption)) score += 40;
+            if (IsPotEqual(a, b)) score += 30;
+            if (IsAddPotEqual(a, b)) score += 20;
+            if (a.Starforce == b.Starforce) score += 10;
+            if (a.PotentialOptionGrade == b.PotentialOptionGrade) score += 5;
+            return score;
+        }
+
+        private static bool IsExactMatch(ItemEquipmentInfo a, ItemEquipmentInfo b)
+        {
+            if (NormalizeName(a.ItemName) != NormalizeName(b.ItemName)) return false;
+            
+            if (IsSeedRing(a) || IsSeedRing(b))
+            {
+                return GetSpecialRingLevel(a) == GetSpecialRingLevel(b);
+            }
+
+            if (a.Starforce != b.Starforce) return false;
+            if (a.PotentialOptionGrade != b.PotentialOptionGrade) return false;
+            if (a.AdditionalPotentialOptionGrade != b.AdditionalPotentialOptionGrade) return false;
+            if (!IsOptionEqual(a.ItemBaseOption, b.ItemBaseOption)) return false;
+            if (!IsOptionEqual(a.ItemAddOption, b.ItemAddOption)) return false;
+            if (!IsOptionEqual(a.ItemEtcOption, b.ItemEtcOption)) return false;
+            if (!IsOptionEqual(a.ItemStarforceOption, b.ItemStarforceOption)) return false;
+            if (a.PotentialOption1 != b.PotentialOption1) return false;
+            if (a.PotentialOption2 != b.PotentialOption2) return false;
+            if (a.PotentialOption3 != b.PotentialOption3) return false;
+            if (a.AdditionalPotentialOption1 != b.AdditionalPotentialOption1) return false;
+            if (a.AdditionalPotentialOption2 != b.AdditionalPotentialOption2) return false;
+            if (a.AdditionalPotentialOption3 != b.AdditionalPotentialOption3) return false;
+            if (a.SoulName != b.SoulName) return false;
+            if (a.SoulOption != b.SoulOption) return false;
+
+            return true;
+        }
+
         public static List<ItemOptionChange> CompareItemOptions(ItemEquipmentInfo? oldItem, ItemEquipmentInfo newItem)
         {
             var changes = new List<ItemOptionChange>();
 
-            // 신규 아이템
             if (oldItem == null)
             {
-                changes.Add(new ItemOptionChange
+                changes.Add(new ItemOptionChange { ChangeType = ItemOptionChangeType.NewItem, Description = "신규 장착" });
+                
+                // 시드링이 아닌 경우 모든 옵션 표시
+                if (GetSpecialRingLevel(newItem) < 1)
                 {
-                    ChangeType = ItemOptionChangeType.NewItem,
-                    Category = "신규",
-                    Description = "신규 장착",
-                    NewValue = newItem.ItemName ?? ""
-                });
-
-                // 신규 아이템의 주요 옵션도 표시
-                if (!string.IsNullOrEmpty(newItem.Starforce) && newItem.Starforce != "0")
-                {
-                    changes.Add(new ItemOptionChange
+                    // 스타포스
+                    if (newItem.Starforce != "0" && !string.IsNullOrEmpty(newItem.Starforce)) 
+                        changes.Add(new ItemOptionChange { 
+                            ChangeType = ItemOptionChangeType.Starforce, 
+                            Category = "스타포스",
+                            NewValue = $"{newItem.Starforce}성"
+                            // Description 없이 NewValue만 표시
+                        });
+                    
+                    // 잠재능력
+                    if (!string.IsNullOrEmpty(newItem.PotentialOptionGrade) && newItem.PotentialOptionGrade != "없음")
                     {
-                        ChangeType = ItemOptionChangeType.Starforce,
-                        Category = "스타포스",
-                        NewValue = $"{newItem.Starforce}성"
-                    });
+                        var potLines = GetPotLines(newItem);
+                        changes.Add(new ItemOptionChange { 
+                            ChangeType = ItemOptionChangeType.Potential, 
+                            Category = "잠재 옵션",
+                            NewValue = newItem.PotentialOptionGrade, 
+                            Details = potLines 
+                        });
+                    }
+                    
+                    // 에디셔널 잠재능력
+                    if (!string.IsNullOrEmpty(newItem.AdditionalPotentialOptionGrade) && newItem.AdditionalPotentialOptionGrade != "없음")
+                    {
+                        var addPotLines = GetAddPotLines(newItem);
+                        changes.Add(new ItemOptionChange { 
+                            ChangeType = ItemOptionChangeType.AdditionalPotential, 
+                            Category = "에디 옵션",
+                            NewValue = newItem.AdditionalPotentialOptionGrade, 
+                            Details = addPotLines 
+                        });
+                    }
+                    
+                    // 주문서 강화
+                    int scrollUp = ParseInt(newItem.ScrollUpgrade);
+                    if (scrollUp > 0)
+                    {
+                        changes.Add(new ItemOptionChange { 
+                            ChangeType = ItemOptionChangeType.Scroll, 
+                            Category = "주문서",
+                            NewValue = $"{scrollUp}회",
+                            Description = $"주문서 강화 {scrollUp}회"
+                        });
+                    }
+                    
+                    // 소울
+                    if (!string.IsNullOrEmpty(newItem.SoulName))
+                    {
+                        changes.Add(new ItemOptionChange { 
+                            ChangeType = ItemOptionChangeType.Soul, 
+                            Category = "소울",
+                            NewValue = newItem.SoulName,
+                            Description = newItem.SoulName
+                        });
+                    }
                 }
-
-                if (!string.IsNullOrEmpty(newItem.PotentialOptionGrade))
-                {
-                    var potLines = GetPotentialLines(newItem);
-                changes.Add(new ItemOptionChange
-                {
-                    ChangeType = ItemOptionChangeType.Potential,
-                    Category = "잠재능력 등급업",
-                    NewValue = newItem.PotentialOptionGrade,
-                    Details = potLines
-                });
-                }
-
-                if (!string.IsNullOrEmpty(newItem.AdditionalPotentialOptionGrade))
-                {
-                    var addLines = GetAdditionalPotentialLines(newItem);
-                changes.Add(new ItemOptionChange
-                {
-                    ChangeType = ItemOptionChangeType.AdditionalPotential,
-                    Category = "에디셔널 등급업",
-                    NewValue = newItem.AdditionalPotentialOptionGrade,
-                    Details = addLines
-                });
-                }
-
                 return changes;
             }
 
-            // 스타포스 변경
-            int oldStar = ParseInt(oldItem.Starforce);
-            int newStar = ParseInt(newItem.Starforce);
-            if (oldStar != newStar)
+            bool isOldSeed = IsSeedRing(oldItem);
+            bool isNewSeed = IsSeedRing(newItem);
+
+            if (isOldSeed || isNewSeed)
             {
-                changes.Add(new ItemOptionChange
+                int oldRingLv = GetSpecialRingLevel(oldItem);
+                int newRingLv = GetSpecialRingLevel(newItem);
+
+                if (oldRingLv > 0 && newRingLv > 0 && oldRingLv != newRingLv)
                 {
-                    ChangeType = ItemOptionChangeType.Starforce,
+                    changes.Add(new ItemOptionChange
+                    {
+                        ChangeType = ItemOptionChangeType.Option, 
+                        Category = "링 레벨",
+                        OldValue = $"{oldRingLv}레벨", NewValue = $"{newRingLv}레벨",
+                        Description = $"스킬 레벨: {oldRingLv} → {newRingLv}"
+                    });
+                }
+                return changes; 
+            }
+
+            if (oldItem.Starforce != newItem.Starforce)
+            {
+                changes.Add(new ItemOptionChange 
+                { 
+                    ChangeType = ItemOptionChangeType.Starforce, 
                     Category = "스타포스",
-                    OldValue = $"{oldStar}성",
-                    NewValue = $"{newStar}성",
-                    Description = $"{oldStar}성 → {newStar}성"
+                    OldValue = $"{oldItem.Starforce}성", NewValue = $"{newItem.Starforce}성",
+                    Description = $"{oldItem.Starforce}성 → {newItem.Starforce}성" 
                 });
             }
 
-            // 잠재능력 등급 변경
-            if (oldItem.PotentialOptionGrade != newItem.PotentialOptionGrade)
+            if (oldItem.PotentialOptionGrade != newItem.PotentialOptionGrade || !IsPotEqual(oldItem, newItem))
             {
-                changes.Add(new ItemOptionChange
+                // 잠재 옵션: 변경 전 표시 없이 새 옵션 3줄 전체 표시
+                var newPotLines = GetPotLines(newItem);
+                if (newPotLines.Any() || oldItem.PotentialOptionGrade != newItem.PotentialOptionGrade)
                 {
-                    ChangeType = ItemOptionChangeType.Potential,
-                    Category = "잠재능력 등급업",
-                    OldValue = oldItem.PotentialOptionGrade ?? "없음",
-                    NewValue = newItem.PotentialOptionGrade ?? "없음",
-                    Description = $"{oldItem.PotentialOptionGrade ?? "없음"} → {newItem.PotentialOptionGrade ?? "없음"}"
-                });
-            }
-
-            // 잠재능력 옵션 변경
-            var oldPotLines = GetPotentialLines(oldItem);
-            var newPotLines = GetPotentialLines(newItem);
-            if (!oldPotLines.SequenceEqual(newPotLines) && oldItem.PotentialOptionGrade == newItem.PotentialOptionGrade)
-            {
-                var detailChanges = CompareOptionLines(oldPotLines, newPotLines);
-                if (detailChanges.Any())
-                {
-                    changes.Add(new ItemOptionChange
-                    {
-                        ChangeType = ItemOptionChangeType.PotentialOption,
-                        Category = "잠재능력 옵션",
-                        Details = detailChanges
+                    changes.Add(new ItemOptionChange 
+                    { 
+                        ChangeType = oldItem.PotentialOptionGrade != newItem.PotentialOptionGrade 
+                            ? ItemOptionChangeType.Potential 
+                            : ItemOptionChangeType.PotentialOption,
+                        Category = "잠재 옵션",
+                        NewValue = newItem.PotentialOptionGrade ?? "없음",
+                        Details = newPotLines // 새 옵션 3줄 전체
                     });
                 }
             }
 
-            // 에디셔널 등급 변경
-            if (oldItem.AdditionalPotentialOptionGrade != newItem.AdditionalPotentialOptionGrade)
+            if (oldItem.AdditionalPotentialOptionGrade != newItem.AdditionalPotentialOptionGrade || !IsAddPotEqual(oldItem, newItem))
             {
-                changes.Add(new ItemOptionChange
-                {
-                    ChangeType = ItemOptionChangeType.AdditionalPotential,
-                    Category = "에디셔널 등급업",
-                    OldValue = oldItem.AdditionalPotentialOptionGrade ?? "없음",
-                    NewValue = newItem.AdditionalPotentialOptionGrade ?? "없음",
-                    Description = $"{oldItem.AdditionalPotentialOptionGrade ?? "없음"} → {newItem.AdditionalPotentialOptionGrade ?? "없음"}"
-                });
-            }
-
-            // 에디셔널 옵션 변경
-            var oldAddLines = GetAdditionalPotentialLines(oldItem);
-            var newAddLines = GetAdditionalPotentialLines(newItem);
-            if (!oldAddLines.SequenceEqual(newAddLines) && oldItem.AdditionalPotentialOptionGrade == newItem.AdditionalPotentialOptionGrade)
-            {
-                var detailChanges = CompareOptionLines(oldAddLines, newAddLines);
-                if (detailChanges.Any())
+                // 에디셔널 잠재 옵션: 변경 전 표시 없이 새 옵션 3줄 전체 표시
+                var newAddPotLines = GetAddPotLines(newItem);
+                if (newAddPotLines.Any() || oldItem.AdditionalPotentialOptionGrade != newItem.AdditionalPotentialOptionGrade)
                 {
                     changes.Add(new ItemOptionChange
                     {
-                        ChangeType = ItemOptionChangeType.AdditionalPotentialOption,
-                        Category = "에디셔널 옵션",
-                        Details = detailChanges
+                        ChangeType = oldItem.AdditionalPotentialOptionGrade != newItem.AdditionalPotentialOptionGrade 
+                            ? ItemOptionChangeType.AdditionalPotential 
+                            : ItemOptionChangeType.AdditionalPotentialOption,
+                        Category = "에디 옵션",
+                        NewValue = newItem.AdditionalPotentialOptionGrade ?? "없음",
+                        Details = newAddPotLines // 새 옵션 3줄 전체
                     });
                 }
             }
 
-            // 추가옵션 변경
-            var addOptionChanges = CompareAddOptions(oldItem.ItemAddOption, newItem.ItemAddOption);
-            if (addOptionChanges.Any())
+            if (!IsOptionEqual(oldItem.ItemAddOption, newItem.ItemAddOption))
             {
-                changes.Add(new ItemOptionChange
+                var diffs = GetOptionDiffs(oldItem.ItemAddOption, newItem.ItemAddOption);
+                if (diffs.Any())
                 {
-                    ChangeType = ItemOptionChangeType.AddOption,
-                    Category = "추가 옵션",
-                    Details = addOptionChanges
-                });
+                    changes.Add(new ItemOptionChange
+                    {
+                        ChangeType = ItemOptionChangeType.AddOption,
+                        Category = "추가 옵션",
+                        Details = diffs
+                    });
+                }
             }
 
-            // 주문서 업그레이드 횟수 변경
-            int oldScroll = ParseInt(oldItem.ScrollUpgrade);
-            int newScroll = ParseInt(newItem.ScrollUpgrade);
-            if (oldScroll != newScroll)
+            if (oldItem.ScrollUpgrade != newItem.ScrollUpgrade || !IsOptionEqual(oldItem.ItemEtcOption, newItem.ItemEtcOption))
             {
+                var diffs = GetOptionDiffs(oldItem.ItemEtcOption, newItem.ItemEtcOption);
+                string desc = "주문서 강화";
+                if (oldItem.ScrollUpgrade != newItem.ScrollUpgrade)
+                    desc += $" ({oldItem.ScrollUpgrade}회 → {newItem.ScrollUpgrade}회)";
+
                 changes.Add(new ItemOptionChange
                 {
                     ChangeType = ItemOptionChangeType.Scroll,
                     Category = "주문서",
-                    OldValue = $"{oldScroll}회",
-                    NewValue = $"{newScroll}회",
-                    Description = $"업그레이드 {oldScroll}회 → {newScroll}회"
+                    Description = desc,
+                    Details = diffs 
                 });
             }
 
-            // 주문서 옵션(etc) 변경
-            var scrollOptionChanges = CompareEtcOptions(oldItem.ItemEtcOption, newItem.ItemEtcOption);
-            if (scrollOptionChanges.Any())
+            if (oldItem.SoulName != newItem.SoulName || oldItem.SoulOption != newItem.SoulOption)
             {
                 changes.Add(new ItemOptionChange
                 {
-                    ChangeType = ItemOptionChangeType.ScrollOption,
-                    Category = "주문서 옵션",
-                    Details = scrollOptionChanges
+                    ChangeType = ItemOptionChangeType.Soul,
+                    Category = "소울",
+                    OldValue = oldItem.SoulName ?? "없음",
+                    NewValue = newItem.SoulName ?? "없음",
+                    Description = $"{oldItem.SoulName} → {newItem.SoulName}"
                 });
             }
 
-            // 소울 변경
-            if (oldItem.SoulName != newItem.SoulName || oldItem.SoulOption != newItem.SoulOption)
-            {
-                if (!string.IsNullOrEmpty(newItem.SoulName))
-                {
-                    changes.Add(new ItemOptionChange
-                    {
-                        ChangeType = ItemOptionChangeType.Soul,
-                        Category = "소울",
-                        OldValue = oldItem.SoulName ?? "없음",
-                        NewValue = newItem.SoulName ?? "",
-                        Description = $"{oldItem.SoulName ?? "없음"} → {newItem.SoulName}"
-                    });
-                }
-            }
-
             return changes;
         }
 
-        private static List<string> GetPotentialLines(ItemEquipmentInfo item)
+        private static bool IsOptionEqual(ItemOptionInfo? a, ItemOptionInfo? b)
         {
-            var lines = new List<string>();
-            if (!string.IsNullOrEmpty(item.PotentialOption1)) lines.Add(item.PotentialOption1);
-            if (!string.IsNullOrEmpty(item.PotentialOption2)) lines.Add(item.PotentialOption2);
-            if (!string.IsNullOrEmpty(item.PotentialOption3)) lines.Add(item.PotentialOption3);
-            return lines;
-        }
-
-        private static List<string> GetAdditionalPotentialLines(ItemEquipmentInfo item)
-        {
-            var lines = new List<string>();
-            if (!string.IsNullOrEmpty(item.AdditionalPotentialOption1)) lines.Add(item.AdditionalPotentialOption1);
-            if (!string.IsNullOrEmpty(item.AdditionalPotentialOption2)) lines.Add(item.AdditionalPotentialOption2);
-            if (!string.IsNullOrEmpty(item.AdditionalPotentialOption3)) lines.Add(item.AdditionalPotentialOption3);
-            return lines;
-        }
-
-        private static List<string> CompareOptionLines(List<string> oldLines, List<string> newLines)
-        {
-            var changes = new List<string>();
-            int maxLen = Math.Max(oldLines.Count, newLines.Count);
+            if (a == null && b == null) return true;
+            if (a == null) return IsAllZero(b);
+            if (b == null) return IsAllZero(a);
             
-            for (int i = 0; i < maxLen; i++)
+            return ParseInt(a.Str) == ParseInt(b.Str) &&
+                   ParseInt(a.Dex) == ParseInt(b.Dex) &&
+                   ParseInt(a.Int) == ParseInt(b.Int) &&
+                   ParseInt(a.Luk) == ParseInt(b.Luk) &&
+                   ParseInt(a.AttackPower) == ParseInt(b.AttackPower) &&
+                   ParseInt(a.MagicPower) == ParseInt(b.MagicPower) &&
+                   ParseInt(a.BossDamage) == ParseInt(b.BossDamage) &&
+                   ParseInt(a.IgnoreMonsterArmor) == ParseInt(b.IgnoreMonsterArmor) &&
+                   ParseInt(a.AllStat) == ParseInt(b.AllStat) &&
+                   ParseInt(a.Damage) == ParseInt(b.Damage) &&
+                   ParseInt(a.MaxHp) == ParseInt(b.MaxHp) &&
+                   ParseInt(a.MaxMp) == ParseInt(b.MaxMp);
+        }
+
+        private static bool IsAllZero(ItemOptionInfo? opt)
+        {
+            if (opt == null) return true;
+            return ParseInt(opt.Str) == 0 && ParseInt(opt.Dex) == 0 && 
+                   ParseInt(opt.Int) == 0 && ParseInt(opt.Luk) == 0 &&
+                   ParseInt(opt.AttackPower) == 0 && ParseInt(opt.MagicPower) == 0;
+        }
+
+        private static bool IsPotEqual(ItemEquipmentInfo a, ItemEquipmentInfo b) 
+            => a.PotentialOption1 == b.PotentialOption1 && a.PotentialOption2 == b.PotentialOption2 && a.PotentialOption3 == b.PotentialOption3;
+
+        private static bool IsAddPotEqual(ItemEquipmentInfo a, ItemEquipmentInfo b)
+            => a.AdditionalPotentialOption1 == b.AdditionalPotentialOption1 && a.AdditionalPotentialOption2 == b.AdditionalPotentialOption2 && a.AdditionalPotentialOption3 == b.AdditionalPotentialOption3;
+
+        #endregion
+
+        #region 유틸리티 메서드
+
+        private class InventorySnapshot
+        {
+            public Dictionary<string, List<ItemEquipmentInfo>> ItemsBySlot { get; private set; } = new();
+            
+            // 시드링 해시 목록 (장비 슬롯 + 링 익스체인지 슬롯 통합)
+            public HashSet<string> AllSeedRingHashes { get; private set; } = new();
+
+            public InventorySnapshot(ItemEquipmentResponse raw, LocalRingResponse? ringRaw = null)
             {
-                string oldVal = i < oldLines.Count ? oldLines[i] : "";
-                string newVal = i < newLines.Count ? newLines[i] : "";
+                var allItems = new List<ItemEquipmentInfo>();
+                if (raw.ItemEquipment != null) allItems.AddRange(raw.ItemEquipment);
+                if (raw.ItemEquipmentPreset1 != null) allItems.AddRange(raw.ItemEquipmentPreset1);
+                if (raw.ItemEquipmentPreset2 != null) allItems.AddRange(raw.ItemEquipmentPreset2);
+                if (raw.ItemEquipmentPreset3 != null) allItems.AddRange(raw.ItemEquipmentPreset3);
                 
-                if (oldVal != newVal)
+                // 링 익스체인지 슬롯의 시드링 추가 (단일 객체)
+                if (ringRaw != null && ringRaw.HasRing) 
                 {
-                    if (string.IsNullOrEmpty(oldVal))
-                        changes.Add($"+ {newVal}");
-                    else if (string.IsNullOrEmpty(newVal))
-                        changes.Add($"- {oldVal}");
-                    else
-                        changes.Add($"{oldVal} → {newVal}");
+                    var converted = new ItemEquipmentInfo
+                    {
+                        ItemName = ringRaw.SpecialRingExchangeName,
+                        SpecialRingLevel = WrapIntToJsonElement(ringRaw.SpecialRingExchangeLevel),
+                        ItemIcon = ringRaw.SpecialRingExchangeIcon,
+                        ItemDescription = ringRaw.SpecialRingExchangeDescription,
+                        ItemEquipmentSlot = "반지",
+                        ItemAddOption = null, ItemBaseOption = null, ItemEtcOption = null,
+                        ItemStarforceOption = null, Starforce = "0", ScrollUpgrade = "0"
+                    };
+                    allItems.Add(converted);
+                }
+
+                foreach (var item in allItems)
+                {
+                    string slot = item.ItemEquipmentSlot ?? "";
+                    if (slot.Contains("반지") || slot.Contains("Ring")) slot = "반지";
+                    if (slot.Contains("펜던트") || slot.Contains("Pendant")) slot = "펜던트";
+                    
+                    if (string.IsNullOrEmpty(slot)) continue;
+                    
+                    if (!ItemsBySlot.ContainsKey(slot)) ItemsBySlot[slot] = new List<ItemEquipmentInfo>();
+                    if (!ItemsBySlot[slot].Any(existing => IsExactMatch(existing, item)))
+                    {
+                        ItemsBySlot[slot].Add(item);
+                    }
+                    
+                    // 시드링 해시 수집 (장비/링익스체인지 슬롯 간 이동 추적용)
+                    if (IsSeedRing(item))
+                    {
+                        AllSeedRingHashes.Add(GenerateSeedRingHash(item));
+                    }
                 }
             }
             
-            return changes;
-        }
-
-        private static List<string> CompareAddOptions(ItemOptionInfo? oldOpt, ItemOptionInfo? newOpt)
-        {
-            var changes = new List<string>();
-            
-            CompareStatValue(changes, "STR", oldOpt?.Str, newOpt?.Str);
-            CompareStatValue(changes, "DEX", oldOpt?.Dex, newOpt?.Dex);
-            CompareStatValue(changes, "INT", oldOpt?.Int, newOpt?.Int);
-            CompareStatValue(changes, "LUK", oldOpt?.Luk, newOpt?.Luk);
-            CompareStatValue(changes, "MaxHP", oldOpt?.MaxHp, newOpt?.MaxHp);
-            CompareStatValue(changes, "MaxMP", oldOpt?.MaxMp, newOpt?.MaxMp);
-            CompareStatValue(changes, "공격력", oldOpt?.AttackPower, newOpt?.AttackPower);
-            CompareStatValue(changes, "마력", oldOpt?.MagicPower, newOpt?.MagicPower);
-            CompareStatValue(changes, "올스탯%", oldOpt?.AllStat, newOpt?.AllStat);
-            CompareStatValue(changes, "보공%", oldOpt?.BossDamage, newOpt?.BossDamage);
-            CompareStatValue(changes, "데미지%", oldOpt?.Damage, newOpt?.Damage);
-            
-            return changes;
-        }
-
-        private static List<string> CompareEtcOptions(ItemOptionInfo? oldOpt, ItemOptionInfo? newOpt)
-        {
-            var changes = new List<string>();
-            
-            CompareStatValue(changes, "STR", oldOpt?.Str, newOpt?.Str);
-            CompareStatValue(changes, "DEX", oldOpt?.Dex, newOpt?.Dex);
-            CompareStatValue(changes, "INT", oldOpt?.Int, newOpt?.Int);
-            CompareStatValue(changes, "LUK", oldOpt?.Luk, newOpt?.Luk);
-            CompareStatValue(changes, "공격력", oldOpt?.AttackPower, newOpt?.AttackPower);
-            CompareStatValue(changes, "마력", oldOpt?.MagicPower, newOpt?.MagicPower);
-            
-            return changes;
-        }
-
-        private static void CompareStatValue(List<string> changes, string statName, string? oldVal, string? newVal)
-        {
-            int oldNum = ParseInt(oldVal);
-            int newNum = ParseInt(newVal);
-            
-            if (oldNum != newNum && (oldNum > 0 || newNum > 0))
+            private System.Text.Json.JsonElement WrapIntToJsonElement(int value)
             {
-                changes.Add($"{statName} {oldNum} → {newNum}");
+                var json = $"{{\"val\":{value}}}";
+                using var doc = JsonDocument.Parse(json);
+                return doc.RootElement.GetProperty("val").Clone();
             }
+        }
+        
+        // 시드링 전용 해시 (이름 + 레벨만으로 동일성 판단)
+        private static string GenerateSeedRingHash(ItemEquipmentInfo item)
+        {
+            return $"{NormalizeName(item.ItemName)}|SeedRing|Lv{GetSpecialRingLevel(item)}";
+        }
+
+        private static int GetSpecialRingLevel(ItemEquipmentInfo item)
+        {
+            if (item.SpecialRingLevel.HasValue)
+            {
+                try {
+                    var element = item.SpecialRingLevel.Value;
+                    if (element.ValueKind == JsonValueKind.Number) return element.GetInt32();
+                    if (element.ValueKind == JsonValueKind.String && int.TryParse(element.GetString(), out int v)) return v;
+                } catch { }
+            }
+            if (!string.IsNullOrEmpty(item.ItemName))
+            {
+                var match = Regex.Match(item.ItemName, @"\s*(\d+)레벨$");
+                if (match.Success && int.TryParse(match.Groups[1].Value, out int level)) return level;
+            }
+            return 0;
+        }
+
+        private static string GetChangeSummary(List<ItemOptionChange> changes)
+        {
+            var summaries = changes.Select(c => c.Category).Distinct().ToList();
+            if (summaries.Count > 2) return $"{summaries[0]} 외 {summaries.Count - 1}건";
+            return string.Join(", ", summaries);
+        }
+
+        private static bool IsSpiritPendant(string? name) => name != null && name.Contains("정령의 펜던트");
+
+        private static List<string> GetPotLines(ItemEquipmentInfo item)
+        {
+            var list = new List<string>();
+            if (!string.IsNullOrEmpty(item.PotentialOption1)) list.Add(item.PotentialOption1);
+            if (!string.IsNullOrEmpty(item.PotentialOption2)) list.Add(item.PotentialOption2);
+            if (!string.IsNullOrEmpty(item.PotentialOption3)) list.Add(item.PotentialOption3);
+            return list;
+        }
+
+        private static List<string> GetAddPotLines(ItemEquipmentInfo item)
+        {
+            var list = new List<string>();
+            if (!string.IsNullOrEmpty(item.AdditionalPotentialOption1)) list.Add(item.AdditionalPotentialOption1);
+            if (!string.IsNullOrEmpty(item.AdditionalPotentialOption2)) list.Add(item.AdditionalPotentialOption2);
+            if (!string.IsNullOrEmpty(item.AdditionalPotentialOption3)) list.Add(item.AdditionalPotentialOption3);
+            return list;
+        }
+
+        private static List<string> CompareStringLines(List<string> oldLines, List<string> newLines)
+        {
+            var res = new List<string>();
+            int max = Math.Max(oldLines.Count, newLines.Count);
+            for(int i=0; i<max; i++)
+            {
+                string o = i < oldLines.Count ? oldLines[i] : "";
+                string n = i < newLines.Count ? newLines[i] : "";
+                if (o != n)
+                {
+                    if (string.IsNullOrEmpty(o)) res.Add($"+ {n}");
+                    else if (string.IsNullOrEmpty(n)) res.Add($"- {o}");
+                    else res.Add($"{o} → {n}");
+                }
+            }
+            return res;
+        }
+
+        private static List<string> GetOptionDiffs(ItemOptionInfo? oldOpt, ItemOptionInfo? newOpt)
+        {
+            var diffs = new List<string>();
+            if (oldOpt == null && newOpt == null) return diffs;
+            
+            CheckStat(diffs, "STR", oldOpt?.Str, newOpt?.Str);
+            CheckStat(diffs, "DEX", oldOpt?.Dex, newOpt?.Dex);
+            CheckStat(diffs, "INT", oldOpt?.Int, newOpt?.Int);
+            CheckStat(diffs, "LUK", oldOpt?.Luk, newOpt?.Luk);
+            CheckStat(diffs, "공격력", oldOpt?.AttackPower, newOpt?.AttackPower);
+            CheckStat(diffs, "마력", oldOpt?.MagicPower, newOpt?.MagicPower);
+            CheckStat(diffs, "올스탯%", oldOpt?.AllStat, newOpt?.AllStat);
+            
+            return diffs;
+        }
+
+        private static void CheckStat(List<string> diffs, string name, string? oldVal, string? newVal)
+        {
+            int o = ParseInt(oldVal);
+            int n = ParseInt(newVal);
+            if (o != n) diffs.Add($"{name} {o} → {n}");
         }
 
         private static int ParseInt(string? s)
         {
             if (string.IsNullOrWhiteSpace(s)) return 0;
-            var cleaned = s.Replace(",", "").Replace("%", "").Trim();
-            return int.TryParse(cleaned, out var v) ? v : 0;
+            return int.TryParse(s.Replace(",", "").Replace("%", ""), out int v) ? v : 0;
         }
 
-        #endregion
-
-        #region 원본 데이터 기반 장비 변경 처리
-
-        /// <summary>
-        /// 원본 데이터에서 장비 변경 내역을 생성하여 기록
-        /// </summary>
-        public static void ProcessItemChangesFromRaw(string characterId, string characterName, DateTime startDate, DateTime endDate)
+        private static string SerializeItem(ItemEquipmentInfo item, string? charClass)
         {
-            var dateList = new List<DateTime>();
-            for (var date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
+            var json = JsonSerializer.Serialize(item);
+            if (!string.IsNullOrEmpty(charClass))
             {
-                if (date > DateTime.Today) continue;
-                if (HasDataForDate(date))
+                var options = new JsonSerializerOptions
                 {
-                    dateList.Add(date);
-                }
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All)
+                };
+                
+                using var doc = JsonDocument.Parse(json);
+                using var stream = new MemoryStream();
+                using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Encoder = options.Encoder });
+                writer.WriteStartObject();
+                writer.WriteString("character_class", charClass);
+                foreach (var prop in doc.RootElement.EnumerateObject()) prop.WriteTo(writer);
+                writer.WriteEndObject();
+                writer.Flush();
+                return System.Text.Encoding.UTF8.GetString(stream.ToArray());
             }
-
-            if (dateList.Count < 1) return; // 최소 1일 이상의 데이터가 있어야 함
-
-            dateList = dateList.OrderBy(d => d).ToList();
-
-            Dictionary<string, ItemEquipmentInfo>? prevItems = null;
-            HashSet<string> prevPresetNames = new();
-
-            // 첫 날짜 이전의 데이터가 있는지 확인
-            if (dateList.Any())
-            {
-                var firstDate = dateList.First();
-                var prevDate = firstDate.AddDays(-1);
-                var prevItemInfo = LoadItemInfo(prevDate);
-                if (prevItemInfo?.ItemEquipment != null)
-                {
-                    prevItems = prevItemInfo.ItemEquipment
-                        .Where(item => !string.IsNullOrEmpty(item.ItemEquipmentSlot) && !string.IsNullOrEmpty(item.ItemName))
-                        .GroupBy(item => item.ItemEquipmentSlot!)
-                        .ToDictionary(g => g.Key, g => g.First());
-                    prevPresetNames = CollectPresetNames(prevItemInfo);
-                }
-            }
-
-            bool isFirstValidData = true;
-            
-            foreach (var targetDate in dateList)
-            {
-                var itemInfo = LoadItemInfo(targetDate);
-                if (itemInfo?.ItemEquipment == null) continue;
-
-                // 슬롯 중복 방지
-                var currentItems = itemInfo.ItemEquipment
-                    .Where(item => !string.IsNullOrEmpty(item.ItemEquipmentSlot) && !string.IsNullOrEmpty(item.ItemName))
-                    .GroupBy(item => item.ItemEquipmentSlot!)
-                    .ToDictionary(g => g.Key, g => g.First());
-
-                var currentPresetNames = CollectPresetNames(itemInfo);
-
-                if (prevItems != null)
-                {
-                    foreach (var itemPair in currentItems)
-                    {
-                        var newItem = itemPair.Value;
-                        string slot = itemPair.Key;
-
-                        if (prevItems.TryGetValue(slot, out var oldItem))
-                        {
-                            if (oldItem.ItemName != newItem.ItemName)
-                            {
-                                // 프리셋 전환만으로 인한 교체면 스킵
-                                if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(oldItem.ItemName ?? ""))
-                                    continue;
-                                // 정령의 펜던트는 스킵
-                                if (IsSpiritPendant(newItem.ItemName) || IsSpiritPendant(oldItem.ItemName))
-                                    continue;
-
-                                string json = System.Text.Json.JsonSerializer.Serialize(newItem);
-                                string summary = BuildChangeSummary(oldItem, newItem, isReplace: true);
-                                var optionChanges = CompareItemOptions(oldItem, newItem);
-                                string optionChangesJson = System.Text.Json.JsonSerializer.Serialize(optionChanges);
-                                string itemIcon = newItem.ItemIcon ?? "";
-
-                                StatisticsService.RecordItemChange(characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "교체", json, targetDate, summary, optionChangesJson, itemIcon);
-                            }
-                            else if (IsItemOptionChanged(oldItem, newItem))
-                            {
-                                if (IsSpiritPendant(newItem.ItemName)) continue;
-                                string json = System.Text.Json.JsonSerializer.Serialize(newItem);
-                                string summary = BuildChangeSummary(oldItem, newItem);
-                                var optionChanges = CompareItemOptions(oldItem, newItem);
-                                string optionChangesJson = System.Text.Json.JsonSerializer.Serialize(optionChanges);
-                                string itemIcon = newItem.ItemIcon ?? "";
-
-                                StatisticsService.RecordItemChange(characterId, characterName, slot, oldItem.ItemName!, newItem.ItemName!, "옵션 변경", json, targetDate, summary, optionChangesJson, itemIcon);
-                            }
-                        }
-                        else
-                        {
-                            // 프리셋에 이미 존재하는 아이템이면 신규 장착으로 보지 않음
-                            if (currentPresetNames.Contains(newItem.ItemName ?? "") || prevPresetNames.Contains(newItem.ItemName ?? ""))
-                                continue;
-                            if (IsSpiritPendant(newItem.ItemName)) continue;
-
-                            string json = System.Text.Json.JsonSerializer.Serialize(newItem);
-                            string summary = BuildChangeSummary(null, newItem, isNew: true);
-                            var optionChanges = CompareItemOptions(null, newItem);
-                            string optionChangesJson = System.Text.Json.JsonSerializer.Serialize(optionChanges);
-                            string itemIcon = newItem.ItemIcon ?? "";
-
-                            StatisticsService.RecordItemChange(characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json, targetDate, summary, optionChangesJson, itemIcon);
-                        }
-                    }
-                }
-                else if (isFirstValidData)
-                {
-                    // 첫 번째 유효한 데이터이고 이전 데이터가 없으면, 현재 장비를 "초기 상태"로 기록
-                    // 주요 장비 슬롯만 기록 (무기, 보조무기, 엠블렘, 모자, 상의, 하의, 신발, 장갑, 망토, 어깨장식, 얼굴장식, 눈장식, 귀고리, 반지, 펜던트, 벨트, 뱃지, 훈장)
-                    var mainSlots = new HashSet<string> { "무기", "보조무기", "엠블렘", "모자", "상의", "하의", "신발", "장갑", "망토", "어깨장식", "얼굴장식", "눈장식", "귀고리", "반지1", "반지2", "반지3", "반지4", "펜던트", "펜던트2", "벨트", "뱃지", "훈장", "포켓 아이템" };
-                    
-                    foreach (var itemPair in currentItems)
-                    {
-                        var newItem = itemPair.Value;
-                        string slot = itemPair.Key;
-                        
-                        // 주요 슬롯이 아니면 스킵
-                        if (!mainSlots.Contains(slot)) continue;
-                        // 정령의 펜던트 스킵
-                        if (IsSpiritPendant(newItem.ItemName)) continue;
-                        // 프리셋 아이템 스킵
-                        if (currentPresetNames.Contains(newItem.ItemName ?? "")) continue;
-
-                        string json = System.Text.Json.JsonSerializer.Serialize(newItem);
-                        string summary = BuildChangeSummary(null, newItem, isNew: true);
-                        var optionChanges = CompareItemOptions(null, newItem);
-                        string optionChangesJson = System.Text.Json.JsonSerializer.Serialize(optionChanges);
-                        string itemIcon = newItem.ItemIcon ?? "";
-
-                        StatisticsService.RecordItemChange(characterId, characterName, slot, "없음", newItem.ItemName!, "장착", json, targetDate, summary, optionChangesJson, itemIcon);
-                    }
-                }
-
-                prevItems = currentItems;
-                prevPresetNames = currentPresetNames;
-                isFirstValidData = false;
-            }
-        }
-
-        private static HashSet<string> CollectPresetNames(ItemEquipmentResponse info)
-        {
-            var set = new HashSet<string>();
-            void AddRange(List<ItemEquipmentInfo>? list)
-            {
-                if (list == null) return;
-                foreach (var it in list)
-                {
-                    if (!string.IsNullOrEmpty(it.ItemName))
-                        set.Add(it.ItemName);
-                }
-            }
-            AddRange(info.ItemEquipmentPreset1);
-            AddRange(info.ItemEquipmentPreset2);
-            AddRange(info.ItemEquipmentPreset3);
-            return set;
-        }
-
-        private static bool IsSpiritPendant(string? name)
-        {
-            if (string.IsNullOrEmpty(name)) return false;
-            return name.Contains("정령의 펜던트");
-        }
-
-        private static bool IsItemOptionChanged(ItemEquipmentInfo oldItem, ItemEquipmentInfo newItem)
-        {
-            if (oldItem.Starforce != newItem.Starforce) return true;
-            if (oldItem.PotentialOptionGrade != newItem.PotentialOptionGrade) return true;
-            if (oldItem.AdditionalPotentialOptionGrade != newItem.AdditionalPotentialOptionGrade) return true;
-            if (oldItem.PotentialOption1 != newItem.PotentialOption1) return true;
-            if (oldItem.PotentialOption2 != newItem.PotentialOption2) return true;
-            if (oldItem.PotentialOption3 != newItem.PotentialOption3) return true;
-            if (oldItem.AdditionalPotentialOption1 != newItem.AdditionalPotentialOption1) return true;
-            if (oldItem.AdditionalPotentialOption2 != newItem.AdditionalPotentialOption2) return true;
-            if (oldItem.AdditionalPotentialOption3 != newItem.AdditionalPotentialOption3) return true;
-            if (!AreOptionsEqual(oldItem.ItemTotalOption, newItem.ItemTotalOption)) return true;
-            if (!AreOptionsEqual(oldItem.ItemBaseOption, newItem.ItemBaseOption)) return true;
-            if (!AreOptionsEqual(oldItem.ItemAddOption, newItem.ItemAddOption)) return true;
-            if (!AreOptionsEqual(oldItem.ItemEtcOption, newItem.ItemEtcOption)) return true;
-            if (!AreOptionsEqual(oldItem.ItemStarforceOption, newItem.ItemStarforceOption)) return true;
-            if (oldItem.SoulName != newItem.SoulName || oldItem.SoulOption != newItem.SoulOption) return true;
-            return false;
-        }
-
-        private static bool AreOptionsEqual(ItemOptionInfo? opt1, ItemOptionInfo? opt2)
-        {
-            if (opt1 == null && opt2 == null) return true;
-            if (opt1 == null || opt2 == null) return false;
-            return opt1.Str == opt2.Str &&
-                   opt1.Dex == opt2.Dex &&
-                   opt1.Int == opt2.Int &&
-                   opt1.Luk == opt2.Luk &&
-                   opt1.MaxHp == opt2.MaxHp &&
-                   opt1.MaxMp == opt2.MaxMp &&
-                   opt1.AttackPower == opt2.AttackPower &&
-                   opt1.MagicPower == opt2.MagicPower &&
-                   opt1.Armor == opt2.Armor &&
-                   opt1.Speed == opt2.Speed &&
-                   opt1.Jump == opt2.Jump;
-        }
-
-        private static string BuildChangeSummary(ItemEquipmentInfo? oldItem, ItemEquipmentInfo newItem, bool isNew = false, bool isReplace = false)
-        {
-            var parts = new List<string>();
-
-            if (isNew)
-            {
-                parts.Add("신규 장착");
-            }
-            else if (isReplace && oldItem != null && !string.IsNullOrEmpty(oldItem.ItemName) && !string.IsNullOrEmpty(newItem.ItemName) && oldItem.ItemName != newItem.ItemName)
-            {
-                parts.Add($"{oldItem.ItemName} → {newItem.ItemName}");
-            }
-
-            int oldStar = ParseInt(oldItem?.Starforce);
-            int newStar = ParseInt(newItem.Starforce);
-            if (oldStar != newStar)
-            {
-                parts.Add($"스타포스 {oldStar}성 → {newStar}성");
-            }
-
-            if (oldItem == null || oldItem.PotentialOptionGrade != newItem.PotentialOptionGrade ||
-                oldItem.PotentialOption1 != newItem.PotentialOption1 ||
-                oldItem.PotentialOption2 != newItem.PotentialOption2 ||
-                oldItem.PotentialOption3 != newItem.PotentialOption3)
-            {
-                if (!string.IsNullOrEmpty(newItem.PotentialOptionGrade))
-                    parts.Add($"잠재 {newItem.PotentialOptionGrade}");
-                else if (oldItem != null && !string.IsNullOrEmpty(oldItem.PotentialOptionGrade))
-                    parts.Add("잠재 변경");
-            }
-
-            if (oldItem == null || oldItem.AdditionalPotentialOptionGrade != newItem.AdditionalPotentialOptionGrade ||
-                oldItem.AdditionalPotentialOption1 != newItem.AdditionalPotentialOption1 ||
-                oldItem.AdditionalPotentialOption2 != newItem.AdditionalPotentialOption2 ||
-                oldItem.AdditionalPotentialOption3 != newItem.AdditionalPotentialOption3)
-            {
-                if (!string.IsNullOrEmpty(newItem.AdditionalPotentialOptionGrade))
-                    parts.Add($"에디셔널 {newItem.AdditionalPotentialOptionGrade}");
-                else if (oldItem != null && !string.IsNullOrEmpty(oldItem.AdditionalPotentialOptionGrade))
-                    parts.Add("에디셔널 변경");
-            }
-
-            if (oldItem == null || !AreOptionsEqual(oldItem.ItemAddOption, newItem.ItemAddOption))
-            {
-                parts.Add("추가옵션 변경");
-            }
-
-            if (oldItem == null || !AreOptionsEqual(oldItem.ItemEtcOption, newItem.ItemEtcOption))
-            {
-                parts.Add("주문서 옵션 변경");
-            }
-
-            if (oldItem == null || oldItem.SoulOption != newItem.SoulOption)
-            {
-                if (!string.IsNullOrEmpty(newItem.SoulOption))
-                    parts.Add("소울 변경");
-            }
-
-            if (parts.Count == 0)
-                parts.Add("옵션 변경");
-
-            return string.Join(" / ", parts);
+            return json;
         }
 
         #endregion
     }
-
-    #region 데이터 모델
-
-    /// <summary>
-    /// 데이터 수집 현황 요약
-    /// </summary>
-    public class DataCollectionSummary
-    {
-        public int TotalDays { get; set; }
-        public DateTime? OldestDate { get; set; }
-        public DateTime? NewestDate { get; set; }
-        public HashSet<DateTime> ExistingDates { get; set; } = new();
+    
+    // --- Data Models (유지) ---
+    public class DataCollectionSummary { public int TotalDays { get; set; } public DateTime? OldestDate { get; set; } public DateTime? NewestDate { get; set; } public HashSet<DateTime> ExistingDates { get; set; } = new(); }
+    public enum ItemOptionChangeType { NewItem, Replace, Starforce, Potential, PotentialOption, AdditionalPotential, AdditionalPotentialOption, AddOption, Scroll, ScrollOption, Soul, Option }
+    public class ItemOptionChange 
+    { 
+        public ItemOptionChangeType ChangeType { get; set; } 
+        public string Category { get; set; } = ""; 
+        public string OldValue { get; set; } = ""; 
+        public string NewValue { get; set; } = ""; 
+        public string Description { get; set; } = ""; 
+        public List<string> Details { get; set; } = new(); 
+        
+        // DisplayText: 신규 아이템일 때는 "→" 없이 현재 옵션만 표시
+        public string DisplayText 
+        { 
+            get 
+            {
+                if (!string.IsNullOrEmpty(Description)) 
+                    return Description;
+                if (Details.Any()) 
+                    return string.Join("\n", Details);
+                // OldValue가 없으면 NewValue만 표시 (→ 없이)
+                if (string.IsNullOrEmpty(OldValue))
+                    return NewValue;
+                return $"{OldValue} → {NewValue}";
+            }
+        }
+        
+        public string CategoryIcon => ChangeType switch 
+        { 
+            ItemOptionChangeType.NewItem => "✨", 
+            ItemOptionChangeType.Replace => "🔄", 
+            ItemOptionChangeType.Starforce => "⭐", 
+            ItemOptionChangeType.Potential or ItemOptionChangeType.PotentialOption => "💎", 
+            ItemOptionChangeType.AdditionalPotential or ItemOptionChangeType.AdditionalPotentialOption => "💠", 
+            ItemOptionChangeType.AddOption => "➕", 
+            ItemOptionChangeType.Scroll or ItemOptionChangeType.ScrollOption => "📜", 
+            ItemOptionChangeType.Soul => "👻", 
+            _ => "•" 
+        }; 
+        
+        public bool IsNewItem => ChangeType == ItemOptionChangeType.NewItem; 
+        public bool HasDetails => Details.Any(); 
     }
-
-    /// <summary>
-    /// 장비 옵션 변경 타입
-    /// </summary>
-    public enum ItemOptionChangeType
-    {
-        NewItem,            // 신규 장착
-        Replace,            // 아이템 교체
-        Starforce,          // 스타포스
-        Potential,          // 잠재능력 등급
-        PotentialOption,    // 잠재능력 옵션
-        AdditionalPotential,     // 에디셔널 등급
-        AdditionalPotentialOption, // 에디셔널 옵션
-        AddOption,          // 추가옵션
-        Scroll,             // 주문서 업그레이드 횟수
-        ScrollOption,       // 주문서 옵션
-        Soul                // 소울
-    }
-
-    /// <summary>
-    /// 장비 옵션 변경 상세 정보
-    /// </summary>
-    public class ItemOptionChange
-    {
-        public ItemOptionChangeType ChangeType { get; set; }
-        public string Category { get; set; } = "";       // 표시용 카테고리명
-        public string OldValue { get; set; } = "";
-        public string NewValue { get; set; } = "";
-        public string Description { get; set; } = "";    // 요약 설명 (예: "15성 → 20성")
-        public List<string> Details { get; set; } = new(); // 상세 변경 내역
-
-        // UI 바인딩용 프로퍼티
-        public string DisplayText => !string.IsNullOrEmpty(Description) 
-            ? Description 
-            : Details.Any() 
-                ? string.Join("\n", Details) 
-                : $"{OldValue} → {NewValue}";
-
-        public string CategoryIcon => ChangeType switch
-        {
-            ItemOptionChangeType.NewItem => "✨",
-            ItemOptionChangeType.Replace => "🔄",
-            ItemOptionChangeType.Starforce => "⭐",
-            ItemOptionChangeType.Potential or ItemOptionChangeType.PotentialOption => "💎",
-            ItemOptionChangeType.AdditionalPotential or ItemOptionChangeType.AdditionalPotentialOption => "💠",
-            ItemOptionChangeType.AddOption => "➕",
-            ItemOptionChangeType.Scroll or ItemOptionChangeType.ScrollOption => "📜",
-            ItemOptionChangeType.Soul => "👻",
-            _ => "•"
-        };
-
-        public bool IsNewItem => ChangeType == ItemOptionChangeType.NewItem;
-        public bool HasDetails => Details.Any();
-    }
-
-    #endregion
 }
