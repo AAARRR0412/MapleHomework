@@ -340,7 +340,7 @@ namespace MapleHomework
             BottomMenuPopup.IsOpen = false;
             var appData = new AppData { Characters = ViewModel.Characters.ToList() };
             var dashboardWindow = new DashboardWindow(appData, ViewModel);
-            dashboardWindow.Owner = this;
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
             dashboardWindow.Show();
         }
 
@@ -348,7 +348,7 @@ namespace MapleHomework
         {
             BottomMenuPopup.IsOpen = false;
             var reportWindow = new ReportWindow(ViewModel);
-            reportWindow.Owner = this;
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
             reportWindow.Show();
         }
 
@@ -357,7 +357,7 @@ namespace MapleHomework
             BottomMenuPopup.IsOpen = false;
             var appData = new AppData { Characters = ViewModel.Characters.ToList() };
             var bossWindow = new BossRewardWindow(appData, ViewModel);
-            bossWindow.Owner = this;
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
             bossWindow.Show();
         }
 
@@ -365,7 +365,7 @@ namespace MapleHomework
         {
             BottomMenuPopup.IsOpen = false;
             var searchWindow = new CharacterSearchWindow();
-            searchWindow.Owner = this;
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
             
             // 메인 UI 테마 동기화
             searchWindow.SyncTheme(ViewModel.IsDarkTheme);

@@ -552,7 +552,7 @@ namespace MapleHomework
                 Grid? targetSlot = null;
                 var slotName = item.ItemEquipmentSlot;
 
-                if (slotName == "링" || slotName.StartsWith("링"))
+                if (slotName == "반지" || slotName.StartsWith("반지"))
                 {
                     if (ringIndex < ringSlots.Length)
                         targetSlot = ringSlots[ringIndex++];
