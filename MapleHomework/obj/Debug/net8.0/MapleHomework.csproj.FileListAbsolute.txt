@@ -1,4 +1,0 @@
-C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\obj\Debug\net8.0\MapleHomework.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\obj\Debug\net8.0\MapleHomework.AssemblyInfoInputs.cache
-C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\obj\Debug\net8.0\MapleHomework.AssemblyInfo.cs
-C:\Users\qkr94\source\repos\MapleHomework\MapleHomework\obj\Debug\net8.0\MapleHomework.csproj.CoreCompileInputs.cache
