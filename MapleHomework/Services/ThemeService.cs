@@ -25,7 +25,7 @@ namespace MapleHomework.Services
             {
                 using var key = Registry.CurrentUser.OpenSubKey(
                     @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
-                
+
                 if (key != null)
                 {
                     var value = key.GetValue("AppsUseLightTheme");
@@ -110,30 +110,99 @@ namespace MapleHomework.Services
             // Boolean 플래그도 설정
             app.Resources["IsDarkTheme"] = isDark;
 
-            // CharacterSearchWindow용 DynamicResource 리소스 업데이트
+            // 전체 색상 팔레트 정의
             if (isDark)
             {
-                app.Resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(0xFF, 0xFF, 0xFF));
-                app.Resources["TextSecondary"] = new SolidColorBrush(Color.FromArgb(0xAA, 0xFF, 0xFF, 0xFF));
-                app.Resources["TextMuted"] = new SolidColorBrush(Color.FromArgb(0x80, 0xFF, 0xFF, 0xFF));
+                // 다크 테마
+                app.Resources["WindowBackground"] = new SolidColorBrush(Color.FromRgb(20, 24, 36));      // #141824
+                app.Resources["SurfaceContainer"] = new SolidColorBrush(Color.FromRgb(32, 38, 54));      // #202636 (CardBackground)
+                app.Resources["CardBackground"] = new SolidColorBrush(Color.FromRgb(32, 38, 54));        // #202636
+                app.Resources["CardBackgroundHover"] = new SolidColorBrush(Color.FromRgb(44, 52, 70));   // #2C3446
+                app.Resources["CardBackgroundAlt"] = new SolidColorBrush(Color.FromRgb(28, 34, 48));     // #1C2230
+
+                app.Resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(245, 247, 250));        // #F5F7FA
+                app.Resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(160, 170, 190));      // #A0AABE
+                app.Resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(110, 120, 140));          // #6E788C
+                app.Resources["TextInverse"] = new SolidColorBrush(Color.FromRgb(20, 24, 36));           // #141824
+
+                app.Resources["Outline"] = new SolidColorBrush(Color.FromRgb(50, 58, 76));               // #323A4C
+                app.Resources["DividerColor"] = new SolidColorBrush(Color.FromRgb(50, 58, 76));          // #323A4C
+                app.Resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(50, 58, 76));           // #323A4C
+
+                app.Resources["OnSurface"] = new SolidColorBrush(Color.FromRgb(245, 247, 250));
+                app.Resources["OnSurfaceVariant"] = new SolidColorBrush(Color.FromRgb(160, 170, 190));
+
+                app.Resources["ItemCardBackground"] = new SolidColorBrush(Color.FromRgb(36, 42, 58));    // #242A3A
+                app.Resources["ItemCardBorder"] = new SolidColorBrush(Color.FromRgb(52, 60, 80));        // #343C50
+                app.Resources["ItemCardHover"] = new SolidColorBrush(Color.FromRgb(48, 56, 74));         // #30384A
+
+                app.Resources["BadgeBackground"] = new SolidColorBrush(Color.FromRgb(50, 45, 75));       // #322D4B
+                app.Resources["BadgeText"] = new SolidColorBrush(Color.FromRgb(167, 139, 250));          // #A78BFA
+                app.Resources["DetailViewBackground"] = new SolidColorBrush(Color.FromRgb(26, 29, 46));  // #1A1D2E
+
                 app.Resources["ExpGraphBarBg"] = new SolidColorBrush(Color.FromArgb(0x15, 0x00, 0x00, 0x00));
                 app.Resources["HexaCoreBg"] = new SolidColorBrush(Color.FromArgb(0x18, 0x00, 0x00, 0x00));
                 app.Resources["HexaCoreBorder"] = new SolidColorBrush(Color.FromArgb(0x25, 0xFF, 0xFF, 0xFF));
-                app.Resources["CardBackground"] = new SolidColorBrush(Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF));
-                app.Resources["BorderColor"] = new SolidColorBrush(Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF));
+
+                // Calendar & API Card (Dark)
+                app.Resources["ApiCardBackground"] = new SolidColorBrush(Color.FromRgb(36, 42, 58));     // #242A3A
+                app.Resources["ApiCardBorder"] = new SolidColorBrush(Color.FromRgb(52, 60, 80));         // #343C50
+                app.Resources["CalendarText"] = new SolidColorBrush(Color.FromRgb(245, 247, 250));       // White
+                app.Resources["CalendarHeader"] = new SolidColorBrush(Color.FromRgb(255, 159, 67));      // Orange
+                app.Resources["CalendarBtnHover"] = new SolidColorBrush(Color.FromRgb(48, 56, 74));      // #30384A
+                app.Resources["CalendarSelectedBg"] = new SolidColorBrush(Color.FromArgb(100, 90, 200, 250)); // Semi-transparent Cyan
+                app.Resources["CalendarCollectedBg"] = new SolidColorBrush(Color.FromRgb(59, 130, 246)); // Blue
+                app.Resources["CalendarMissingBg"] = new SolidColorBrush(Color.FromRgb(244, 63, 94));    // Red
+                app.Resources["CalendarMissingBgDim"] = new SolidColorBrush(Color.FromArgb(60, 244, 63, 94)); // Red Dim
             }
             else
             {
-                app.Resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(0x1E, 0x29, 0x3B));
-                app.Resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(0x47, 0x55, 0x69));
-                app.Resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(0x64, 0x74, 0x8B));
+                // 라이트 테마
+                app.Resources["WindowBackground"] = new SolidColorBrush(Color.FromRgb(245, 247, 251));   // #F5F7FB
+                app.Resources["SurfaceContainer"] = new SolidColorBrush(Colors.White);                   // #FFFFFF
+                app.Resources["CardBackground"] = new SolidColorBrush(Colors.White);                     // #FFFFFF
+                app.Resources["CardBackgroundHover"] = new SolidColorBrush(Color.FromRgb(240, 244, 250)); // #F0F4FA
+                app.Resources["CardBackgroundAlt"] = new SolidColorBrush(Color.FromRgb(248, 250, 252));   // #F8FAFC
+
+                app.Resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(15, 23, 42));            // #0F172A
+                app.Resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(71, 85, 105));         // #475569
+                app.Resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(100, 116, 139));           // #64748B
+                app.Resources["TextInverse"] = new SolidColorBrush(Colors.White);                         // #FFFFFF
+
+                app.Resources["Outline"] = new SolidColorBrush(Color.FromRgb(226, 232, 240));             // #E2E8F0
+                app.Resources["DividerColor"] = new SolidColorBrush(Color.FromRgb(226, 232, 240));        // #E2E8F0
+                app.Resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(226, 232, 240));         // #E2E8F0
+
+                app.Resources["OnSurface"] = new SolidColorBrush(Color.FromRgb(15, 23, 42));
+                app.Resources["OnSurfaceVariant"] = new SolidColorBrush(Color.FromRgb(100, 116, 139));
+
+                app.Resources["ItemCardBackground"] = new SolidColorBrush(Color.FromRgb(250, 251, 252));  // #FAFBFC
+                app.Resources["ItemCardBorder"] = new SolidColorBrush(Color.FromRgb(229, 233, 240));      // #E5E9F0
+                app.Resources["ItemCardHover"] = new SolidColorBrush(Color.FromRgb(240, 244, 248));       // #F0F4F8
+
+                app.Resources["BadgeBackground"] = new SolidColorBrush(Color.FromRgb(238, 242, 255));     // #EEF2FF
+                app.Resources["BadgeText"] = new SolidColorBrush(Color.FromRgb(99, 102, 241));            // #6366F1
+                app.Resources["DetailViewBackground"] = new SolidColorBrush(Color.FromRgb(250, 251, 252)); // #FAFBFC
+
                 app.Resources["ExpGraphBarBg"] = new SolidColorBrush(Color.FromRgb(0xE2, 0xE8, 0xF0));
                 app.Resources["HexaCoreBg"] = new SolidColorBrush(Color.FromRgb(0xF8, 0xFA, 0xFC));
                 app.Resources["HexaCoreBorder"] = new SolidColorBrush(Color.FromRgb(0xE2, 0xE8, 0xF0));
-                app.Resources["CardBackground"] = new SolidColorBrush(Color.FromRgb(0xFF, 0xFF, 0xFF));
-                app.Resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(0xE2, 0xE8, 0xF0));
+
+                // Calendar & API Card (Light)
+                app.Resources["ApiCardBackground"] = new SolidColorBrush(Color.FromRgb(255, 246, 236));  // #FFF6EC
+                app.Resources["ApiCardBorder"] = new SolidColorBrush(Color.FromRgb(255, 227, 194));      // #FFE3C2
+                app.Resources["CalendarText"] = new SolidColorBrush(Color.FromRgb(15, 23, 42));          // Dark Blue
+                app.Resources["CalendarHeader"] = new SolidColorBrush(Color.FromRgb(249, 115, 22));      // Orange
+                app.Resources["CalendarBtnHover"] = new SolidColorBrush(Color.FromRgb(255, 237, 213));   // Light Orange
+                app.Resources["CalendarSelectedBg"] = new SolidColorBrush(Color.FromArgb(100, 16, 185, 129)); // Semi-traditional Green? No, user uses Cyan.
+                app.Resources["CalendarCollectedBg"] = new SolidColorBrush(Color.FromRgb(59, 130, 246)); // Blue
+                app.Resources["CalendarMissingBg"] = new SolidColorBrush(Color.FromRgb(244, 63, 94));    // Red
+                app.Resources["CalendarMissingBgDim"] = new SolidColorBrush(Color.FromArgb(60, 244, 63, 94)); // Red Dim
             }
+            OnThemeChanged?.Invoke(isDark);
         }
+
+        public static event Action<bool>? OnThemeChanged;
 
         /// <summary>
         /// 시스템 테마 변경 감지 시작

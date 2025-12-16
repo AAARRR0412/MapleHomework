@@ -1,0 +1,610 @@
+{
+    "skill_core": [
+        {
+            "level": 1,
+            "sol_erda": 0,
+            "fragment": 0
+        },
+        {
+            "level": 2,
+            "sol_erda": 1,
+            "fragment": 30
+        },
+        {
+            "level": 3,
+            "sol_erda": 1,
+            "fragment": 35
+        },
+        {
+            "level": 4,
+            "sol_erda": 1,
+            "fragment": 40
+        },
+        {
+            "level": 5,
+            "sol_erda": 2,
+            "fragment": 45
+        },
+        {
+            "level": 6,
+            "sol_erda": 2,
+            "fragment": 50
+        },
+        {
+            "level": 7,
+            "sol_erda": 2,
+            "fragment": 55
+        },
+        {
+            "level": 8,
+            "sol_erda": 3,
+            "fragment": 60
+        },
+        {
+            "level": 9,
+            "sol_erda": 3,
+            "fragment": 65
+        },
+        {
+            "level": 10,
+            "sol_erda": 10,
+            "fragment": 200
+        },
+        {
+            "level": 11,
+            "sol_erda": 3,
+            "fragment": 80
+        },
+        {
+            "level": 12,
+            "sol_erda": 3,
+            "fragment": 90
+        },
+        {
+            "level": 13,
+            "sol_erda": 4,
+            "fragment": 100
+        },
+        {
+            "level": 14,
+            "sol_erda": 4,
+            "fragment": 110
+        },
+        {
+            "level": 15,
+            "sol_erda": 4,
+            "fragment": 120
+        },
+        {
+            "level": 16,
+            "sol_erda": 4,
+            "fragment": 130
+        },
+        {
+            "level": 17,
+            "sol_erda": 4,
+            "fragment": 140
+        },
+        {
+            "level": 18,
+            "sol_erda": 4,
+            "fragment": 150
+        },
+        {
+            "level": 19,
+            "sol_erda": 5,
+            "fragment": 160
+        },
+        {
+            "level": 20,
+            "sol_erda": 15,
+            "fragment": 350
+        },
+        {
+            "level": 21,
+            "sol_erda": 5,
+            "fragment": 170
+        },
+        {
+            "level": 22,
+            "sol_erda": 5,
+            "fragment": 180
+        },
+        {
+            "level": 23,
+            "sol_erda": 5,
+            "fragment": 190
+        },
+        {
+            "level": 24,
+            "sol_erda": 5,
+            "fragment": 200
+        },
+        {
+            "level": 25,
+            "sol_erda": 5,
+            "fragment": 210
+        },
+        {
+            "level": 26,
+            "sol_erda": 6,
+            "fragment": 220
+        },
+        {
+            "level": 27,
+            "sol_erda": 6,
+            "fragment": 230
+        },
+        {
+            "level": 28,
+            "sol_erda": 6,
+            "fragment": 240
+        },
+        {
+            "level": 29,
+            "sol_erda": 7,
+            "fragment": 250
+        },
+        {
+            "level": 30,
+            "sol_erda": 20,
+            "fragment": 500
+        }
+    ],
+    "mastery_core": [
+        {
+            "level": 1,
+            "sol_erda": 3,
+            "fragment": 50
+        },
+        {
+            "level": 2,
+            "sol_erda": 1,
+            "fragment": 15
+        },
+        {
+            "level": 3,
+            "sol_erda": 1,
+            "fragment": 18
+        },
+        {
+            "level": 4,
+            "sol_erda": 1,
+            "fragment": 20
+        },
+        {
+            "level": 5,
+            "sol_erda": 1,
+            "fragment": 23
+        },
+        {
+            "level": 6,
+            "sol_erda": 1,
+            "fragment": 25
+        },
+        {
+            "level": 7,
+            "sol_erda": 1,
+            "fragment": 28
+        },
+        {
+            "level": 8,
+            "sol_erda": 2,
+            "fragment": 30
+        },
+        {
+            "level": 9,
+            "sol_erda": 2,
+            "fragment": 33
+        },
+        {
+            "level": 10,
+            "sol_erda": 5,
+            "fragment": 100
+        },
+        {
+            "level": 11,
+            "sol_erda": 2,
+            "fragment": 40
+        },
+        {
+            "level": 12,
+            "sol_erda": 2,
+            "fragment": 45
+        },
+        {
+            "level": 13,
+            "sol_erda": 2,
+            "fragment": 50
+        },
+        {
+            "level": 14,
+            "sol_erda": 2,
+            "fragment": 55
+        },
+        {
+            "level": 15,
+            "sol_erda": 2,
+            "fragment": 60
+        },
+        {
+            "level": 16,
+            "sol_erda": 2,
+            "fragment": 65
+        },
+        {
+            "level": 17,
+            "sol_erda": 2,
+            "fragment": 70
+        },
+        {
+            "level": 18,
+            "sol_erda": 2,
+            "fragment": 75
+        },
+        {
+            "level": 19,
+            "sol_erda": 3,
+            "fragment": 80
+        },
+        {
+            "level": 20,
+            "sol_erda": 8,
+            "fragment": 175
+        },
+        {
+            "level": 21,
+            "sol_erda": 3,
+            "fragment": 85
+        },
+        {
+            "level": 22,
+            "sol_erda": 3,
+            "fragment": 90
+        },
+        {
+            "level": 23,
+            "sol_erda": 3,
+            "fragment": 95
+        },
+        {
+            "level": 24,
+            "sol_erda": 3,
+            "fragment": 100
+        },
+        {
+            "level": 25,
+            "sol_erda": 3,
+            "fragment": 105
+        },
+        {
+            "level": 26,
+            "sol_erda": 3,
+            "fragment": 110
+        },
+        {
+            "level": 27,
+            "sol_erda": 3,
+            "fragment": 115
+        },
+        {
+            "level": 28,
+            "sol_erda": 3,
+            "fragment": 120
+        },
+        {
+            "level": 29,
+            "sol_erda": 4,
+            "fragment": 125
+        },
+        {
+            "level": 30,
+            "sol_erda": 10,
+            "fragment": 250
+        }
+    ],
+    "reinforcement_core": [
+        {
+            "level": 1,
+            "sol_erda": 4,
+            "fragment": 75
+        },
+        {
+            "level": 2,
+            "sol_erda": 1,
+            "fragment": 23
+        },
+        {
+            "level": 3,
+            "sol_erda": 1,
+            "fragment": 27
+        },
+        {
+            "level": 4,
+            "sol_erda": 1,
+            "fragment": 30
+        },
+        {
+            "level": 5,
+            "sol_erda": 2,
+            "fragment": 34
+        },
+        {
+            "level": 6,
+            "sol_erda": 2,
+            "fragment": 38
+        },
+        {
+            "level": 7,
+            "sol_erda": 2,
+            "fragment": 42
+        },
+        {
+            "level": 8,
+            "sol_erda": 3,
+            "fragment": 45
+        },
+        {
+            "level": 9,
+            "sol_erda": 3,
+            "fragment": 49
+        },
+        {
+            "level": 10,
+            "sol_erda": 8,
+            "fragment": 150
+        },
+        {
+            "level": 11,
+            "sol_erda": 3,
+            "fragment": 60
+        },
+        {
+            "level": 12,
+            "sol_erda": 3,
+            "fragment": 68
+        },
+        {
+            "level": 13,
+            "sol_erda": 3,
+            "fragment": 75
+        },
+        {
+            "level": 14,
+            "sol_erda": 3,
+            "fragment": 83
+        },
+        {
+            "level": 15,
+            "sol_erda": 3,
+            "fragment": 90
+        },
+        {
+            "level": 16,
+            "sol_erda": 3,
+            "fragment": 98
+        },
+        {
+            "level": 17,
+            "sol_erda": 3,
+            "fragment": 105
+        },
+        {
+            "level": 18,
+            "sol_erda": 3,
+            "fragment": 113
+        },
+        {
+            "level": 19,
+            "sol_erda": 4,
+            "fragment": 120
+        },
+        {
+            "level": 20,
+            "sol_erda": 12,
+            "fragment": 263
+        },
+        {
+            "level": 21,
+            "sol_erda": 4,
+            "fragment": 128
+        },
+        {
+            "level": 22,
+            "sol_erda": 4,
+            "fragment": 135
+        },
+        {
+            "level": 23,
+            "sol_erda": 4,
+            "fragment": 143
+        },
+        {
+            "level": 24,
+            "sol_erda": 4,
+            "fragment": 150
+        },
+        {
+            "level": 25,
+            "sol_erda": 4,
+            "fragment": 158
+        },
+        {
+            "level": 26,
+            "sol_erda": 5,
+            "fragment": 165
+        },
+        {
+            "level": 27,
+            "sol_erda": 5,
+            "fragment": 173
+        },
+        {
+            "level": 28,
+            "sol_erda": 5,
+            "fragment": 180
+        },
+        {
+            "level": 29,
+            "sol_erda": 6,
+            "fragment": 188
+        },
+        {
+            "level": 30,
+            "sol_erda": 15,
+            "fragment": 375
+        }
+    ],
+    "common_core": [
+        {
+            "level": 1,
+            "sol_erda": 7,
+            "fragment": 125
+        },
+        {
+            "level": 2,
+            "sol_erda": 2,
+            "fragment": 38
+        },
+        {
+            "level": 3,
+            "sol_erda": 2,
+            "fragment": 44
+        },
+        {
+            "level": 4,
+            "sol_erda": 2,
+            "fragment": 50
+        },
+        {
+            "level": 5,
+            "sol_erda": 3,
+            "fragment": 57
+        },
+        {
+            "level": 6,
+            "sol_erda": 3,
+            "fragment": 63
+        },
+        {
+            "level": 7,
+            "sol_erda": 3,
+            "fragment": 69
+        },
+        {
+            "level": 8,
+            "sol_erda": 5,
+            "fragment": 75
+        },
+        {
+            "level": 9,
+            "sol_erda": 5,
+            "fragment": 82
+        },
+        {
+            "level": 10,
+            "sol_erda": 14,
+            "fragment": 300
+        },
+        {
+            "level": 11,
+            "sol_erda": 5,
+            "fragment": 110
+        },
+        {
+            "level": 12,
+            "sol_erda": 5,
+            "fragment": 124
+        },
+        {
+            "level": 13,
+            "sol_erda": 6,
+            "fragment": 138
+        },
+        {
+            "level": 14,
+            "sol_erda": 6,
+            "fragment": 152
+        },
+        {
+            "level": 15,
+            "sol_erda": 6,
+            "fragment": 165
+        },
+        {
+            "level": 16,
+            "sol_erda": 6,
+            "fragment": 179
+        },
+        {
+            "level": 17,
+            "sol_erda": 6,
+            "fragment": 193
+        },
+        {
+            "level": 18,
+            "sol_erda": 6,
+            "fragment": 207
+        },
+        {
+            "level": 19,
+            "sol_erda": 7,
+            "fragment": 220
+        },
+        {
+            "level": 20,
+            "sol_erda": 17,
+            "fragment": 525
+        },
+        {
+            "level": 21,
+            "sol_erda": 7,
+            "fragment": 234
+        },
+        {
+            "level": 22,
+            "sol_erda": 7,
+            "fragment": 248
+        },
+        {
+            "level": 23,
+            "sol_erda": 7,
+            "fragment": 262
+        },
+        {
+            "level": 24,
+            "sol_erda": 7,
+            "fragment": 275
+        },
+        {
+            "level": 25,
+            "sol_erda": 7,
+            "fragment": 289
+        },
+        {
+            "level": 26,
+            "sol_erda": 9,
+            "fragment": 303
+        },
+        {
+            "level": 27,
+            "sol_erda": 9,
+            "fragment": 317
+        },
+        {
+            "level": 28,
+            "sol_erda": 9,
+            "fragment": 330
+        },
+        {
+            "level": 29,
+            "sol_erda": 10,
+            "fragment": 344
+        },
+        {
+            "level": 30,
+            "sol_erda": 20,
+            "fragment": 750
+        }
+    ]
+}

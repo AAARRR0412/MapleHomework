@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using MapleHomework.Models;
+using MapleHomework.Data;
 
 namespace MapleHomework.Services
 {
@@ -13,7 +14,7 @@ namespace MapleHomework.Services
     {
         private static readonly string DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
         private static readonly string FilePath = Path.Combine(DataFolder, "characters_data.json");
-        
+
         static CharacterRepository()
         {
             if (!Directory.Exists(DataFolder))
@@ -50,10 +51,10 @@ namespace MapleHomework.Services
             {
                 string json = File.ReadAllText(FilePath);
                 var appData = JsonSerializer.Deserialize<AppData>(json) ?? new AppData();
-                
+
                 // 각 캐릭터의 보스 난이도를 GameData에서 동기화
                 SyncBossDifficulties(appData);
-                
+
                 return appData;
             }
             catch
@@ -76,7 +77,7 @@ namespace MapleHomework.Services
                     if (bossInfo != null)
                     {
                         task.AvailableDifficulties = new List<BossDifficulty>(bossInfo.AvailableDifficulties);
-                        
+
                         // 현재 설정된 난이도가 사용 가능한 난이도에 없으면 기본값으로 설정
                         if (!task.AvailableDifficulties.Contains(task.Difficulty))
                         {
@@ -92,7 +93,7 @@ namespace MapleHomework.Services
                     if (bossInfo != null)
                     {
                         task.AvailableDifficulties = new List<BossDifficulty>(bossInfo.AvailableDifficulties);
-                        
+
                         // 현재 설정된 난이도가 사용 가능한 난이도에 없으면 기본값으로 설정
                         if (!task.AvailableDifficulties.Contains(task.Difficulty))
                         {
@@ -103,64 +104,7 @@ namespace MapleHomework.Services
             }
         }
 
-        /// <summary>
-        /// 기존 config.json에서 마이그레이션
-        /// </summary>
-        public static AppData MigrateFromOldConfig()
-        {
-            var appData = Load();
-            
-            // 기존 config.json 확인
-            if (File.Exists("config.json"))
-            {
-                try
-                {
-                    var oldConfig = ConfigManager.Load();
-                    if (!string.IsNullOrEmpty(oldConfig.ApiKey))
-                    {
-                        appData.ApiKey = oldConfig.ApiKey;
-                        appData.IsDarkTheme = oldConfig.IsDarkTheme;
-                        appData.AutoStartEnabled = oldConfig.AutoStartEnabled;
 
-                        // 기존 캐릭터가 없으면 추가
-                        if (appData.Characters.Count == 0 && !string.IsNullOrEmpty(oldConfig.CharacterName))
-                        {
-                            var character = new CharacterProfile
-                            {
-                                Nickname = oldConfig.CharacterName
-                            };
-                            appData.Characters.Add(character);
-                            appData.SelectedCharacterId = character.Id;
-                        }
-                    }
-                }
-                catch
-                {
-                    // 마이그레이션 실패 시 무시
-                }
-            }
-
-            // 기존 homework_data.json에서 태스크 데이터 마이그레이션
-            if (appData.Characters.Count > 0 && File.Exists("homework_data.json"))
-            {
-                try
-                {
-                    var oldTaskData = TaskRepository.Load();
-                    if (oldTaskData != null)
-                    {
-                        var firstChar = appData.Characters[0];
-                        // 기존 데이터가 있으면 첫 번째 캐릭터에 적용
-                        // (이미 태스크가 있으면 덮어쓰지 않음)
-                    }
-                }
-                catch
-                {
-                    // 마이그레이션 실패 시 무시
-                }
-            }
-
-            return appData;
-        }
 
         /// <summary>
         /// 새 캐릭터 추가 가능 여부

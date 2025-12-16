@@ -18,7 +18,7 @@ namespace MapleHomework.Services
     {
         private static readonly string DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
         private static readonly string FilePath = Path.Combine(DataFolder, "homework_data.json");
-        
+
         static TaskRepository()
         {
             if (!Directory.Exists(DataFolder))
@@ -61,5 +61,26 @@ namespace MapleHomework.Services
                 return null;
             }
         }
+        public static void EnsureDefaultTasks(CharacterProfile character)
+        {
+            // Default implementation stub
+            if (character.DailyTasks.Count == 0)
+            {
+                character.DailyTasks = new List<HomeworkTask>(GameData.Dailies);
+            }
+            if (character.WeeklyTasks.Count == 0)
+            {
+                character.WeeklyTasks = new List<HomeworkTask>(GameData.Weeklies);
+            }
+            if (character.BossTasks.Count == 0)
+            {
+                character.BossTasks = GameData.Bosses;
+            }
+            if (character.MonthlyTasks.Count == 0)
+            {
+                character.MonthlyTasks = GameData.Monthlies;
+            }
+        }
+
     }
 }

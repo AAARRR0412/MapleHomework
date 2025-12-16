@@ -66,7 +66,15 @@
                     <TextBlock Text="테마 설정" Foreground="#4CD964" FontSize="13" FontWeight="Bold" Margin="0,0,0,12"/>
                     
                     <TextBlock Text="테마 모드" Foreground="#AAAAAA" Margin="0,0,0,6" FontSize="12" FontWeight="SemiBold"/>
-                    <ComboBox x:Name="ThemeModeCombo" Margin="0,0,0,12" SelectionChanged="ThemeModeCombo_SelectionChanged"/>
+                    <ComboBox x:Name="ThemeModeCombo" Margin="0,0,0,12" SelectionChanged="ThemeModeCombo_SelectionChanged"
+                              Foreground="Black" Background="White" BorderBrush="#E2E8F0">
+                        <ComboBox.Resources>
+                            <Style TargetType="ComboBoxItem">
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="Background" Value="White"/>
+                            </Style>
+                        </ComboBox.Resources>
+                    </ComboBox>
 
                     <!-- 구분선 -->
                     <Border Height="1" Background="#33FFFFFF" Margin="0,8,0,15"/>

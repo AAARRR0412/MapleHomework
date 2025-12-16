@@ -9,10 +9,10 @@ using Forms = System.Windows.Forms;
 
 namespace MapleHomework
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     {
         public static MainWindow? Instance { get; private set; }
-        
+
         public MainViewModel ViewModel { get; set; }
         private Forms.NotifyIcon? _notifyIcon;
         private NotificationService? _notificationService;
@@ -24,29 +24,29 @@ namespace MapleHomework
         /// </summary>
         public NotificationService? NotificationServiceInstance => _notificationService;
 
-        public MainWindow()
+        public MainWindow(MainViewModel viewModel)
         {
             Instance = this;
-            
+
             InitializeComponent();
-            ViewModel = new MainViewModel();
+            ViewModel = viewModel;
             this.DataContext = ViewModel;
-            
+
             // 사이드바 상태 변경 구독
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-            
+
             // 메인 창 위치/크기 변경 시 사이드바 위치 동기화
             this.LocationChanged += MainWindow_LocationChanged;
             this.SizeChanged += MainWindow_SizeChanged;
             this.StateChanged += MainWindow_StateChanged;
-            
+
             InitializeNotifyIcon();
             InitializeServices();
             LoadSavedData();
             RestoreWindowPosition(); // 저장된 위치 복원
-            
+
             // 창 크기 변경 시 열 수 업데이트 및 사이드바 초기화
-            this.Loaded += (s, e) => 
+            this.Loaded += (s, e) =>
             {
                 UpdateTaskColumnCount();
                 InitializeSidebarWindow();
@@ -75,7 +75,7 @@ namespace MapleHomework
         private void ToggleSidebarWindow()
         {
             if (_sidebarWindow == null) return;
-            
+
             if (ViewModel.IsSidebarOpen)
             {
                 UpdateSidebarPosition();
@@ -90,7 +90,7 @@ namespace MapleHomework
         private void UpdateSidebarPosition()
         {
             if (_sidebarWindow == null) return;
-            
+
             _sidebarWindow.UpdatePosition(this.Left, this.Top, this.ActualHeight);
         }
 
@@ -105,7 +105,7 @@ namespace MapleHomework
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
             if (_sidebarWindow == null) return;
-            
+
             if (this.WindowState == WindowState.Minimized)
             {
                 _sidebarWindow.Hide();
@@ -120,7 +120,7 @@ namespace MapleHomework
         private void RestoreWindowPosition()
         {
             var settings = ConfigManager.Load();
-            
+
             // 저장된 위치가 유효한지 확인
             if (!double.IsNaN(settings.MainWindowLeft) && !double.IsNaN(settings.MainWindowTop))
             {
@@ -130,9 +130,9 @@ namespace MapleHomework
                 var screenLeft = SystemParameters.VirtualScreenLeft;
                 var screenTop = SystemParameters.VirtualScreenTop;
 
-                if (settings.MainWindowLeft >= screenLeft && 
+                if (settings.MainWindowLeft >= screenLeft &&
                     settings.MainWindowLeft < screenLeft + screenWidth - 100 &&
-                    settings.MainWindowTop >= screenTop && 
+                    settings.MainWindowTop >= screenTop &&
                     settings.MainWindowTop < screenTop + screenHeight - 100)
                 {
                     this.Left = settings.MainWindowLeft;
@@ -140,7 +140,7 @@ namespace MapleHomework
                     this.WindowStartupLocation = WindowStartupLocation.Manual;
                 }
             }
-            
+
             // 저장된 크기 복원
             if (settings.MainWindowWidth > 0 && settings.MainWindowHeight > 0)
             {
@@ -152,7 +152,7 @@ namespace MapleHomework
         private void SaveWindowPosition()
         {
             var settings = ConfigManager.Load();
-            
+
             // 최소화 상태가 아닐 때만 저장
             if (this.WindowState == WindowState.Normal)
             {
@@ -167,7 +167,7 @@ namespace MapleHomework
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateTaskColumnCount();
-            
+
             // 사이드바 위치도 업데이트
             if (ViewModel.IsSidebarOpen)
             {
@@ -179,10 +179,10 @@ namespace MapleHomework
         {
             // 콘텐츠 영역 너비 기준으로 열 수 결정
             double contentWidth = this.ActualWidth - 80; // 좌우 패딩 고려
-            
+
             // 각 박스당 최소 200px 필요
             const double minItemWidth = 200;
-            
+
             if (contentWidth >= minItemWidth * 3)
                 ViewModel.TaskColumnCount = 3;
             else if (contentWidth >= minItemWidth * 2)
@@ -206,14 +206,14 @@ namespace MapleHomework
                 else
                 {
                     // 파일 시스템에서 시도 (개발 환경 등)
-                var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico");
-                if (System.IO.File.Exists(iconPath))
-                {
-                    _notifyIcon.Icon = new System.Drawing.Icon(iconPath);
-                }
-                else
-                {
-                    _notifyIcon.Icon = SystemIcons.Application;
+                    var iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico");
+                    if (System.IO.File.Exists(iconPath))
+                    {
+                        _notifyIcon.Icon = new System.Drawing.Icon(iconPath);
+                    }
+                    else
+                    {
+                        _notifyIcon.Icon = SystemIcons.Application;
                     }
                 }
             }
@@ -221,7 +221,7 @@ namespace MapleHomework
             {
                 _notifyIcon.Icon = SystemIcons.Application;
             }
-            
+
             _notifyIcon.Text = "Maple Scheduler";
             _notifyIcon.Visible = true;
             _notifyIcon.DoubleClick += (s, e) => ShowWindow();
@@ -297,7 +297,7 @@ namespace MapleHomework
             // 트레이로 숨기기 전에 데이터와 위치 저장
             SaveWindowPosition();
             ViewModel.SaveAllData();
-            
+
             this.Hide();
             _notifyIcon?.ShowBalloonTip(1000, "Maple Scheduler", "프로그램이 트레이로 최소화되었습니다.", Forms.ToolTipIcon.Info);
         }
@@ -308,7 +308,7 @@ namespace MapleHomework
             settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
         }
-        
+
         protected override void OnClosed(EventArgs e)
         {
             // 위치와 모든 데이터 저장
@@ -324,63 +324,65 @@ namespace MapleHomework
         }
 
         #region 하단바 메뉴 이벤트
-        
+
         private void BottomMenuButton_Click(object sender, RoutedEventArgs e)
         {
-            BottomMenuPopup.IsOpen = !BottomMenuPopup.IsOpen;
+            MenuOverlay.Visibility = MenuOverlay.Visibility == Visibility.Visible
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
 
         private void CloseMenuPopup(object sender, RoutedEventArgs e)
         {
-            BottomMenuPopup.IsOpen = false;
+            MenuOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void OpenDashboard_Click(object sender, RoutedEventArgs e)
         {
-            BottomMenuPopup.IsOpen = false;
+            MenuOverlay.Visibility = Visibility.Collapsed;
             var appData = new AppData { Characters = ViewModel.Characters.ToList() };
             var dashboardWindow = new DashboardWindow(appData, ViewModel);
-            dashboardWindow.Owner = this;
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
             dashboardWindow.Show();
         }
 
         private void OpenStatisticsReport_Click(object sender, RoutedEventArgs e)
         {
-            BottomMenuPopup.IsOpen = false;
+            MenuOverlay.Visibility = Visibility.Collapsed;
             var reportWindow = new ReportWindow(ViewModel);
-            reportWindow.Owner = this;
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
             reportWindow.Show();
         }
 
         private void OpenBossCalculator_Click(object sender, RoutedEventArgs e)
         {
-            BottomMenuPopup.IsOpen = false;
+            MenuOverlay.Visibility = Visibility.Collapsed;
             var appData = new AppData { Characters = ViewModel.Characters.ToList() };
             var bossWindow = new BossRewardWindow(appData, ViewModel);
-            bossWindow.Owner = this;
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
             bossWindow.Show();
         }
 
         private void OpenCharacterSearch_Click(object sender, RoutedEventArgs e)
         {
-            BottomMenuPopup.IsOpen = false;
+            MenuOverlay.Visibility = Visibility.Collapsed;
             var searchWindow = new CharacterSearchWindow();
-            searchWindow.Owner = this;
-            
+            // Owner 제거 - 다른 창 뒤로 갈 수 있도록
+
             // 메인 UI 테마 동기화
             searchWindow.SyncTheme(ViewModel.IsDarkTheme);
-            
+
             // 테마 변경 이벤트 구독
             void OnThemeChanged() => searchWindow.SyncTheme(ViewModel.IsDarkTheme);
             ViewModel.ThemeChanged += OnThemeChanged;
             searchWindow.Closed += (s, args) => ViewModel.ThemeChanged -= OnThemeChanged;
-            
+
             searchWindow.Show();
         }
-        
+
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
-            BottomMenuPopup.IsOpen = false;
+            MenuOverlay.Visibility = Visibility.Collapsed;
             var settingsWindow = new SettingsWindow(ViewModel);
             settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
@@ -390,10 +392,10 @@ namespace MapleHomework
         {
             // 다크/라이트 모드 전환 (현재는 다크 모드만 지원)
             // TODO: 라이트 모드 구현
-            System.Windows.MessageBox.Show("라이트 모드는 추후 지원 예정입니다.", "알림", 
+            System.Windows.MessageBox.Show("라이트 모드는 추후 지원 예정입니다.", "알림",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        
+
         #endregion
     }
 }

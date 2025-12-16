@@ -1,0 +1,105 @@
+# .NET Build Output
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.DotSettings.user
+
+# Visual Studio Code
+.vscode/
+
+# Cursor
+.cursor/
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Windows Forms/WPF designer files
+*.designer.cs
+
+# Publish/Deploy output
+publish/
+
+# Backup & Log files
+*.log
+*.bak
+*.tmp
+*.swp
+
+# Build log files
+build.log
+build_*.txt
+errors.txt
+errors*.txt
+runtime_err*.txt
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Windows executable outputs (if not needed)
+*.exe
+!MapleHomework.exe
+
+# Application data
+AppData/
+CharacterData/
+_backup/
+logs/
+
+# API Keys and secrets
+appsettings.*.json
+secrets.json
+*.key
+*.pem
+
+# Antigravity
+$$.antigravityrules
+
+# Temporary/Test files
+*.cache
+*.testlog
+
+# Package manager lock files (optional - comment if you want to track)
+# packages.lock.json

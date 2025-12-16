@@ -40,7 +40,7 @@ namespace MapleHomework.Services
             {
                 var appData = CharacterRepository.Load();
                 var settings = ConfigManager.Load();
-                var statistics = StatisticsService.Load();
+                var statistics = StatisticsService.LoadAll();
 
                 var container = new BackupContainer
                 {
@@ -86,7 +86,7 @@ namespace MapleHomework.Services
                 {
                     string json = reader.ReadToEnd();
                     var container = JsonSerializer.Deserialize<BackupContainer>(json);
-                    
+
                     if (container == null || container.Metadata == null)
                         return Result<BackupMetadata>.Failure("유효하지 않은 백업 파일입니다.");
 
@@ -119,7 +119,7 @@ namespace MapleHomework.Services
                     // 데이터 복원
                     CharacterRepository.Save(container.Data);
                     ConfigManager.Save(container.Settings);
-                    StatisticsService.Save(container.Statistics);
+                    StatisticsService.SaveAll(container.Statistics);
 
                     return Result.Success();
                 }

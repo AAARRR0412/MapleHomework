@@ -8,6 +8,7 @@ using System.Windows.Input;
 using MapleHomework.Models;
 using MapleHomework.Services;
 using MapleHomework.ViewModels;
+using MapleHomework.Commands;
 using Wpf.Ui.Controls;
 
 namespace MapleHomework
@@ -30,11 +31,11 @@ namespace MapleHomework
         };
         public string CategoryColor => Category switch
         {
-            TaskCategory.Daily => "#A2E1DB",
-            TaskCategory.Weekly => "#FFDBCC",
-            TaskCategory.Boss => "#FEE1E8",
-            TaskCategory.Monthly => "#CBAACB",
-            _ => "#888888"
+            TaskCategory.Daily => "#3B82F6",   // Blue
+            TaskCategory.Weekly => "#F97316",  // Orange
+            TaskCategory.Boss => "#E11D48",    // Rose (Soft Red)
+            TaskCategory.Monthly => "#8B5CF6", // Violet
+            _ => "#64748B"
         };
     }
 
@@ -97,14 +98,14 @@ namespace MapleHomework
             _appData = appData;
             Characters = new ObservableCollection<CharacterProfile>(appData.Characters);
             this.DataContext = this;
-            
+
             // 테마 적용
             ApplyThemeResources();
             _viewModel.ThemeChanged += OnThemeChanged;
             _viewModel.DataChanged += OnDataChanged;
-            
+
             RefreshTodayTasks();
-            
+
             // 창 크기 변경 시 열 수 업데이트
             this.SizeChanged += DashboardWindow_SizeChanged;
             this.Loaded += (s, e) => UpdateTaskColumnCount();
@@ -142,22 +143,8 @@ namespace MapleHomework
         /// </summary>
         public void ApplyThemeResources()
         {
-            var settings = ConfigManager.Load();
-            bool isDark = settings.ThemeMode == ThemeMode.Dark || 
-                         (settings.ThemeMode == ThemeMode.System && 
-                          System.Windows.SystemParameters.HighContrast == false);
-            
-            // 윈도우 배경색 직접 설정
-            if (isDark)
-            {
-                this.Background = new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(0x0F, 0x17, 0x2A)); // #0F172A
-            }
-            else
-            {
-                this.Background = new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(0xF5, 0xF7, 0xFB)); // #F5F7FB
-            }
+            // 배경색은 XAML DynamicResource에서 처리하므로 수동 설정 제거
+            // 필요한 경우 여기서 추가적인 코드 레벨 테마 로직 처리
         }
 
         private void DashboardWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -169,10 +156,10 @@ namespace MapleHomework
         {
             // 오늘의 할일 영역 너비 기준 (대략 창 너비의 60% - 여백)
             double contentWidth = this.ActualWidth * 0.6 - 60;
-            
+
             // 각 박스당 최소 180px 필요
             const double minItemWidth = 180;
-            
+
             if (contentWidth >= minItemWidth * 3)
                 TaskColumnCount = 3;
             else if (contentWidth >= minItemWidth * 2)
@@ -237,7 +224,7 @@ namespace MapleHomework
             {
                 Characters.Add(c);
             }
-            
+
             RefreshTodayTasks();
             OnPropertyChanged(nameof(CharacterCount));
             OnPropertyChanged(nameof(TotalPendingCount));
@@ -259,7 +246,7 @@ namespace MapleHomework
             {
                 // 카테고리별 즐겨찾기 여부에 따라 태스크 필터링
                 var pendingTasksWithCategory = new List<(HomeworkTask task, bool isFavorite)>();
-                
+
                 foreach (var task in character.DailyTasks.Where(t => t.IsActive))
                 {
                     if (!task.IsChecked) _totalUncompletedCount++;
@@ -267,7 +254,7 @@ namespace MapleHomework
                     if (!task.IsChecked)
                         pendingTasksWithCategory.Add((task, character.IsDailyFavorite));
                 }
-                
+
                 foreach (var task in character.WeeklyTasks.Where(t => t.IsActive))
                 {
                     if (!task.IsChecked) _totalUncompletedCount++;
@@ -275,7 +262,7 @@ namespace MapleHomework
                     if (!task.IsChecked)
                         pendingTasksWithCategory.Add((task, character.IsWeeklyFavorite));
                 }
-                
+
                 foreach (var task in character.BossTasks.Where(t => t.IsActive))
                 {
                     if (!task.IsChecked) _totalUncompletedCount++;
@@ -283,7 +270,7 @@ namespace MapleHomework
                     if (!task.IsChecked)
                         pendingTasksWithCategory.Add((task, character.IsBossFavorite));
                 }
-                
+
                 foreach (var task in character.MonthlyTasks.Where(t => t.IsActive))
                 {
                     if (!task.IsChecked) _totalUncompletedCount++;
@@ -293,7 +280,7 @@ namespace MapleHomework
                 }
 
                 // 필터링 (즐겨찾기만 표시 옵션)
-                var filteredTasks = ShowOnlyFavorites 
+                var filteredTasks = ShowOnlyFavorites
                     ? pendingTasksWithCategory.Where(x => x.isFavorite).Select(x => x.task).ToList()
                     : pendingTasksWithCategory.Select(x => x.task).ToList();
 

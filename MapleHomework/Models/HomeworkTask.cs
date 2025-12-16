@@ -21,6 +21,15 @@ namespace MapleHomework.Models
         // 해당 퀘스트를 수행하기 위한 최소 레벨 (0이면 제한 없음)
         public int RequiredLevel { get; set; } = 0;
 
+        // 정렬 순서
+        public int Order { get; set; } = 0;
+
+        // 숨김 처리 여부 (삭제는 아니지만 목록에서 안보이게)
+        public bool IsHidden { get; set; } = false;
+
+        // 삭제 여부 (실제 삭제는 아니지만 휴지통 개념)
+        public bool IsDeleted { get; set; } = false;
+
         // 사용자가 이 숙제를 할지 말지 선택 (설정값)
         private bool _isActive = true;
         public bool IsActive
@@ -53,10 +62,10 @@ namespace MapleHomework.Models
         public int PartySize
         {
             get => _partySize;
-            set 
-            { 
-                _partySize = Math.Max(1, Math.Min(6, value)); 
-                OnPropertyChanged(); 
+            set
+            {
+                _partySize = Math.Max(1, Math.Min(6, value));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(DisplayName));
             }
         }
@@ -91,6 +100,44 @@ namespace MapleHomework.Models
         }
 
         public DateTime LastCheckedTime { get; set; }
+
+        public bool CheckReset(DateTime now)
+        {
+            // 리셋 시간이 지났는지 확인
+            // 메이플스토리 리셋: 매일 자정 (00:00)
+            // 주간/보스 리셋: 목요일 자정 (00:00)
+            // 월간 리셋: 매월 1일 자정 (00:00)
+
+            if (!IsChecked) return false;
+
+            DateTime resetTime = DateTime.MinValue;
+            DateTime last = LastCheckedTime;
+
+            // 로직 간소화: "마지막 체크 시간"의 다음 리셋 타임을 구하고, 현재 시간이 그보다 지났으면 리셋
+            switch (Category)
+            {
+                case TaskCategory.Daily:
+                    resetTime = last.Date.AddDays(1); // 다음날 0시
+                    break;
+                case TaskCategory.Weekly:
+                case TaskCategory.Boss:
+                    // 다음 목요일 0시 찾기
+                    int daysUntilThursday = ((int)DayOfWeek.Thursday - (int)last.DayOfWeek + 7) % 7;
+                    if (daysUntilThursday == 0) daysUntilThursday = 7;
+                    resetTime = last.Date.AddDays(daysUntilThursday);
+                    break;
+                case TaskCategory.Monthly:
+                    resetTime = new DateTime(last.Year, last.Month, 1).AddMonths(1); // 다음달 1일
+                    break;
+            }
+
+            if (now >= resetTime)
+            {
+                IsChecked = false;
+                return true;
+            }
+            return false;
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

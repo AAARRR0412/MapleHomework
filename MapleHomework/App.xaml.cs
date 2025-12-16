@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using MapleHomework.Services;
+using MapleHomework.ViewModels;
 using Application = System.Windows.Application;
 
 namespace MapleHomework
@@ -15,12 +16,12 @@ namespace MapleHomework
     {
         private static Mutex? _mutex;
         private const string MutexName = "MapleHomework_SingleInstance_Mutex";
-        
+
         // 백그라운드 API 수집 관리
         private static Task? _backgroundCollectTask;
         private static CancellationTokenSource? _collectCancellation;
         public static bool IsCollecting => _backgroundCollectTask != null && !_backgroundCollectTask.IsCompleted;
-        
+
         // 수집 진행률 이벤트
         public static event Action<int>? CollectProgressChanged;
         public static event Action<bool, string>? CollectCompleted;
@@ -49,7 +50,73 @@ namespace MapleHomework
                 return;
             }
 
+            // 전역 예외 처리 핸들러 등록
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            // 서비스 초기화 및 마이그레이션
+            var migrationService = new MigrationService();
+            migrationService.MigrateIfNeeded();
+
+            var appData = CharacterRepository.Load();
+
+            // 앱 실행 시 테마 초기화 (ViewModel 생성 전에 리소스가 설정되어야 함)
+            ThemeService.ApplyTheme(appData.IsDarkTheme);
+
+            var apiService = new MapleApiService();
+            var windowService = new WindowService();
+
+            var mainViewModel = new MainViewModel(appData, apiService, windowService);
+
+            // MainWindow 표시
+            var mainWindow = new MainWindow(mainViewModel);
+            mainWindow.Show();
+
             base.OnStartup(e);
+        }
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            LogCrash(e.Exception, "DispatcherUnhandledException");
+            // e.Handled = true; // 필요시 주석 해제하여 크래시 방지 가능 (하지만 상태가 불안정할 수 있음)
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            LogCrash(e.Exception, "UnobservedTaskException");
+            e.SetObserved(); // 프로세스 종료 방지
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex)
+            {
+                LogCrash(ex, "CurrentDomain_UnhandledException");
+            }
+        }
+
+        private void LogCrash(Exception ex, string source)
+        {
+            try
+            {
+                string docsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                string logDir = System.IO.Path.Combine(docsPath, "MapleScheduler", "crash-logs");
+
+                if (!System.IO.Directory.Exists(logDir))
+                {
+                    System.IO.Directory.CreateDirectory(logDir);
+                }
+
+                string fileName = $"crash_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+                string content = $"[{DateTime.Now}] Source: {source}\nMessage: {ex.Message}\nStackTrace:\n{ex.StackTrace}\n\nInnerException:\n{ex.InnerException}";
+
+                System.IO.File.WriteAllText(System.IO.Path.Combine(logDir, fileName), content);
+            }
+            catch
+            {
+                // 로깅 실패는 어쩔 수 없음
+            }
         }
 
         private void BringExistingInstanceToFront()
@@ -87,7 +154,7 @@ namespace MapleHomework
         {
             // 백그라운드 수집 취소
             _collectCancellation?.Cancel();
-            
+
             _mutex?.ReleaseMutex();
             _mutex?.Dispose();
             base.OnExit(e);
@@ -115,7 +182,7 @@ namespace MapleHomework
             _backgroundCollectTask = Task.Run(async () =>
             {
                 var apiService = new MapleApiService();
-                
+
                 try
                 {
                     // 시작 알림 (UI 스레드에서 실행)

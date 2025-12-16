@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -7,15 +7,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
-		<!-- 배포 설정 -->
+		<!-- 諛고룷 ?ㅼ젙 -->
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 		<AssemblyName>MapleHomework</AssemblyName>
 		<RootNamespace>MapleHomework</RootNamespace>
-		<!-- 버전 정보 (필요시 수정) -->
+		<!-- 踰꾩쟾 ?뺣낫 (?꾩슂???섏젙) -->
 		<Version>1.0.0</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
-		<!-- 단일 exe 배포 설정 -->
+		<!-- ?⑥씪 exe 諛고룷 ?ㅼ젙 -->
 		<PublishSingleFile>true</PublishSingleFile>
 		<SelfContained>true</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -45,11 +45,11 @@
 	  <Resource Include="Fonts\Pretendard-SemiBold.ttf" />
 	</ItemGroup>
 
-	<!-- CharaSimResource 이미지 리소스 (임베디드 리소스로 exe에 포함) -->
+	<!-- Rendering ?대?吏 由ъ냼??(?꾨쿋?붾뱶 由ъ냼?ㅻ줈 exe???ы븿) -->
 	<ItemGroup>
-		<EmbeddedResource Include="CharaSimResource\Resources\**\*.png" />
-		<EmbeddedResource Include="CharaSimResource\Resources\**\*.bmp" />
-		<EmbeddedResource Include="CharaSimResource\Resources\**\*.ttf" />
+		<EmbeddedResource Include="Rendering\Resources\**\*.png" />
+		<EmbeddedResource Include="Rendering\Resources\**\*.bmp" />
+		<EmbeddedResource Include="Rendering\Resources\**\*.ttf" />
   <Resource Include="Data\*.png" />
       <Resource Include="icon.ico" />
 	</ItemGroup>

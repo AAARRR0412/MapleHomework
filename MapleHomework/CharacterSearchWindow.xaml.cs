@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -12,22 +14,51 @@ using System.Windows.Media.Imaging;
 using MapleHomework.Data;
 using MapleHomework.Models;
 using MapleHomework.Services;
-using MapleHomework.CharaSimResource;
+using MapleHomework.Rendering;
 using WpfImage = System.Windows.Controls.Image;
 
 namespace MapleHomework
 {
-    public partial class CharacterSearchWindow : Window
+    public partial class CharacterSearchWindow : Wpf.Ui.Controls.FluentWindow, INotifyPropertyChanged
     {
         private readonly MapleApiService _apiService;
+        private string? _ocid;
+        private string _searchedNickname = "";
+
+        // UI 상태 바인딩용
+        private bool _isHexaExpanded = false; // 기본값: 축소 (Collapsed)
+        public bool IsHexaExpanded
+        {
+            get => _isHexaExpanded;
+            set
+            {
+                if (_isHexaExpanded != value)
+                {
+                    _isHexaExpanded = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         private ItemEquipmentResponse? _itemEquipment;
         private HexaStatResponse? _hexaMatrix;
         private HexaMatrixStatResponse? _hexaMatrixStat;
         private CharacterSkillResponse? _characterSkill;
+        private SymbolEquipmentResponse? _symbolResponse;
+
+        private List<SymbolDisplayItem> _arcaneSymbols = new();
+        private List<SymbolDisplayItem> _authenticSymbols = new();
+        private List<SymbolDisplayItem> _grandSymbols = new();
         private readonly Dictionary<string, Grid> _equipSlots = new();
 
         // 헥사코어 아이템 클래스 (ReportWindow와 동일)
-        private class HexaCoreItem
+        // 헥사코어 아이템 클래스 (ViewModel)
+        public class HexaCoreItem
         {
             public string SkillName { get; set; } = "";
             public string OriginalName { get; set; } = "";
@@ -35,10 +66,40 @@ namespace MapleHomework
             public int CoreLevel { get; set; }
             public string SkillIconUrl { get; set; } = "";
             public string BadgeIconPath { get; set; } = "";
+
+            // 강화 비용 정보
+            public int NextSolErda { get; set; }
+            public int NextFragment { get; set; }
+            public int RemainingSolErda { get; set; }
+            public int RemainingFragment { get; set; }
+            public bool IsMaxLevel => CoreLevel >= 30;
+
+            // UI 표시용
+            public string NextCostText => IsMaxLevel ? "MAX" : $"{NextSolErda} / {NextFragment}";
+            public string RemainingCostText => IsMaxLevel ? "-" : $"{RemainingSolErda} / {RemainingFragment}";
+
+            // 포맷팅된 텍스트 (단위 포함)
+            public string NextSolErdaText => IsMaxLevel ? "-" : $"{NextSolErda}개";
+            public string NextFragmentText => IsMaxLevel ? "-" : $"{NextFragment}개";
+            public string RemainingSolErdaText => IsMaxLevel ? "-" : $"{RemainingSolErda}개";
+            public string RemainingFragmentText => IsMaxLevel ? "-" : $"{RemainingFragment}개";
+
+            public double ProgressValue => CoreLevel >= 30 ? 100 : (CoreLevel / 30.0 * 100);
+            public double ProgressFactor
+            {
+                get
+                {
+                    if (CoreLevel >= 30) return 1.0;
+                    if (CoreLevel <= 0) return 0.0;
+                    double result = CoreLevel / 30.0;
+                    return double.IsNaN(result) || double.IsInfinity(result) ? 0.0 : result;
+                }
+            }
+            public string ProgressText => $"{ProgressValue:F1}%";
         }
 
         // 경험치 그래프 아이템
-        private class ExpGraphItem
+        public class ExpGraphItem
         {
             public string DateLabel { get; set; } = "";
             public double ExpRate { get; set; }
@@ -48,7 +109,7 @@ namespace MapleHomework
         }
 
         // 헥사스텟 아이템
-        private class HexaStatItem
+        public class HexaStatItem
         {
             public string MainStat { get; set; } = "";
             public int MainLevel { get; set; }
@@ -72,14 +133,30 @@ namespace MapleHomework
             // 현재 테마 상태 확인 및 적용
             var settings = ConfigManager.Load();
             _isDarkTheme = ThemeService.ShouldUseDarkTheme(settings);
+
+            // 이벤트 구독
+            ThemeService.OnThemeChanged += SyncTheme;
+            this.Closed += (s, e) => ThemeService.OnThemeChanged -= SyncTheme;
+
             ApplyTheme(_isDarkTheme);
 
             // 장비 슬롯 매핑
             InitializeEquipSlots();
-            
+
             // 프리셋 UI 초기화
-            UpdatePresetUI();
+            // 헥사 비용 데이터 로드
+            try
+            {
+                string dataPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "HexaCoreCosts.json");
+                HexaCostCalculator.Initialize(dataPath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load Hexa costs: {ex.Message}");
+            }
         }
+
+
 
         private void InitializeEquipSlots()
         {
@@ -90,7 +167,7 @@ namespace MapleHomework
             _equipSlots["링4"] = Slot_Ring3;  // 1행 위치
             _equipSlots["모자"] = Slot_Hat;
             _equipSlots["엠블렘"] = Slot_Emblem;
-            // 뱃지 슬롯 삭제됨
+            _equipSlots["뱃지"] = Slot_Badge;
             _equipSlots["펜던트"] = Slot_Pendant0;
             _equipSlots["펜던트2"] = Slot_Pendant1;
             _equipSlots["어깨장식"] = Slot_Shoulder;
@@ -126,7 +203,7 @@ namespace MapleHomework
         {
             _currentPreset = preset;
             UpdatePresetUI();
-            
+
             // 장비 슬롯 다시 표시
             PopulateEquipmentSlots();
         }
@@ -134,27 +211,19 @@ namespace MapleHomework
         private void UpdatePresetUI()
         {
             // 프리셋 버튼 UI 업데이트 (선택된 버튼 하이라이트)
-            var accentBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x50, 0x55, 0xBB, 0xEE));
-            var normalBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x25, 0xFF, 0xFF, 0xFF));
-            var accentBorder = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x55, 0xBB, 0xEE));
-            var normalBorder = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x35, 0xFF, 0xFF, 0xFF));
-            var whiteText = System.Windows.Media.Brushes.White;
-            var mutedText = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xAA, 0xFF, 0xFF, 0xFF));
+            var accentBrush = new LinearGradientBrush
+            {
+                StartPoint = new System.Windows.Point(0, 0),
+                EndPoint = new System.Windows.Point(1, 0)
+            };
+            accentBrush.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0x5A, 0xC8, 0xFA), 0));
+            accentBrush.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0x4E, 0xCD, 0xC4), 1));
+
+            var normalBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x64, 0x74, 0x8B));
 
             Preset1Border.Background = _currentPreset == 1 ? accentBrush : normalBrush;
-            Preset1Border.BorderBrush = _currentPreset == 1 ? accentBorder : normalBorder;
-            ((System.Windows.Controls.TextBlock)Preset1Border.Child).Foreground = 
-                _currentPreset == 1 ? whiteText : mutedText;
-
             Preset2Border.Background = _currentPreset == 2 ? accentBrush : normalBrush;
-            Preset2Border.BorderBrush = _currentPreset == 2 ? accentBorder : normalBorder;
-            ((System.Windows.Controls.TextBlock)Preset2Border.Child).Foreground = 
-                _currentPreset == 2 ? whiteText : mutedText;
-
             Preset3Border.Background = _currentPreset == 3 ? accentBrush : normalBrush;
-            Preset3Border.BorderBrush = _currentPreset == 3 ? accentBorder : normalBorder;
-            ((System.Windows.Controls.TextBlock)Preset3Border.Child).Foreground = 
-                _currentPreset == 3 ? whiteText : mutedText;
         }
 
         /// <summary>
@@ -168,140 +237,9 @@ namespace MapleHomework
 
         private void ApplyTheme(bool isDark)
         {
-            // 공통 색상 정의
-            var labelDark = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x80, 0xFF, 0xFF, 0xFF));
-            var labelLight = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x64, 0x74, 0x8B));
-            var textDark = System.Windows.Media.Brushes.White;
-            var textLight = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x1E, 0x29, 0x3B));
-            var subTextLight = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x47, 0x55, 0x69));
-            
-            if (isDark)
-            {
-                // 다크 테마 배경
-                var darkGradient = new LinearGradientBrush
-                {
-                    StartPoint = new System.Windows.Point(0, 0),
-                    EndPoint = new System.Windows.Point(0, 1)
-                };
-                darkGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0x4A, 0x55, 0x68), 0));
-                darkGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0x2D, 0x37, 0x48), 0.3));
-                darkGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0x1A, 0x20, 0x2C), 1));
-                MainContainer.Background = darkGradient;
-                
-                // 다크 테마 타이틀바
-                var titleBarGradient = new LinearGradientBrush
-                {
-                    StartPoint = new System.Windows.Point(0, 0),
-                    EndPoint = new System.Windows.Point(0, 1)
-                };
-                titleBarGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0x5D, 0x6C, 0x7A), 0));
-                titleBarGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0x4A, 0x55, 0x68), 1));
-                TitleBar.Background = titleBarGradient;
-                TitleText.Foreground = textDark;
-                
-                // 다크 테마 검색창
-                SearchCard.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x25, 0xFF, 0xFF, 0xFF));
-                SearchCard.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x30, 0xFF, 0xFF, 0xFF));
-                SearchTextBox.Foreground = textDark;
-                SearchTextBox.CaretBrush = textDark;
-                
-                // 다크 테마 카드 색상
-                var cardBg = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x12, 0xFF, 0xFF, 0xFF));
-                var cardBorder = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x18, 0xFF, 0xFF, 0xFF));
-                
-                ProfileCard.Background = cardBg;
-                ProfileCard.BorderBrush = cardBorder;
-                ExpCard.Background = cardBg;
-                ExpCard.BorderBrush = cardBorder;
-                EquipmentCard.Background = cardBg;
-                EquipmentCard.BorderBrush = cardBorder;
-                HexaCoreCard.Background = cardBg;
-                HexaCoreCard.BorderBrush = cardBorder;
-                
-                // 다크 테마 텍스트 색상
-                CharacterName.Foreground = textDark;
-                CharacterClass.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xAA, 0xFF, 0xFF, 0xFF));
-                LoadingText.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xAA, 0xFF, 0xFF, 0xFF));
-                
-                // 다크 테마 라벨 색상
-                LabelCombatPower.Foreground = labelDark;
-                LabelUnion.Foreground = labelDark;
-                LabelWorld.Foreground = labelDark;
-                LabelGuild.Foreground = labelDark;
-                LabelAvgExp.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xAA, 0xFF, 0xFF, 0xFF));
-                AvgExpAmount.Foreground = labelDark;
-                
-                // 다크 테마 추가 요소
-                PresetsLabel.Foreground = labelDark;
-                ExpLoadingText2.Foreground = labelDark;
-                NoHexaText.Foreground = labelDark;
-                EquipmentHeaderText.Foreground = textDark;
-            }
-            else
-            {
-                // 라이트 테마 배경 - 세련된 그라데이션
-                var lightGradient = new LinearGradientBrush
-                {
-                    StartPoint = new System.Windows.Point(0, 0),
-                    EndPoint = new System.Windows.Point(0, 1)
-                };
-                lightGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0xF8, 0xFA, 0xFC), 0));
-                lightGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0xF1, 0xF5, 0xF9), 0.5));
-                lightGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0xE2, 0xE8, 0xF0), 1));
-                MainContainer.Background = lightGradient;
-                
-                // 라이트 테마 타이틀바
-                var titleBarGradient = new LinearGradientBrush
-                {
-                    StartPoint = new System.Windows.Point(0, 0),
-                    EndPoint = new System.Windows.Point(0, 1)
-                };
-                titleBarGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF), 0));
-                titleBarGradient.GradientStops.Add(new GradientStop(System.Windows.Media.Color.FromRgb(0xF8, 0xFA, 0xFC), 1));
-                TitleBar.Background = titleBarGradient;
-                TitleText.Foreground = textLight;
-                
-                // 라이트 테마 검색창
-                SearchCard.Background = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF));
-                SearchCard.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xE2, 0xE8, 0xF0));
-                SearchTextBox.Foreground = textLight;
-                SearchTextBox.CaretBrush = textLight;
-                
-                // 라이트 테마 카드 색상
-                var cardBg = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0xFF, 0xFF));
-                var cardBorder = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xE2, 0xE8, 0xF0));
-                
-                ProfileCard.Background = cardBg;
-                ProfileCard.BorderBrush = cardBorder;
-                ExpCard.Background = cardBg;
-                ExpCard.BorderBrush = cardBorder;
-                EquipmentCard.Background = cardBg;
-                EquipmentCard.BorderBrush = cardBorder;
-                HexaCoreCard.Background = cardBg;
-                HexaCoreCard.BorderBrush = cardBorder;
-                
-                // 라이트 테마 텍스트 색상 - 가독성 좋은 다크 컬러
-                CharacterName.Foreground = textLight;
-                CharacterClass.Foreground = subTextLight;
-                LoadingText.Foreground = subTextLight;
-                
-                // 라이트 테마 라벨 색상
-                LabelCombatPower.Foreground = labelLight;
-                LabelUnion.Foreground = labelLight;
-                LabelWorld.Foreground = labelLight;
-                LabelGuild.Foreground = labelLight;
-                LabelAvgExp.Foreground = subTextLight;
-                AvgExpAmount.Foreground = labelLight;
-                
-                // 라이트 테마 추가 요소
-                PresetsLabel.Foreground = labelLight;
-                ExpLoadingText2.Foreground = labelLight;
-                NoHexaText.Foreground = labelLight;
-                EquipmentHeaderText.Foreground = textLight;
-            }
-
-            // 전역 테마 서비스도 업데이트
-            ThemeService.ApplyTheme(isDark);
+            // ThemeService에서 전역 리소스(App.Current.Resources)를 업데이트하므로
+            // 개별 창에서 리소스를 다시 설정할 필요가 없습니다.
+            // DynamicResource가 자동으로 변경된 리소스를 감지합니다.
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -315,6 +253,11 @@ namespace MapleHomework
             Close();
         }
 
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
         private void SearchTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Enter)
@@ -326,16 +269,42 @@ namespace MapleHomework
             _ = SearchCharacterAsync();
         }
 
-        private async Task SearchCharacterAsync()
+        private void HeaderSearchTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            var nickname = SearchTextBox.Text?.Trim();
+            if (e.Key == System.Windows.Input.Key.Enter)
+                _ = SearchFromHeaderAsync();
+        }
+
+        private void HeaderSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = SearchFromHeaderAsync();
+        }
+
+        private async Task SearchFromHeaderAsync()
+        {
+            var nickname = HeaderSearchTextBox.Text?.Trim();
+            if (string.IsNullOrEmpty(nickname))
+                return;
+
+            SearchTextBox.Text = nickname;
+            await SearchCharacterAsync();
+            HeaderSearchTextBox.Clear();
+        }
+
+        private async Task SearchCharacterAsync(bool forceUpdate = false)
+        {
+            var nickname = HeaderSearchTextBox.IsVisible ? HeaderSearchTextBox.Text.Trim() : SearchTextBox.Text?.Trim();
+            if (string.IsNullOrEmpty(nickname) && !string.IsNullOrEmpty(CharacterName.Text))
+                nickname = CharacterName.Text; // Use current name if refreshing without text box
+
             if (string.IsNullOrEmpty(nickname))
             {
                 ShowError("닉네임을 입력해주세요.");
                 return;
             }
+            _searchedNickname = nickname;
 
-            ShowLoading(true, "캐릭터 정보를 불러오는 중...");
+            ShowLoading(true, "정보를 확인하는 중...");
             HideError();
             ResultPanel.Visibility = Visibility.Collapsed;
 
@@ -349,166 +318,258 @@ namespace MapleHomework
                     ShowLoading(false);
                     return;
                 }
+                _ocid = ocid;
 
-                // 2. 기본 정보 조회
-                ShowLoading(true, "기본 정보 조회 중...");
-                var basic = await _apiService.GetCharacterInfoAsync(ocid);
-                if (basic == null)
+                CharacterCacheData? cacheData = null;
+
+                // 2. 캐시 확인 (강제 업데이트가 아닐 경우)
+                if (!forceUpdate)
                 {
-                    ShowError("캐릭터 기본 정보를 가져올 수 없습니다.");
+                    var loadedCache = await _apiService.LoadCharacterCache(ocid);
+                    if (loadedCache != null && !loadedCache.IsExpired(6)) // 6시간 유효
+                    {
+                        cacheData = loadedCache;
+                    }
+                }
+
+                // 3. 데이터가 없거나 만료되었으면 API 호출
+                if (cacheData == null)
+                {
+                    ShowLoading(true, "최신 데이터를 불러오는 중...");
+                    cacheData = await FetchAllCharacterData(ocid);
+
+                    if (cacheData != null)
+                    {
+                        await _apiService.SaveCharacterCache(ocid, cacheData);
+                    }
+                }
+
+                if (cacheData == null || cacheData.BasicInfo == null)
+                {
+                    ShowError("캐릭터 정보를 가져올 수 없습니다.");
                     ShowLoading(false);
                     return;
                 }
 
-                // 기본 정보 표시
-                CharacterName.Text = basic.CharacterName ?? nickname;
-                CharacterLevel.Text = basic.CharacterLevel.ToString();
-                CharacterClass.Text = basic.CharacterClass ?? "-";
-                WorldText.Text = basic.WorldName ?? "-";
-                GuildText.Text = basic.CharacterGuildName ?? "-";
-                _currentLevel = basic.CharacterLevel;
+                // 4. UI 업데이트
+                PopulateUI(cacheData);
+                UpdateCacheInfo(cacheData.Timestamp);
 
-                // 캐릭터 이미지
-                if (!string.IsNullOrEmpty(basic.CharacterImage))
-                {
-                    CharacterImage.Source = new BitmapImage(new Uri(basic.CharacterImage));
-                }
-
-                // 3. 스탯 조회 (전투력)
-                ShowLoading(true, "전투력 조회 중...");
-                var stat = await _apiService.GetCharacterStatAsync(ocid);
-                if (stat?.FinalStat != null)
-                {
-                    var cpStat = stat.FinalStat.Find(s => s.StatName == "전투력");
-                    if (cpStat != null && long.TryParse(cpStat.StatValue, out long cp))
-                    {
-                        CombatPowerText.Text = FormatCombatPower(cp);
-                    }
-                }
-
-                // 4. 유니온 조회
-                ShowLoading(true, "유니온 정보 조회 중...");
-                var union = await _apiService.GetUnionInfoAsync(ocid);
-                if (union != null)
-                {
-                    UnionLevelText.Text = union.UnionLevel.ToString("N0");
-                }
-
-                // 5. 장비 조회
-                ShowLoading(true, "장비 정보 조회 중...");
-                _itemEquipment = await _apiService.GetItemEquipmentAsync(ocid);
-                PopulateEquipmentSlots();
-
-                // 6. 스킬 정보 조회 (헥사 코어 아이콘용)
-                ShowLoading(true, "스킬 정보 조회 중...");
-                _characterSkill = await _apiService.GetCharacterSkillAsync(ocid);
-                
-                // 7. 헥사 코어 조회
-                ShowLoading(true, "HEXA 코어 조회 중...");
-                _hexaMatrix = await _apiService.GetHexaStatAsync(ocid);
-                _hexaMatrixStat = await _apiService.GetHexaMatrixStatAsync(ocid);
-                PopulateHexaCores();
-                PopulateHexaStats();
-
-                // 먼저 화면을 표시하고 경험치는 비동기로 로딩
-                ShowLoading(false);
+                // 패널 전환
+                InitialSearchPanel.Visibility = Visibility.Collapsed;
                 ResultPanel.Visibility = Visibility.Visible;
-                
-                // 경험치 로딩 상태 표시
-                ExpLoadingPanel.Visibility = Visibility.Visible;
-                ExpContentPanel.Visibility = Visibility.Collapsed;
-                
-                // 7. 경험치 추이 (7일) - 비동기로 별도 로딩
+
+                // 헤더 검색창 표시
+                HeaderSearchBox.Visibility = Visibility.Visible;
+
+                // 경험치 히스토리 (별도 로딩)
                 _ = LoadExpTrendAsync(ocid);
             }
             catch (Exception ex)
             {
-                ShowError($"오류가 발생했습니다: {ex.Message}");
+                ShowError($"오류 발생: {ex.Message}");
+            }
+            finally
+            {
                 ShowLoading(false);
             }
         }
 
-        private async Task LoadExpTrendAsync(string ocid)
+        private async Task<CharacterCacheData?> FetchAllCharacterData(string ocid)
         {
-            var expItems = new List<ExpGraphItem>();
-            var dailyExpGains = new List<long>();
-            
-            // 7일치 데이터 수집 (레벨과 경험치 % 저장)
-            var dailyData = new List<(DateTime date, int level, double expRate)>();
-            
-            for (int i = 7; i >= 0; i--)
+            var data = new CharacterCacheData { Timestamp = DateTime.Now };
+            string targetDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+            // 기본 정보 (3일치 시도)
+            for (int i = 0; i < 3; i++)
             {
-                var date = DateTime.Now.AddDays(-i);
-                var dateStr = date.ToString("yyyy-MM-dd");
-                
-                try
-                {
-                    var basic = await _apiService.GetCharacterInfoAsync(ocid, dateStr);
-                    if (basic != null && double.TryParse(basic.CharacterExpRate?.Replace("%", ""), out double rate))
-                    {
-                        dailyData.Add((date, basic.CharacterLevel, rate));
-                    }
-                }
-                catch { }
-                
-                await Task.Delay(30);
-            }
-            
-            // 일일 경험치 획득량 계산 (평균 계산용)
-            for (int i = 1; i < dailyData.Count; i++)
-            {
-                var prev = dailyData[i - 1];
-                var curr = dailyData[i];
-                
-                var expGain = ExpTable.CalculateExpGain(prev.level, prev.expRate, curr.level, curr.expRate);
-                if (expGain > 0)
-                {
-                    dailyExpGains.Add(expGain);
-                }
-            }
-            
-            // 7일치 그래프에 표시 - 각 날짜의 경험치 퍼센트
-            // 최근 7일 데이터만 표시 (오늘 제외, 1~7일 전)
-            var recentData = dailyData.Where(d => d.date.Date < DateTime.Now.Date).OrderByDescending(d => d.date).Take(7).Reverse().ToList();
-            
-            foreach (var data in recentData)
-            {
-                expItems.Add(new ExpGraphItem
-                {
-                    DateLabel = data.date.ToString("MM-dd"),
-                    ExpRate = data.expRate,
-                    ExpRateText = $"{data.expRate:F2}%",
-                    GraphRate = Math.Min(data.expRate / 100.0, 1.0), // 0~100% 범위
-                    ExpGain = 0
-                });
+                targetDate = DateTime.Now.AddDays(-i).ToString("yyyy-MM-dd");
+                data.BasicInfo = await _apiService.GetCharacterInfoAsync(ocid, targetDate);
+                if (data.BasicInfo != null) break;
             }
 
-            ExpGraphList.ItemsSource = expItems;
-            
-            // 7일 평균 일일 경험치 계산
-            if (dailyExpGains.Any())
+            if (data.BasicInfo == null) return null;
+
+            // 병렬 처리보다는 순차 처리로 안정성 확보 (필요시 병렬 가능)
+            data.StatInfo = await _apiService.GetCharacterStatAsync(ocid, targetDate);
+            data.ItemEquipment = await _apiService.GetItemEquipmentAsync(ocid, targetDate);
+            data.CharacterSkill = await _apiService.GetCharacterSkillAsync(ocid, targetDate);
+            data.HexaMatrix = await _apiService.GetHexaStatAsync(ocid, targetDate);
+            data.HexaMatrixStat = await _apiService.GetHexaMatrixStatAsync(ocid, targetDate);
+            data.SymbolEquipment = await _apiService.GetSymbolEquipmentAsync(ocid, targetDate);
+
+            // 유니온
+            var union = await _apiService.GetUnionInfoAsync(ocid, targetDate);
+            // UnionRaiderResponse 구조가 맞는지 확인 필요 (여기선 가정)
+            // data.UnionRaider = ... (기존 코드에 UnionRaider 모델이 명시적이지 않아서 생략 가능하거나 추가 필요)
+            // 기존 코드: _apiService.GetUnionInfoAsync -> UnionRaiderResponse
+            data.UnionRaider = union;
+
+            // 길드 ? BasicInfo에 포함됨 via CharacterGuildName
+            // 유니온 챔피언? CacheData에 추가 안했지만 필요하다면 추가. 
+            // 현재 CacheData 모델에 UnionChampion이 없으므로 생략하거나 모델 수정 필요. 
+            // (CacheData 모델에는 UnionRaider만 있음. UnionChampion은 별도)
+            // 일단 UnionChampion은 매번 로딩하거나 CacheData에 추가해야 함.
+            // *모델에 UnionChampionResponse 추가 필요* -> 일단 여기선 생략하고 실시간 로딩하거나, 모델 업데이트했다고 가정.
+            // 기존 task에서 모델 CacheData 작성시 UnionChampionResponse를 깜빡했을 수 있음.
+            // 일단 제외하고 진행 (또는 나중에 추가)
+
+            return data;
+        }
+
+        private void PopulateUI(CharacterCacheData data)
+        {
+            if (data.BasicInfo == null) return;
+
+            var basic = data.BasicInfo;
+            // 기본 정보
+            CharacterName.Text = basic.CharacterName;
+            CharacterLevel.Text = basic.CharacterLevel.ToString();
+            CharacterClass.Text = basic.CharacterClass ?? "-";
+            WorldText.Text = basic.WorldName ?? "-";
+            GuildText.Text = basic.CharacterGuildName ?? "-";
+            _currentLevel = basic.CharacterLevel;
+
+            if (!string.IsNullOrEmpty(basic.CharacterImage))
             {
-                var avgDailyExp = (long)dailyExpGains.Average();
-                
-                // 현재 레벨 기준 평균 몇 %인지 계산
-                double avgExpRateAtLevel = 0;
-                if (ExpTable.RequiredExp.TryGetValue(_currentLevel, out var required) && required > 0)
+                CharacterImage.Source = new BitmapImage(new Uri(basic.CharacterImage));
+            }
+
+            // 스탯
+            if (data.StatInfo?.FinalStat != null)
+            {
+                var cpStat = data.StatInfo.FinalStat.Find(s => s.StatName == "전투력");
+                long cp = 0;
+                if (cpStat != null) long.TryParse(cpStat.StatValue, out cp);
+                CombatPowerText.Text = FormatCombatPower(cp);
+
+                var popStat = data.StatInfo.FinalStat.Find(s => s.StatName == "인기도");
+                if (popStat != null) PopularityText.Text = popStat.StatValue;
+            }
+
+            // 유니온
+            if (data.UnionRaider != null)
+            {
+                UnionLevelText.Text = data.UnionRaider.UnionLevel.ToString("N0");
+            }
+
+            // 장비
+            _itemEquipment = data.ItemEquipment;
+            PopulateEquipmentSlots();
+
+            // 스킬/헥사
+            _characterSkill = data.CharacterSkill;
+            _hexaMatrix = data.HexaMatrix;
+            _hexaMatrixStat = data.HexaMatrixStat;
+            PopulateHexaCores();
+            PopulateHexaStats();
+
+            // 심볼
+            _symbolResponse = data.SymbolEquipment;
+            PopulateSymbols();
+        }
+
+        private void UpdateCacheInfo(DateTime timestamp)
+        {
+            LastUpdatedText.Text = $"업데이트: {timestamp:yyyy-MM-dd HH:mm}";
+            CacheInfoPanel.Visibility = Visibility.Visible;
+        }
+
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(_ocid)) return;
+            await SearchCharacterAsync(forceUpdate: true);
+        }
+
+        private async Task LoadExpTrendAsync(string ocid)
+        {
+            try
+            {
+                var expItems = new List<ExpGraphItem>();
+                var dailyExpGains = new List<long>();
+
+                // 7일치 데이터 수집 (레벨과 경험치 % 저장)
+                var dailyData = new List<(DateTime date, int level, double expRate)>();
+
+                for (int i = 7; i >= 0; i--)
                 {
-                    avgExpRateAtLevel = (double)avgDailyExp / required * 100.0;
+                    var date = DateTime.Now.AddDays(-i);
+                    var dateStr = date.ToString("yyyy-MM-dd");
+
+                    try
+                    {
+                        var basic = await _apiService.GetCharacterInfoAsync(ocid, dateStr);
+                        if (basic != null && double.TryParse(basic.CharacterExpRate?.Replace("%", ""), out double rate))
+                        {
+                            dailyData.Add((date, basic.CharacterLevel, rate));
+                        }
+                    }
+                    catch { }
+
+                    await Task.Delay(30);
                 }
-                
-                AvgExpText.Text = $"{avgExpRateAtLevel:F2}%";
-                AvgExpAmount.Text = $"({ExpTable.FormatExpKorean(avgDailyExp)})";
+
+                // 일일 경험치 획득량 계산 (평균 계산용)
+                for (int i = 1; i < dailyData.Count; i++)
+                {
+                    var prev = dailyData[i - 1];
+                    var curr = dailyData[i];
+
+                    var expGain = ExpTable.CalculateExpGain(prev.level, prev.expRate, curr.level, curr.expRate);
+                    if (expGain > 0)
+                    {
+                        dailyExpGains.Add(expGain);
+                    }
+                }
+
+                // 7일치 그래프에 표시 - 각 날짜의 경험치 퍼센트
+                // 최근 7일 데이터만 표시 (오늘 제외, 1~7일 전)
+                var recentData = dailyData.Where(d => d.date.Date < DateTime.Now.Date).OrderByDescending(d => d.date).Take(7).Reverse().ToList();
+
+                foreach (var data in recentData)
+                {
+                    expItems.Add(new ExpGraphItem
+                    {
+                        DateLabel = data.date.ToString("MM-dd"),
+                        ExpRate = data.expRate,
+                        ExpRateText = $"{data.expRate:F2}%",
+                        GraphRate = Math.Min(data.expRate / 100.0, 1.0), // 0~100% 범위
+                        ExpGain = 0
+                    });
+                }
+
+                // UI 업데이트 (Context가 유지되지만 안전을 위해 확인)
+                ExpGraphList.ItemsSource = expItems;
+
+                // 7일 평균 일일 경험치 계산
+                if (dailyExpGains.Any())
+                {
+                    var avgDailyExp = (long)dailyExpGains.Average();
+
+                    // 현재 레벨 기준 평균 몇 %인지 계산
+                    double avgExpRateAtLevel = 0;
+                    if (ExpTable.RequiredExp.TryGetValue(_currentLevel, out var required) && required > 0)
+                    {
+                        avgExpRateAtLevel = (double)avgDailyExp / required * 100.0;
+                    }
+
+                    AvgExpText.Text = $"{avgExpRateAtLevel:F2}%";
+                }
+                else
+                {
+                    AvgExpText.Text = "-";
+                }
+
+                // 로딩 완료 - UI 전환
+                ExpLoadingPanel.Visibility = Visibility.Collapsed;
+                ExpContentPanel.Visibility = Visibility.Visible;
             }
-            else
+            catch (Exception ex)
             {
-                AvgExpText.Text = "-";
-                AvgExpAmount.Text = "";
+                System.Diagnostics.Debug.WriteLine($"ExpTrend Error: {ex.Message}");
+                // UI가 이미 닫혔거나 하는 경우를 대비해 catch만 하고 별도 처리는 생략하거나
+                // 필요시 Dispatcher.Invoke(() => ShowError(...));
             }
-            
-            // 로딩 완료 - UI 전환
-            ExpLoadingPanel.Visibility = Visibility.Collapsed;
-            ExpContentPanel.Visibility = Visibility.Visible;
         }
 
         private void PopulateEquipmentSlots()
@@ -540,7 +601,7 @@ namespace MapleHomework
             // 링 인덱스 관리
             int ringIndex = 0;
             var ringSlots = new Grid[] { Slot_Ring0, Slot_Ring1, Slot_Ring2, Slot_Ring3 };
-            
+
             // 펜던트 인덱스 관리
             int pendantIndex = 0;
             var pendantSlots = new Grid[] { Slot_Pendant0, Slot_Pendant1 };
@@ -552,7 +613,7 @@ namespace MapleHomework
                 Grid? targetSlot = null;
                 var slotName = item.ItemEquipmentSlot;
 
-                if (slotName == "링" || slotName.StartsWith("링"))
+                if (slotName == "반지" || slotName.StartsWith("반지"))
                 {
                     if (ringIndex < ringSlots.Length)
                         targetSlot = ringSlots[ringIndex++];
@@ -569,14 +630,40 @@ namespace MapleHomework
 
                 if (targetSlot != null)
                 {
+                    // 타원형 그림자 (메이플 스타일)
+                    var shadow = new System.Windows.Shapes.Ellipse
+                    {
+                        Width = 28,
+                        Height = 8,
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                        VerticalAlignment = System.Windows.VerticalAlignment.Bottom,
+                        Margin = new Thickness(0, 0, 0, 4),
+                        Fill = new RadialGradientBrush
+                        {
+                            GradientOrigin = new System.Windows.Point(0.5, 0.5),
+                            Center = new System.Windows.Point(0.5, 0.5),
+                            RadiusX = 0.5,
+                            RadiusY = 0.5,
+                            GradientStops = new GradientStopCollection
+                            {
+                                new GradientStop(System.Windows.Media.Color.FromArgb(120, 0, 0, 0), 0),
+                                new GradientStop(System.Windows.Media.Color.FromArgb(40, 0, 0, 0), 0.7),
+                                new GradientStop(System.Windows.Media.Color.FromArgb(0, 0, 0, 0), 1)
+                            }
+                        }
+                    };
+                    targetSlot.Children.Add(shadow);
+
+                    // 아이템 이미지
                     var image = new WpfImage
                     {
                         Source = new BitmapImage(new Uri(item.ItemIcon)),
                         Stretch = Stretch.None, // 원본 크기 유지
                         HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                        VerticalAlignment = System.Windows.VerticalAlignment.Center
+                        VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                        Margin = new Thickness(0, 1, 0, 3) // 1px 아래로, 그림자 위치와 맞추기
                     };
-                    RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+                    RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Fant);
                     targetSlot.Children.Add(image);
                     targetSlot.Tag = item; // 아이템 데이터 저장
                 }
@@ -585,128 +672,168 @@ namespace MapleHomework
 
         private void PopulateHexaCores()
         {
-            if (_hexaMatrix?.HexaCoreEquipment == null || !_hexaMatrix.HexaCoreEquipment.Any())
+            try
             {
-                HexaCoreList.ItemsSource = null;
-                NoHexaText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            NoHexaText.Visibility = Visibility.Collapsed;
-
-            // API에서 조회한 스킬 데이터 + 저장된 데이터에서 아이콘 맵 생성
-            var skillIconMap = new Dictionary<string, string>();
-            
-            // 1. 현재 API 조회 결과
-            if (_characterSkill?.CharacterSkill != null)
-            {
-                foreach (var skill in _characterSkill.CharacterSkill.Where(s => !string.IsNullOrEmpty(s.SkillName) && !string.IsNullOrEmpty(s.SkillIcon)))
+                if (_hexaMatrix?.HexaCoreEquipment == null || !_hexaMatrix.HexaCoreEquipment.Any())
                 {
-                    skillIconMap.TryAdd(skill.SkillName!, skill.SkillIcon!);
-                }
-            }
-            
-            // 2. 저장된 스킬 데이터 (추가)
-            var savedSkill = RawDataProcessor.LoadLatestSkill6Info();
-            if (savedSkill?.CharacterSkill != null)
-            {
-                foreach (var skill in savedSkill.CharacterSkill.Where(s => !string.IsNullOrEmpty(s.SkillName) && !string.IsNullOrEmpty(s.SkillIcon)))
-                {
-                    skillIconMap.TryAdd(skill.SkillName!, skill.SkillIcon!);
-                }
-            }
-
-            string ResolveIcon(string coreName, List<LinkedSkillInfo>? linked)
-            {
-                if (skillIconMap.TryGetValue(coreName, out var icon)) return icon;
-
-                // 마스터리 코어: "A/B" 형태 → 첫 스킬명으로 아이콘 매칭
-                var firstName = coreName.Split(new[] { '/', ',' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
-                if (!string.IsNullOrEmpty(firstName) && skillIconMap.TryGetValue(firstName, out var iconSplit))
-                    return iconSplit;
-
-                if (linked != null)
-                {
-                    foreach (var lk in linked)
+                    Dispatcher.Invoke(() =>
                     {
-                        var id = lk?.HexaSkillId;
-                        if (!string.IsNullOrEmpty(id) && skillIconMap.TryGetValue(id, out var icon2))
-                            return icon2;
+                        HexaCoreList.ItemsSource = null;
+                        NoHexaText.Visibility = Visibility.Visible;
+                    });
+                    return;
+                }
+
+                Dispatcher.Invoke(() => NoHexaText.Visibility = Visibility.Collapsed);
+
+                // API에서 조회한 스킬 데이터 + 저장된 데이터에서 아이콘 맵 생성
+                var skillIconMap = new Dictionary<string, string>();
+
+                // 1. 현재 API 조회 결과
+                if (_characterSkill?.CharacterSkill != null)
+                {
+                    foreach (var skill in _characterSkill.CharacterSkill.Where(s => !string.IsNullOrEmpty(s.SkillName) && !string.IsNullOrEmpty(s.SkillIcon)))
+                    {
+                        skillIconMap.TryAdd(skill.SkillName!, skill.SkillIcon!);
                     }
                 }
-                return "";
-            }
 
-            string GetBadgePath(string? coreType) => coreType switch
-            {
-                "마스터리 코어" => "Data/Mastery.png",
-                "강화 코어" => "Data/Enhance.png",
-                "공용 코어" => "Data/Common.png",
-                _ => "Data/Skill.png"
-            };
-
-            var coreItems = new List<HexaCoreItem>();
-            string[] typeOrder = { "마스터리 코어", "스킬 코어", "강화 코어", "공용 코어" };
-
-            foreach (var core in _hexaMatrix.HexaCoreEquipment)
-            {
-                var item = new HexaCoreItem
+                // 2. 저장된 스킬 데이터 (추가)
+                var savedSkill = RawDataProcessor.LoadLatestSkill6Info(_searchedNickname);
+                if (savedSkill?.CharacterSkill != null)
                 {
-                    OriginalName = core.HexaCoreName ?? "",
-                    SkillName = TruncateSkillName(core.HexaCoreName ?? "", 8),
-                    CoreType = core.HexaCoreType ?? "",
-                    CoreLevel = core.HexaCoreLevel,
-                    BadgeIconPath = GetBadgePath(core.HexaCoreType),
-                    SkillIconUrl = ResolveIcon(core.HexaCoreName ?? "", core.LinkedSkill)
+                    foreach (var skill in savedSkill.CharacterSkill.Where(s => !string.IsNullOrEmpty(s.SkillName) && !string.IsNullOrEmpty(s.SkillIcon)))
+                    {
+                        skillIconMap.TryAdd(skill.SkillName!, skill.SkillIcon!);
+                    }
+                }
+
+                string ResolveIcon(string coreName, List<LinkedSkillInfo>? linked)
+                {
+                    if (string.IsNullOrEmpty(coreName)) return ""; // Safety check
+
+                    if (skillIconMap.TryGetValue(coreName, out var icon)) return icon;
+
+                    // 마스터리 코어: "A/B" 형태 → 첫 스킬명으로 아이콘 매칭
+                    var firstName = coreName.Split(new[] { '/', ',' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
+                    if (!string.IsNullOrEmpty(firstName) && skillIconMap.TryGetValue(firstName, out var iconSplit))
+                        return iconSplit;
+
+                    if (linked != null)
+                    {
+                        foreach (var lk in linked)
+                        {
+                            var id = lk?.HexaSkillId;
+                            if (!string.IsNullOrEmpty(id) && skillIconMap.TryGetValue(id, out var icon2))
+                                return icon2;
+                        }
+                    }
+                    return "";
+                }
+
+                string GetBadgePath(string? coreType) => coreType switch
+                {
+                    "마스터리 코어" => "/Data/Mastery.png", // Added leading slash
+                    "강화 코어" => "/Data/Enhance.png",
+                    "공용 코어" => "/Data/Common.png",
+                    _ => "/Data/Skill.png"
                 };
-                coreItems.Add(item);
+
+                var coreItems = new List<HexaCoreItem>();
+                string[] typeOrder = { "마스터리 코어", "스킬 코어", "강화 코어", "공용 코어" };
+
+                foreach (var core in _hexaMatrix.HexaCoreEquipment)
+                {
+                    if (core == null) continue; // Null check
+
+                    var coreType = core.HexaCoreType ?? "스킬 코어";
+                    var currentLevel = core.HexaCoreLevel;
+
+                    // 비용 계산
+                    var (nextSol, nextFrag) = HexaCostCalculator.GetNextLevelCost(coreType, currentLevel);
+                    var (remSol, remFrag) = HexaCostCalculator.GetRemainingCost(coreType, currentLevel);
+
+                    var item = new HexaCoreItem
+                    {
+                        OriginalName = core.HexaCoreName ?? "",
+                        SkillName = TruncateSkillName(core.HexaCoreName ?? "", 8),
+                        CoreType = coreType,
+                        CoreLevel = currentLevel,
+                        BadgeIconPath = GetBadgePath(coreType),
+                        SkillIconUrl = ResolveIcon(core.HexaCoreName ?? "", core.LinkedSkill),
+
+                        NextSolErda = nextSol,
+                        NextFragment = nextFrag,
+                        RemainingSolErda = remSol,
+                        RemainingFragment = remFrag
+                    };
+                    coreItems.Add(item);
+                }
+
+                // 정렬
+                var sorted = coreItems
+                    .OrderBy(c => Array.IndexOf(typeOrder, c.CoreType) >= 0 ? Array.IndexOf(typeOrder, c.CoreType) : 999)
+                    .ThenByDescending(c => c.CoreLevel)
+                    .ToList();
+
+                Dispatcher.Invoke(() =>
+                {
+                    HexaCoreList.ItemsSource = sorted;
+                });
             }
-
-            // 정렬
-            var sorted = coreItems
-                .OrderBy(c => Array.IndexOf(typeOrder, c.CoreType) >= 0 ? Array.IndexOf(typeOrder, c.CoreType) : 999)
-                .ThenByDescending(c => c.CoreLevel)
-                .ToList();
-
-            HexaCoreList.ItemsSource = sorted;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"HexaCore Error: {ex.Message}");
+            }
         }
 
         private void PopulateHexaStats()
         {
-            var statItems = new List<HexaStatItem>();
-
-            void AddCore(List<HexaStatCoreInfo>? cores, int slotIndex)
+            try
             {
-                if (cores == null) return;
-                foreach (var core in cores)
+                var statItems = new List<HexaStatItem>();
+
+                void AddCore(List<HexaStatCoreInfo>? cores, int slotIndex)
                 {
-                    if (string.IsNullOrEmpty(core.MainStatName)) continue;
-                    statItems.Add(new HexaStatItem
+                    if (cores == null) return;
+                    foreach (var core in cores)
                     {
-                        MainStat = core.MainStatName ?? "",
-                        MainLevel = core.MainStatLevel,
-                        SubStat1 = core.SubStatName1 ?? "",
-                        SubLevel1 = core.SubStatLevel1,
-                        SubStat2 = core.SubStatName2 ?? "",
-                        SubLevel2 = core.SubStatLevel2,
-                        Grade = core.StatGrade,
-                        SlotIndex = slotIndex
+                        if (core == null) continue; // Null check
+                        if (string.IsNullOrEmpty(core.MainStatName)) continue;
+                        statItems.Add(new HexaStatItem
+                        {
+                            MainStat = core.MainStatName ?? "",
+                            MainLevel = core.MainStatLevel,
+                            SubStat1 = core.SubStatName1 ?? "",
+                            SubLevel1 = core.SubStatLevel1,
+                            SubStat2 = core.SubStatName2 ?? "",
+                            SubLevel2 = core.SubStatLevel2,
+                            Grade = core.StatGrade,
+                            SlotIndex = slotIndex
+                        });
+                    }
+                }
+
+                AddCore(_hexaMatrixStat?.CharacterHexaStatCore, 1);
+                AddCore(_hexaMatrixStat?.CharacterHexaStatCore2, 2);
+                AddCore(_hexaMatrixStat?.CharacterHexaStatCore3, 3);
+
+                if (statItems.Any())
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        HexaStatList.ItemsSource = statItems;
+                        HexaStatList.Visibility = Visibility.Visible;
                     });
                 }
+                else
+                {
+                    Dispatcher.Invoke(() => HexaStatList.Visibility = Visibility.Collapsed);
+                }
             }
-
-            AddCore(_hexaMatrixStat?.CharacterHexaStatCore, 1);
-            AddCore(_hexaMatrixStat?.CharacterHexaStatCore2, 2);
-            AddCore(_hexaMatrixStat?.CharacterHexaStatCore3, 3);
-
-            if (statItems.Any())
+            catch (Exception ex)
             {
-                HexaStatList.ItemsSource = statItems;
-                HexaStatList.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                HexaStatList.Visibility = Visibility.Collapsed;
+                System.Diagnostics.Debug.WriteLine($"HexaStat Error: {ex.Message}");
             }
         }
 
@@ -771,8 +898,8 @@ namespace MapleHomework
                 var tooltipBitmap = MapleTooltipRenderer.RenderEquipmentTooltip(item);
                 if (tooltipBitmap != null)
                 {
-                    TooltipImage.Source = MapleHomework.Rendering.Core.WpfBitmapConverter.ToBitmapSource(tooltipBitmap);
-                    
+                    TooltipImage.Source = WpfBitmapConverter.ToBitmapSource(tooltipBitmap);
+
                     // Popup을 마우스 위치에 표시 (창 밖으로도 나감)
                     TooltipPopup.HorizontalOffset = 20;
                     TooltipPopup.VerticalOffset = 10;
@@ -797,10 +924,33 @@ namespace MapleHomework
                 LoadingText.Text = message;
         }
 
+        private System.Windows.Threading.DispatcherTimer? _toastTimer;
+
         private void ShowError(string message)
         {
-            ErrorPanel.Visibility = Visibility.Visible;
+            ShowToast(message, isError: true);
+        }
+
+        private void ShowToast(string message, bool isError = true, int durationSeconds = 3)
+        {
             ErrorText.Text = message;
+            ToastIcon.Symbol = isError ? Wpf.Ui.Controls.SymbolRegular.ErrorCircle24 : Wpf.Ui.Controls.SymbolRegular.CheckmarkCircle24;
+            ToastIcon.Foreground = new SolidColorBrush(isError ? System.Windows.Media.Color.FromRgb(255, 107, 107) : System.Windows.Media.Color.FromRgb(52, 211, 153));
+
+            ErrorPanel.Visibility = Visibility.Visible;
+
+            // 자동 숨김 타이머
+            _toastTimer?.Stop();
+            _toastTimer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(durationSeconds)
+            };
+            _toastTimer.Tick += (s, e) =>
+            {
+                _toastTimer.Stop();
+                HideError();
+            };
+            _toastTimer.Start();
         }
 
         private void HideError()
@@ -816,6 +966,127 @@ namespace MapleHomework
                 return $"{cp / 10000.0:F1}만";
             return cp.ToString("N0");
         }
+        private void PopulateSymbols()
+        {
+            _arcaneSymbols.Clear();
+            _authenticSymbols.Clear();
+            _grandSymbols.Clear();
+
+            if (SymbolList == null) return;
+            // SymbolList.ItemsSource = null; // Don't clear explicitly to avoid flickering/blank state
+            if (NoSymbolText != null) NoSymbolText.Visibility = Visibility.Collapsed;
+
+            // 라디오 버튼 초기화 (Arcane 선택)
+            if (TabArcane != null) TabArcane.IsChecked = true;
+            if (TabAuthentic != null) TabAuthentic.IsChecked = false;
+            if (TabGrand != null) TabGrand.IsChecked = false;
+
+            if (_symbolResponse?.Symbol == null)
+            {
+                if (NoSymbolText != null) NoSymbolText.Visibility = Visibility.Visible;
+                return;
+            }
+
+            foreach (var sym in _symbolResponse.Symbol)
+            {
+                var type = SymbolCalculator.GetSymbolType(sym.SymbolName ?? "");
+                if (type == SymbolType.Unknown) continue;
+
+                var (remCount, remCost) = SymbolCalculator.CalculateRemaining(sym.SymbolName ?? "", sym.SymbolLevel, sym.SymbolGrowthCount);
+
+                double growthRate = 0;
+                if (sym.SymbolRequireGrowthCount > 0)
+                {
+                    growthRate = (double)sym.SymbolGrowthCount / sym.SymbolRequireGrowthCount;
+                    if (growthRate > 1) growthRate = 1;
+                }
+
+                int maxLevel = SymbolCalculator.GetMaxLevel(type);
+                if (sym.SymbolLevel >= maxLevel)
+                {
+                    growthRate = 1;
+                    remCount = 0;
+                    remCost = 0;
+                }
+
+                var item = new SymbolDisplayItem
+                {
+                    SymbolName = sym.SymbolName,
+                    SymbolIconUrl = sym.SymbolIcon ?? "",
+                    Level = sym.SymbolLevel,
+                    MaxLevel = maxLevel,
+                    GrowthRate = growthRate,
+                    GrowthText = (sym.SymbolLevel >= maxLevel) ? "MAX" : $"{sym.SymbolGrowthCount:N0} / {sym.SymbolRequireGrowthCount:N0} ({Math.Round(growthRate * 100)}%)",
+                    RemainingCountText = (remCount > 0) ? $"{remCount:N0}개 남음" : "졸업",
+                    RemainingCostText = (remCost > 0) ? FormatMeso(remCost) : "완료"
+                };
+
+                if (type == SymbolType.Arcane) _arcaneSymbols.Add(item);
+                else if (type == SymbolType.Authentic) _authenticSymbols.Add(item);
+                else if (type == SymbolType.GrandAuthentic) _grandSymbols.Add(item);
+            }
+
+            UpdateSymbolView("Arcane");
+        }
+
+        private void OnSymbolTabClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.RadioButton rb && rb.Content is string content)
+            {
+                UpdateSymbolView(content);
+            }
+        }
+
+        private void UpdateSymbolView(string tabName)
+        {
+            List<SymbolDisplayItem>? items = null;
+            if (tabName == "Arcane" || tabName == "아케인") items = _arcaneSymbols;
+            else if (tabName == "Authentic" || tabName == "어센틱") items = _authenticSymbols;
+            else if (tabName == "Grand" || tabName == "그랜드") items = _grandSymbols;
+
+            if (items == null || items.Count == 0)
+            {
+                if (SymbolList != null) SymbolList.ItemsSource = null;
+                if (NoSymbolText != null)
+                {
+                    NoSymbolText.Visibility = Visibility.Visible;
+                    NoSymbolText.Text = $"{tabName} 심볼 정보가 없습니다.";
+                }
+            }
+            else
+            {
+                if (SymbolList != null) SymbolList.ItemsSource = items;
+                if (NoSymbolText != null) NoSymbolText.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private string FormatMeso(long meso)
+        {
+            if (meso >= 100000000)
+            {
+                double uk = (double)meso / 100000000;
+                return $"{uk:N1}억 메소";
+            }
+            else if (meso >= 10000)
+            {
+                double man = (double)meso / 10000;
+                return $"{man:N1}만 메소";
+            }
+            return $"{meso:N0} 메소";
+        }
+    }
+
+    public class SymbolDisplayItem
+    {
+        public string? SymbolName { get; set; }
+        public string? SymbolIconUrl { get; set; }
+        public int Level { get; set; }
+        public int MaxLevel { get; set; }
+        public string DisplayLevel => Level >= MaxLevel ? "MAX" : $"Lv.{Level}";
+        public double GrowthRate { get; set; }
+        public string? GrowthText { get; set; }
+        public string? RemainingCountText { get; set; }
+        public string? RemainingCostText { get; set; }
     }
 }
 

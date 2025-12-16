@@ -1,52 +1,42 @@
-﻿using System;
+﻿using MapleHomework.Commands;
+using MapleHomework.Models;
+using MapleHomework.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using MapleHomework.Data;
 using Brush = System.Windows.Media.Brush;
-using Color = System.Windows.Media.Color;
 using Brushes = System.Windows.Media.Brushes;
-using MapleHomework.Models;
-using MapleHomework.Services;
+using System.Windows.Data;
+using System.Windows;
 
 namespace MapleHomework.ViewModels
 {
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object?> _execute;
-        public RelayCommand(Action<object?> execute) => _execute = execute;
-        public bool CanExecute(object? parameter) => true;
-        public void Execute(object? parameter) => _execute(parameter);
-        public event EventHandler? CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-    }
-
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly MapleApiService _apiService;
+        private readonly IMapleApiService _apiService;
+        private readonly IWindowService _windowService;
         private DispatcherTimer _timer;
         private AppData _appData;
 
-        // 대시보드 윈도우 인스턴스 (중복 열림 방지)
-        private DashboardWindow? _dashboardWindow;
-        // 보스 수익 계산기 윈도우 인스턴스
-        private BossRewardWindow? _bossRewardWindow;
+        /// <summary>
+        /// AppData 인스턴스 (외부 접근용)
+        /// </summary>
+        public AppData AppData => _appData;
 
         // 테마 변경 이벤트 (다른 윈도우들에게 알림)
         public event Action? ThemeChanged;
-        
+
         // 데이터 변경 이벤트 (캐릭터 추가/삭제, 즐겨찾기 변경 등)
         public event Action? DataChanged;
-        
+
         /// <summary>
         /// 테마 변경 이벤트 발생
         /// </summary>
@@ -60,6 +50,7 @@ namespace MapleHomework.ViewModels
         /// </summary>
         public void NotifyDataChanged()
         {
+            RefreshAllViews();
             DataChanged?.Invoke();
         }
 
@@ -83,6 +74,7 @@ namespace MapleHomework.ViewModels
                         _appData.SelectedCharacterId = value.Id;
                         CharacterRepository.Save(_appData);
                         LoadCharacterTasks(value);
+                        _ = LoadCharacterDataFromApi(value.Nickname);
                     }
                 }
             }
@@ -139,6 +131,8 @@ namespace MapleHomework.ViewModels
         // 완료된 항목 뷰
         public ObservableCollection<HomeworkTask> CompletedList { get; set; } = new();
 
+        public bool HasCompletedItems => CompletedList.Count > 0;
+
         // 편집 모드
         private bool _isEditMode = false;
         public bool IsEditMode
@@ -148,6 +142,15 @@ namespace MapleHomework.ViewModels
             {
                 _isEditMode = value;
                 OnPropertyChanged();
+
+                // 편집 모드 전환 시 섹션 뷰 필터를 즉시 갱신 (필터가 IsEditMode를 참조함)
+                try
+                {
+                    ActiveSectionsView?.Refresh();
+                    HiddenSectionsView?.Refresh();
+                }
+                catch { }
+
                 RefreshAllViews();
             }
         }
@@ -238,10 +241,24 @@ namespace MapleHomework.ViewModels
             StartProgressAnimation();
         }
 
-        public IEnumerable<BossDifficulty> DifficultyOptions => Enum.GetValues(typeof(BossDifficulty)).Cast<BossDifficulty>();
-        
-        // 파티원 수 옵션 (1~6인)
-        public IEnumerable<int> PartySizeOptions => new[] { 1, 2, 3, 4, 5, 6 };
+        public record PartyOption(int Count, string Display);
+
+
+
+        public ObservableCollection<TaskSectionViewModel> Sections { get; set; } = new();
+        public ICollectionView ActiveSectionsView { get; private set; } = null!;
+        public ICollectionView HiddenSectionsView { get; private set; } = null!; // 완료되어 아래로 이동한 섹션들
+
+        // 파티원 수 옵션 (솔플 ~ 6인)
+        public IEnumerable<PartyOption> PartySizeOptions => new[]
+        {
+            new PartyOption(1, "솔플"),
+            new PartyOption(2, "2인"),
+            new PartyOption(3, "3인"),
+            new PartyOption(4, "4인"),
+            new PartyOption(5, "5인"),
+            new PartyOption(6, "6인")
+        };
 
         // 캐릭터 정보 (UI 바인딩용)
         private string _characterName = "캐릭터 추가";
@@ -288,7 +305,7 @@ namespace MapleHomework.ViewModels
         public ICommand ToggleTaskCommand { get; }
         public ICommand ToggleEditModeCommand { get; }
         public ICommand SelectCharacterCommand { get; }
-        public ICommand AddCharacterCommand { get; }
+        public ICommand AddCharacterCommand { get; } // Deprecated
         public ICommand StartAddCharacterCommand { get; }
         public ICommand ConfirmAddCharacterCommand { get; }
         public ICommand CancelAddCharacterCommand { get; }
@@ -304,16 +321,17 @@ namespace MapleHomework.ViewModels
         public ICommand ToggleBossFavoriteCommand { get; }
         public ICommand ToggleMonthlyFavoriteCommand { get; }
         public ICommand OpenReportCommand { get; }
-        private ReportWindow? _reportWindow;
 
-        public MainViewModel()
+        public MainViewModel(AppData appData, IMapleApiService apiService, IWindowService windowService)
         {
-            _apiService = new MapleApiService();
-            _appData = CharacterRepository.MigrateFromOldConfig();
-            
+            _appData = appData;
+            _apiService = apiService;
+            _windowService = windowService;
+
             RemoveDuplicateCharacters();
 
             IsDarkTheme = _appData.IsDarkTheme;
+            UpdateThemeColors();
 
             // 캐릭터 로드
             foreach (var character in _appData.Characters)
@@ -327,7 +345,7 @@ namespace MapleHomework.ViewModels
                 // 하단바 토글 → 설정/메모리/AppData 동기화 후 전체 창에 알림
                 ApplyThemeAndPersist(!IsDarkTheme);
             });
-            
+
             // 편집 취소 (변경사항 버리고 편집모드 종료)
             CancelEditCommand = new RelayCommand(_ =>
             {
@@ -338,7 +356,7 @@ namespace MapleHomework.ViewModels
                 }
                 IsEditMode = false;
             });
-            
+
             // 편집 저장 (변경사항 저장하고 편집모드 종료)
             SaveEditCommand = new RelayCommand(_ =>
             {
@@ -413,71 +431,30 @@ namespace MapleHomework.ViewModels
 
             RemoveCharacterCommand = new RelayCommand(param =>
             {
-                if (param is CharacterProfile character && Characters.Count > 1)
+                if (param is CharacterProfile character)
                 {
                     CharacterRepository.RemoveCharacter(_appData, character.Id);
                     Characters.Remove(character);
-                    if (SelectedCharacter == character)
+                    if (Characters.Count == 0 || SelectedCharacter == character)
                     {
                         SelectedCharacter = Characters.FirstOrDefault();
                     }
                     CharacterRepository.Save(_appData);
                     OnPropertyChanged(nameof(CanAddCharacter));
-                    NotifyDataChanged(); // 다른 창에 알림
+                    NotifyDataChanged();
                 }
             });
 
-            ToggleCharacterSelectorCommand = new RelayCommand(_ =>
-            {
-                IsCharacterSelectorOpen = !IsCharacterSelectorOpen;
-                if (!IsCharacterSelectorOpen)
-                {
-                    IsAddingCharacter = false;
-                    NewCharacterName = "";
-                }
-            });
+            ToggleCharacterSelectorCommand = new RelayCommand(_ => IsCharacterSelectorOpen = !IsCharacterSelectorOpen);
 
             OpenDashboardCommand = new RelayCommand(_ =>
             {
-                // 이미 열려 있는 창이 있는지 확인
-                if (_dashboardWindow != null && _dashboardWindow.IsLoaded)
-                {
-                    // 최소화되어 있으면 복원
-                    if (_dashboardWindow.WindowState == System.Windows.WindowState.Minimized)
-                    {
-                        _dashboardWindow.WindowState = System.Windows.WindowState.Normal;
-                    }
-                    // 창을 활성화하고 최상위로 가져오기
-                    _dashboardWindow.Activate();
-                    _dashboardWindow.Focus();
-                }
-                else
-                {
-                    // 새 창 생성
-                    _dashboardWindow = new DashboardWindow(_appData, this);
-                    _dashboardWindow.Closed += (s, e) => _dashboardWindow = null; // 닫히면 참조 해제
-                    _dashboardWindow.Show();
-                }
+                _windowService.OpenDashboard(_appData, this);
             });
 
             OpenBossRewardCommand = new RelayCommand(_ =>
             {
-                // 이미 열려 있는 창이 있는지 확인
-                if (_bossRewardWindow != null && _bossRewardWindow.IsLoaded)
-                {
-                    if (_bossRewardWindow.WindowState == System.Windows.WindowState.Minimized)
-                    {
-                        _bossRewardWindow.WindowState = System.Windows.WindowState.Normal;
-                    }
-                    _bossRewardWindow.Activate();
-                    _bossRewardWindow.Focus();
-                }
-                else
-                {
-                    _bossRewardWindow = new BossRewardWindow(_appData, this);
-                    _bossRewardWindow.Closed += (s, e) => _bossRewardWindow = null;
-                    _bossRewardWindow.Show();
-                }
+                _windowService.OpenBossReward(_appData, this);
             });
 
             ToggleFavoriteCommand = new RelayCommand(param =>
@@ -537,26 +514,7 @@ namespace MapleHomework.ViewModels
             // 리포트 창 열기
             OpenReportCommand = new RelayCommand(_ =>
             {
-                if (_reportWindow != null && _reportWindow.IsLoaded)
-                {
-                    if (_reportWindow.WindowState == System.Windows.WindowState.Minimized)
-                        _reportWindow.WindowState = System.Windows.WindowState.Normal;
-                    _reportWindow.Activate();
-                    _reportWindow.Topmost = true;
-                    _reportWindow.Topmost = false;
-                    _reportWindow.Focus();
-                }
-                else
-                {
-                    _reportWindow = new ReportWindow(this)
-                    {
-                        Owner = System.Windows.Application.Current.MainWindow,
-                        WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
-                    };
-                    _reportWindow.Closed += (s, e) => _reportWindow = null;
-                    _reportWindow.Show();
-                    _reportWindow.Activate();
-                }
+                _windowService.OpenReport(this);
             });
 
             UpdateThemeColors();
@@ -600,649 +558,631 @@ namespace MapleHomework.ViewModels
 
                 if (!seenNicknames.Contains(charData.Nickname))
                 {
-                    seenNicknames.Add(charData.Nickname);
                     uniqueCharacters.Add(charData);
+                    seenNicknames.Add(charData.Nickname);
                 }
             }
-
-            if (uniqueCharacters.Count != _appData.Characters.Count)
-            {
-                _appData.Characters = uniqueCharacters;
-                CharacterRepository.Save(_appData);
-            }
+            _appData.Characters = uniqueCharacters;
         }
 
         private void InitializeViews()
         {
-            DailyView = CollectionViewSource.GetDefaultView(DailyList);
-            WeeklyView = CollectionViewSource.GetDefaultView(WeeklyList);
-            BossView = CollectionViewSource.GetDefaultView(BossList);
-            MonthlyView = CollectionViewSource.GetDefaultView(MonthlyList);
+            DailyView = System.Windows.Data.CollectionViewSource.GetDefaultView(DailyList);
+            DailyView.Filter = item => FilterTask(item, TaskCategory.Daily);
+            DailyView.SortDescriptions.Add(new SortDescription(nameof(HomeworkTask.Order), ListSortDirection.Ascending));
 
-            DailyView.Filter = FilterTask;
-            WeeklyView.Filter = FilterTask;
-            BossView.Filter = FilterTask;
-            MonthlyView.Filter = FilterTask;
+            WeeklyView = System.Windows.Data.CollectionViewSource.GetDefaultView(WeeklyList);
+            WeeklyView.Filter = item => FilterTask(item, TaskCategory.Weekly);
+            WeeklyView.SortDescriptions.Add(new SortDescription(nameof(HomeworkTask.Order), ListSortDirection.Ascending));
+
+            BossView = System.Windows.Data.CollectionViewSource.GetDefaultView(BossList);
+            BossView.Filter = item => FilterTask(item, TaskCategory.Boss);
+            BossView.SortDescriptions.Add(new SortDescription(nameof(HomeworkTask.Order), ListSortDirection.Ascending));
+
+            MonthlyView = System.Windows.Data.CollectionViewSource.GetDefaultView(MonthlyList);
+            MonthlyView.Filter = item => FilterTask(item, TaskCategory.Monthly);
+            MonthlyView.SortDescriptions.Add(new SortDescription(nameof(HomeworkTask.Order), ListSortDirection.Ascending));
+
+            // Sections 초기화
+            Sections.Clear();
+            Sections.Add(new TaskSectionViewModel
+            {
+                Title = "일일 컨텐츠",
+                Category = TaskCategory.Daily,
+                ItemsView = DailyView,
+                ToggleFavoriteCommand = ToggleDailyFavoriteCommand,
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleCyanGradient") as Brush ?? Brushes.Cyan
+            });
+            Sections.Add(new TaskSectionViewModel
+            {
+                Title = "주간 컨텐츠",
+                Category = TaskCategory.Weekly,
+                ItemsView = WeeklyView,
+                ToggleFavoriteCommand = ToggleWeeklyFavoriteCommand,
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleOrangeGradient") as Brush ?? Brushes.Orange
+            });
+            Sections.Add(new TaskSectionViewModel
+            {
+                Title = "주간 보스",
+                Category = TaskCategory.Boss,
+                ItemsView = BossView,
+                ToggleFavoriteCommand = ToggleBossFavoriteCommand,
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleRedGradient") as Brush ?? Brushes.Red
+            });
+            Sections.Add(new TaskSectionViewModel
+            {
+                Title = "월간 컨텐츠",
+                Category = TaskCategory.Monthly,
+                ItemsView = MonthlyView,
+                ToggleFavoriteCommand = ToggleMonthlyFavoriteCommand,
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MaplePurpleGradient") as Brush ?? Brushes.Purple
+            });
+
+            var activeCvs = new CollectionViewSource { Source = Sections };
+            ActiveSectionsView = activeCvs.View;
+            // 편집 모드에서는 모든 섹션 표시, 일반 모드에서는 완료되지 않은 섹션만 표시
+            ActiveSectionsView.Filter = o => IsEditMode || !((TaskSectionViewModel)o).IsAllCompleted;
+
+            var hiddenCvs = new CollectionViewSource { Source = Sections };
+            HiddenSectionsView = hiddenCvs.View;
+            // 편집 모드에서는 숨김 섹션 없음, 일반 모드에서는 완료된 섹션만 표시
+            HiddenSectionsView.Filter = o => !IsEditMode && ((TaskSectionViewModel)o).IsAllCompleted;
         }
 
-        private void LoadCharacterTasks(CharacterProfile character)
+
+
+        private bool FilterTask(object item, TaskCategory category)
         {
-            foreach (var t in DailyList) t.PropertyChanged -= OnTaskChanged;
-            foreach (var t in WeeklyList) t.PropertyChanged -= OnTaskChanged;
-            foreach (var t in BossList) t.PropertyChanged -= OnTaskChanged;
-            foreach (var t in MonthlyList) t.PropertyChanged -= OnTaskChanged;
-
-            DailyList.Clear();
-            WeeklyList.Clear();
-            BossList.Clear();
-            MonthlyList.Clear();
-
-            if (character.DailyTasks.Count == 0)
+            if (item is HomeworkTask task)
             {
-                foreach (var task in GameData.Dailies)
-                    character.DailyTasks.Add(new HomeworkTask { Name = task.Name, Category = task.Category, RequiredLevel = task.RequiredLevel, IsActive = task.IsActive });
-            }
-            if (character.WeeklyTasks.Count == 0)
-            {
-                foreach (var task in GameData.Weeklies)
-                    character.WeeklyTasks.Add(new HomeworkTask { Name = task.Name, Category = task.Category, IsActive = task.IsActive });
-            }
-            if (character.BossTasks.Count == 0)
-            {
-                foreach (var task in GameData.Bosses)
-                    character.BossTasks.Add(new HomeworkTask { Name = task.Name, Category = task.Category, Difficulty = task.Difficulty, AvailableDifficulties = new List<BossDifficulty>(task.AvailableDifficulties), IsActive = task.IsActive });
-            }
-            if (character.MonthlyTasks.Count == 0)
-            {
-                foreach (var task in GameData.Monthlies)
-                    character.MonthlyTasks.Add(new HomeworkTask { Name = task.Name, Category = task.Category, IsActive = task.IsActive });
-            }
+                if (!IsEditMode && task.IsHidden) return false;
+                if (task.IsDeleted) return false;
+                if (!IsEditMode && task.IsChecked) return false;
+                if (!IsEditMode && !task.IsActive) return false; // Inactive tasks 숨김
 
-            foreach (var task in character.DailyTasks) DailyList.Add(task);
-            foreach (var task in character.WeeklyTasks) WeeklyList.Add(task);
-            foreach (var task in character.BossTasks) BossList.Add(task);
-            foreach (var task in character.MonthlyTasks) MonthlyList.Add(task);
-
-            foreach (var t in DailyList) t.PropertyChanged += OnTaskChanged;
-            foreach (var t in WeeklyList) t.PropertyChanged += OnTaskChanged;
-            foreach (var t in BossList) t.PropertyChanged += OnTaskChanged;
-            foreach (var t in MonthlyList) t.PropertyChanged += OnTaskChanged;
-
-            CharacterName = character.Nickname;
-            CharacterImage = character.ImageUrl;
-            CharacterLevel = character.Level > 0 ? character.Level.ToString() : "-";
-            CharacterClass = !string.IsNullOrEmpty(character.CharacterClass) ? character.CharacterClass : "-";
-            WorldName = !string.IsNullOrEmpty(character.WorldName) ? character.WorldName : "-";
-
-            _characterLevelInt = character.Level;
-
-            // 카테고리별 즐겨찾기 상태 업데이트
-            OnPropertyChanged(nameof(IsDailyFavorite));
-            OnPropertyChanged(nameof(IsWeeklyFavorite));
-            OnPropertyChanged(nameof(IsBossFavorite));
-            OnPropertyChanged(nameof(IsMonthlyFavorite));
-
-            RefreshAllViews();
-            
-            _ = CheckAndUpdateCharacterInfo(character);
-        }
-
-        private async Task CheckAndUpdateCharacterInfo(CharacterProfile character)
-        {
-            if (string.IsNullOrEmpty(character.Nickname)) return;
-            if (character.Nickname == "새 캐릭터") return;
-
-            if ((DateTime.Now - character.LastUpdatedTime).TotalMinutes < 10) return;
-
-            await LoadCharacterDataFromApi(character.Nickname);
-        }
-
-        private bool FilterTask(object obj)
-        {
-            if (obj is HomeworkTask task)
-            {
-                if (IsEditMode) return true;
-                return task.IsActive && !task.IsChecked;
+                return task.Category == category;
             }
             return false;
         }
 
-        private void UpdateCompletedList()
+        // 데이터 갱신 (다른 창에서 호출 가능)
+        public void RefreshAllViews()
         {
-            CompletedList.Clear();
+            DailyView?.Refresh();
+            WeeklyView?.Refresh();
+            BossView?.Refresh();
+            MonthlyView?.Refresh();
 
-            var completedItems = DailyList.Where(t => t.IsActive && t.IsChecked)
-                .Concat(WeeklyList.Where(t => t.IsActive && t.IsChecked))
-                .Concat(BossList.Where(t => t.IsActive && t.IsChecked))
-                .Concat(MonthlyList.Where(t => t.IsActive && t.IsChecked))
-                .OrderBy(t => t.Category)
-                .ThenBy(t => t.Name);
-
-            foreach (var item in completedItems)
-            {
-                CompletedList.Add(item);
-            }
-
-            OnPropertyChanged(nameof(HasCompletedItems));
-        }
-
-        public bool HasCompletedItems => CompletedList.Any();
-
-        private void RefreshAllViews()
-        {
-            DailyView.Refresh();
-            WeeklyView.Refresh();
-            BossView.Refresh();
-            MonthlyView.Refresh();
-            UpdateCompletedList();
-            SaveData();
             UpdateProgress();
-            
-            // 선택된 캐릭터의 진행률/수익 갱신
-            SelectedCharacter?.NotifyProgressChanged();
-            
-            // 열려있는 다른 창들 갱신
-            RefreshExternalWindows();
         }
 
-        /// <summary>
-        /// 열려있는 외부 창들(Dashboard, BossReward) 갱신
-        /// </summary>
         public void RefreshExternalWindows()
         {
-            // 대시보드 창 갱신
-            if (_dashboardWindow != null && _dashboardWindow.IsLoaded)
-            {
-                _dashboardWindow.RefreshData();
-            }
-            
-            // 보스 수익 계산기 창 갱신
-            if (_bossRewardWindow != null && _bossRewardWindow.IsLoaded)
-            {
-                _bossRewardWindow.RefreshData();
-            }
+            // 이제 WindowService가 윈도우 인스턴스를 관리하므로 
+            // MainViewModel에서 직접 갱신할 필요가 없거나,
+            // WindowService에 RefreshAll() 같은 메서드를 추가하여 호출해야 함.
+            // 현재 구조에서는 MainViewModel이 데이터 소스(_appData)를 공유하므로
+            // 다른 윈도우들이 이벤트(DataChanged, ThemeChanged)를 구독하여 스스로 갱신하도록 하는 것이 좋음.
         }
 
-        public async Task LoadCharacterDataFromApi(string nickname)
+        private void LoadCharacterTasks(CharacterProfile character)
         {
-            if (string.IsNullOrEmpty(nickname)) return;
-            if (SelectedCharacter == null) return;
+            DailyList.Clear();
+            WeeklyList.Clear();
+            BossList.Clear();
+            MonthlyList.Clear();
+            CompletedList.Clear();
 
-            string? ocid = SelectedCharacter.Ocid;
-            
-            if (string.IsNullOrEmpty(ocid))
+            // 기본 태스크가 없으면 생성
+            TaskRepository.EnsureDefaultTasks(character);
+
+            foreach (var task in character.HomeworkList)
             {
-                ocid = await _apiService.GetOcidAsync(nickname);
-            }
+                task.PropertyChanged -= OnTaskChanged; // 중복 구독 방지
+                task.PropertyChanged += OnTaskChanged;
 
-            if (string.IsNullOrEmpty(ocid)) 
-            { 
-                if (SelectedCharacter.Nickname == nickname) CharacterName = "찾을 수 없음"; 
-                return; 
-            }
-
-            try
-            {
-                // 1. 기본 정보 (이미지, 레벨 등)
-            var basicInfo = await _apiService.GetCharacterInfoAsync(ocid);
-            if (basicInfo != null)
-            {
-                SelectedCharacter.Nickname = basicInfo.CharacterName ?? "알 수 없음";
-                SelectedCharacter.ImageUrl = basicInfo.CharacterImage ?? "";
-                SelectedCharacter.Level = basicInfo.CharacterLevel;
-                SelectedCharacter.CharacterClass = basicInfo.CharacterClass ?? "-";
-                SelectedCharacter.WorldName = basicInfo.WorldName ?? "-";
-                SelectedCharacter.Ocid = ocid;
-                SelectedCharacter.LastUpdatedTime = DateTime.Now;
-
-                if (SelectedCharacter.Nickname == nickname)
+                // GameData 순서대로 정렬하기 위해 Order 값 갱신
+                int orderIndex = -1;
+                switch (task.Category)
                 {
-                    CharacterName = SelectedCharacter.Nickname;
-                    CharacterImage = SelectedCharacter.ImageUrl;
-                    CharacterLevel = SelectedCharacter.Level.ToString();
-                    CharacterClass = SelectedCharacter.CharacterClass;
-                    WorldName = SelectedCharacter.WorldName;
-                    
-                    _characterLevelInt = SelectedCharacter.Level;
-                    ApplyLevelRestrictions(basicInfo.CharacterLevel);
-                    await LoadSymbolDataAndAutoDisable(ocid);
+                    case TaskCategory.Daily:
+                        orderIndex = GameData.Dailies.FindIndex(d => d.Name == task.Name);
+                        break;
+                    case TaskCategory.Weekly:
+                        orderIndex = GameData.Weeklies.FindIndex(w => w.Name == task.Name);
+                        break;
+                    case TaskCategory.Boss:
+                        orderIndex = GameData.WeeklyBosses.FindIndex(b => b.Name == task.Name);
+                        break;
+                    case TaskCategory.Monthly:
+                        orderIndex = GameData.MonthlyBosses.FindIndex(m => m.Name == task.Name);
+                        break;
                 }
-                }
+                if (orderIndex != -1) task.Order = orderIndex;
 
-                // 2. 유니온 정보 (GetUnionInfoAsync 사용)
-                var unionInfo = await _apiService.GetUnionInfoAsync(ocid);
-                if (unionInfo != null)
+                switch (task.Category)
                 {
-                    SelectedCharacter.UnionLevel = unionInfo.UnionLevel;
-                    SelectedCharacter.UnionGrade = unionInfo.UnionGrade;
+                    case TaskCategory.Daily: DailyList.Add(task); break;
+                    case TaskCategory.Weekly: WeeklyList.Add(task); break;
+                    case TaskCategory.Boss: BossList.Add(task); break;
+                    case TaskCategory.Monthly: MonthlyList.Add(task); break;
                 }
 
-                // 3. 전투력 정보
-                var statInfo = await _apiService.GetCharacterStatAsync(ocid);
-                if (statInfo?.FinalStat != null)
+                if (task.IsChecked && !IsEditMode && !task.IsDeleted)
                 {
-                    // 전투력 정보는 현재 사용되지 않으므로 제거
+                    CompletedList.Add(task);
                 }
+            }
 
-                // await SyncUnionChampions(apiKey, ocid); // 이 기능은 현재 API로 구현 불가하여 비활성화
-                
-                CharacterRepository.Save(_appData);
-            }
-            catch (Exception ex)
-            {
-                // 오류 발생 시 로그 출력 또는 사용자에게 알림
-                Console.WriteLine($"Error loading character data: {ex.Message}");
-            }
+            CharacterName = character.Nickname;
+            CharacterImage = character.ImageUrl ?? "";
+            CharacterLevel = character.Level > 0 ? $"{character.Level}" : "-";
+            CharacterClass = !string.IsNullOrEmpty(character.CharacterClass) ? character.CharacterClass : "-";
+            WorldName = !string.IsNullOrEmpty(character.WorldName) ? character.WorldName : "-";
+
+            // API 레벨 정보만 별도 저장해둔 필드가 없어서 UI 표시용으로만 사용
+            int.TryParse(CharacterLevel, out _characterLevelInt);
+
+            OnPropertyChanged(nameof(IsDailyFavorite));
+            OnPropertyChanged(nameof(IsWeeklyFavorite));
+            OnPropertyChanged(nameof(IsBossFavorite));
+            OnPropertyChanged(nameof(IsMonthlyFavorite));
+            OnPropertyChanged(nameof(HasCompletedItems));
+
+            RefreshAllViews();
         }
 
-        /*
-        private async Task SyncUnionChampions(string apiKey, string ocid)
+        private void OnTaskChanged(object? sender, PropertyChangedEventArgs e)
         {
-            var unionData = await _apiService.GetUnionChampionAsync(apiKey, ocid);
-            if (unionData?.UnionChampion == null) return;
-
-            var existingNicknames = Characters.Select(c => c.Nickname).ToHashSet();
-            bool isDataChanged = false;
-
-            foreach (var champion in unionData.UnionChampion)
+            if (e.PropertyName == nameof(HomeworkTask.IsChecked))
             {
-                if (string.IsNullOrEmpty(champion.ChampionName)) continue;
-                if (existingNicknames.Contains(champion.ChampionName)) continue;
-
-                if (!CharacterRepository.CanAddCharacter(_appData)) break;
-
-                var newChar = CharacterRepository.AddCharacter(_appData, champion.ChampionName);
-                if (newChar != null)
+                if (sender is HomeworkTask task)
                 {
-                    newChar.CharacterClass = champion.ChampionClass ?? "-";
-                    Characters.Add(newChar);
-                    isDataChanged = true;
-                }
-            }
-
-            if (isDataChanged)
-            {
-                CharacterRepository.Save(_appData);
-                OnPropertyChanged(nameof(CanAddCharacter));
-            }
-
-            foreach (var character in Characters)
-            {
-                if (character.Level > 0 && !string.IsNullOrEmpty(character.ImageUrl)) continue;
-                if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(character.Nickname)) continue;
-
-                try
-                {
-                    string? champOcid = character.Ocid;
-                    if (string.IsNullOrEmpty(champOcid))
+                    if (task.IsChecked)
                     {
-                        champOcid = await _apiService.GetOcidAsync(apiKey, character.Nickname);
-                        await Task.Delay(100);
+                        if (!CompletedList.Contains(task)) CompletedList.Add(task);
                     }
-
-                    if (!string.IsNullOrEmpty(champOcid))
+                    else
                     {
-                        character.Ocid = champOcid;
-                        var champInfo = await _apiService.GetCharacterInfoAsync(apiKey, champOcid);
-                        await Task.Delay(100);
+                        if (CompletedList.Contains(task)) CompletedList.Remove(task);
+                    }
+                    CharacterRepository.Save(_appData);
+                    OnPropertyChanged(nameof(HasCompletedItems));
 
-                        if (champInfo != null)
+                    // UI 스레드에서 지연 호출하여 컬렉션 열거 중 수정 문제 방지
+                    System.Windows.Application.Current?.Dispatcher.BeginInvoke(
+                        System.Windows.Threading.DispatcherPriority.Background,
+                        new Action(() =>
                         {
-                            character.Nickname = champInfo.CharacterName ?? character.Nickname;
-                            character.ImageUrl = champInfo.CharacterImage ?? "";
-                            character.Level = champInfo.CharacterLevel;
-                            character.CharacterClass = champInfo.CharacterClass ?? "-";
-                            character.WorldName = champInfo.WorldName ?? "-";
-                            
-                            if (character.DailyTasks.Count > 0)
+                            try
                             {
-                                foreach (var task in character.DailyTasks)
-                                {
-                                    if (task.RequiredLevel > 0 && task.RequiredLevel > character.Level)
-                                    {
-                                        task.IsActive = false;
-                                    }
-                                }
+                                RefreshAllViews();
+                                NotifyDataChanged();
                             }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"RefreshAllViews error: {ex.Message}");
+                            }
+                        }));
+                }
+            }
+            else if (e.PropertyName == nameof(HomeworkTask.IsActive))
+            {
+                if (sender is HomeworkTask task && task.Category == TaskCategory.Boss)
+                {
+                    if (task.IsActive)
+                    {
+                        // 활성화 된 경우 개수 체크
+                        var activeBossCount = BossList.Count(t => t.IsActive);
+                        if (activeBossCount > 12)
+                        {
+                            // 12개 초과 시 복구
+                            task.IsActive = false; // 다시 끔 (이때 재귀 호출되지만 아래 조건에서 걸러짐)
+                            System.Windows.MessageBox.Show("주간 보스는 최대 12개까지만 설정할 수 있습니다.\n(메이플스토리 결정석 판매 제한)",
+                                "설정 제한", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                            return;
                         }
                     }
-                }
-                catch { }
-            }
-
-            CharacterRepository.Save(_appData);
-        }
-        */
-
-        public async Task LoadCharacterData(string nickname)
-        {
-            await LoadCharacterDataFromApi(nickname);
-        }
-
-        private int _characterLevelInt = 0;
-
-        private void ApplyLevelRestrictions(int characterLevel)
-        {
-            _characterLevelInt = characterLevel;
-
-            foreach (var task in DailyList)
-            {
-                if (task.RequiredLevel > 0 && task.RequiredLevel > characterLevel)
-                {
-                    task.IsActive = false;
+                    // 변경 사항은 편집 모드 종료 시 저장됨 (SaveEditCommand)
+                    // 빠른 카운트 업데이트만 수행
+                    var bossTotal = BossList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive);
+                    var bossDone = BossList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive && t.IsChecked);
+                    BossCountText = $"{bossDone}/{bossTotal}";
                 }
             }
-
-            RefreshAllViews();
-        }
-
-        public bool CanActivateTask(HomeworkTask task)
-        {
-            if (task.RequiredLevel == 0) return true;
-            return _characterLevelInt >= task.RequiredLevel;
-        }
-
-        private static readonly Dictionary<string, string> SymbolToQuestMap = new()
-        {
-            { "소멸의 여로", "소멸의 여로" },
-            { "츄츄 아일랜드", "츄츄 아일랜드" },
-            { "레헬른", "레헬른" },
-            { "아르카나", "아르카나" },
-            { "모라스", "모라스" },
-            { "에스페라", "에스페라" },
-            { "세르니움", "세르니움" },
-            { "아르크스", "호텔 아르크스" },
-            { "오디움", "오디움" },
-            { "도원경", "도원경" },
-            { "아르테리아", "아르테리아" },
-            { "카르시온", "카르시온" },
-            { "탈라하트", "탈라하트" }
-        };
-
-        private const int ArcaneMaxLevel = 20;
-        private const int AuthenticMaxLevel = 11;
-
-        private async Task LoadSymbolDataAndAutoDisable(string ocid)
-        {
-            var symbolData = await _apiService.GetSymbolEquipmentAsync(ocid);
-            if (symbolData?.Symbol == null) return;
-
-            foreach (var symbol in symbolData.Symbol)
-            {
-                if (string.IsNullOrEmpty(symbol.SymbolName)) continue;
-
-                string cleanName = symbol.SymbolName
-                    .Replace("아케인심볼 : ", "")
-                    .Replace("어센틱심볼 : ", "")
-                    .Trim();
-
-                bool isArcane = symbol.SymbolName.Contains("아케인");
-                int maxLevel = isArcane ? ArcaneMaxLevel : AuthenticMaxLevel;
-                bool isMaxLevel = symbol.SymbolLevel >= maxLevel;
-
-                if (isMaxLevel && SymbolToQuestMap.TryGetValue(cleanName, out string? questName))
-                {
-                    var quest = DailyList.FirstOrDefault(d => d.Name == questName);
-                    if (quest != null && quest.IsActive)
-                    {
-                        quest.IsActive = false;
-                    }
-                }
-            }
-
-            RefreshAllViews();
-        }
-
-        private void CheckAndResetTasks()
-        {
-            DateTime now = DateTime.Now;
-            DateTime todayMidnight = now.Date;
-
-            foreach (var task in DailyList) if (task.IsChecked && task.LastCheckedTime < todayMidnight) task.IsChecked = false;
-
-            DateTime thisThursday = GetMostRecentThursday(now);
-            foreach (var task in WeeklyList.Concat(BossList)) if (task.IsChecked && task.LastCheckedTime < thisThursday) task.IsChecked = false;
-
-            DateTime thisMonthFirst = new DateTime(now.Year, now.Month, 1);
-            foreach (var task in MonthlyList) if (task.IsChecked && task.LastCheckedTime < thisMonthFirst) task.IsChecked = false;
-
-            SaveData();
-            UpdateProgress();
-        }
-
-        private DateTime GetMostRecentThursday(DateTime now)
-        {
-            DateTime date = now.Date;
-            while (date.DayOfWeek != DayOfWeek.Thursday) date = date.AddDays(-1);
-            return date;
         }
 
         private void SaveData()
         {
+            CharacterRepository.Save(_appData);
+            UpdateProgress();
+            NotifyDataChanged();
+        }
+
+        private void UpdateProgress()
+        {
+            // 각 카테고리별 전체 항목 수 (숨김/삭제 제외)
+            var dailyTotal = DailyList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive); // IsActive 체크 추가
+            var weeklyTotal = WeeklyList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive);
+            var bossTotal = BossList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive);
+            // var monthlyTotal = MonthlyList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive);
+
+            // 각 카테고리별 완료 항목 수
+            var dailyDone = DailyList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive && t.IsChecked);
+            var weeklyDone = WeeklyList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive && t.IsChecked);
+            var bossDone = BossList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive && t.IsChecked);
+            // var monthlyDone = MonthlyList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsActive && t.IsChecked);
+
+            // 진행률 계산 (0~100)
+            double dProg = dailyTotal > 0 ? (double)dailyDone / dailyTotal * 100 : 0;
+            double wProg = weeklyTotal > 0 ? (double)weeklyDone / weeklyTotal * 100 : 0;
+            double bProg = bossTotal > 0 ? (double)bossDone / bossTotal * 100 : 0;
+
+            SetProgressWithAnimation(dProg, wProg, bProg);
+
+            BossCountText = $"{bossDone}/{bossTotal}";
+
+            // Sections 정보 갱신 및 재정렬
+            if (Sections.Count >= 4)
+            {
+                Sections[0].ProgressText = $"{dProg:0}%";
+                Sections[0].ProgressValue = dProg;
+                Sections[0].IsFavorite = IsDailyFavorite;
+                Sections[0].IsAllCompleted = dailyTotal > 0 && dailyDone >= dailyTotal;
+
+                Sections[1].ProgressText = $"{wProg:0}%";
+                Sections[1].ProgressValue = wProg;
+                Sections[1].IsFavorite = IsWeeklyFavorite;
+                Sections[1].IsAllCompleted = weeklyTotal > 0 && weeklyDone >= weeklyTotal;
+
+                Sections[2].SecondaryText = BossCountText; // 보스 카운트
+                Sections[2].IsFavorite = IsBossFavorite;
+                Sections[2].ProgressText = $"{bProg:0}%";
+                Sections[2].ProgressValue = bProg;
+                Sections[2].IsAllCompleted = bossTotal > 0 && bossDone >= bossTotal;
+
+                Sections[3].IsFavorite = IsMonthlyFavorite;
+                Sections[3].ProgressValue = 0; // 월간 진행률 표시 안함
+                // 월간 진행률은 없지만 텍스트는 필요하다면
+                Sections[3].IsAllCompleted = false; // 월간은 일단 고정? 아니면 로직 추가
+                // var monthlyTotal ... (주석되어 있음)
+                // 월간 로직이 주석처리 되어 있어서 IsAllCompleted = false로 두거나, 
+                // MonthlyList 체크
+                var mTotal = MonthlyList.Count(t => !t.IsDeleted && !t.IsHidden);
+                var mDone = MonthlyList.Count(t => !t.IsDeleted && !t.IsHidden && t.IsChecked);
+                Sections[3].IsAllCompleted = mTotal > 0 && mDone >= mTotal;
+
+                // CollectionView Refresh를 지연 호출하여 UI 바인딩 충돌 방지
+                System.Windows.Application.Current?.Dispatcher.BeginInvoke(
+                    System.Windows.Threading.DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        try
+                        {
+                            ActiveSectionsView?.Refresh();
+                            HiddenSectionsView?.Refresh();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"SectionsView Refresh error: {ex.Message}");
+                        }
+                    }));
+            }
+        }
+
+        private void CheckAndResetTasks()
+        {
             if (SelectedCharacter == null) return;
 
-            SelectedCharacter.DailyTasks = new List<HomeworkTask>(DailyList);
-            SelectedCharacter.WeeklyTasks = new List<HomeworkTask>(WeeklyList);
-            SelectedCharacter.BossTasks = new List<HomeworkTask>(BossList);
-            SelectedCharacter.MonthlyTasks = new List<HomeworkTask>(MonthlyList);
+            bool changed = false;
+            var now = DateTime.Now;
 
+            foreach (var character in Characters)
+            {
+                foreach (var task in character.HomeworkList)
+                {
+                    if (task.CheckReset(now))
+                    {
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed)
+            {
+                CharacterRepository.Save(_appData);
+                // 현재 선택된 캐릭터라면 UI 갱신
+                if (SelectedCharacter != null)
+                {
+                    LoadCharacterTasks(SelectedCharacter);
+                }
+            }
+        }
+
+        // --- API & UI Logic extracted from old ViewModel ---
+
+        private int _characterLevelInt = 0;
+
+        public async Task LoadCharacterDataFromApi(string nickname)
+        {
+            if (string.IsNullOrEmpty(nickname)) return;
+
+            // [Caching] 오늘 이미 업데이트되었다면 API 호출 생략 (캐릭터가 선택된 상태일 때만 체크)
+            if (SelectedCharacter != null &&
+                SelectedCharacter.Nickname == nickname &&
+                SelectedCharacter.LastUpdatedTime.Date == DateTime.Today)
+            {
+                return;
+            }
+
+            var ocid = await _apiService.GetOcidAsync(nickname);
+            if (string.IsNullOrEmpty(ocid)) return;
+
+            var basicInfo = await _apiService.GetCharacterInfoAsync(ocid);
+            if (basicInfo == null)
+            {
+                // 어제 데이터도 없으면 그제 데이터 시도 (새벽 0~1시 갱신 딜레이 고려)
+                var date = DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd");
+                basicInfo = await _apiService.GetCharacterInfoAsync(ocid, date);
+            }
+
+            if (basicInfo != null)
+            {
+                CharacterImage = basicInfo.CharacterImage ?? "";
+                CharacterLevel = $"{basicInfo.CharacterLevel}";
+                CharacterClass = basicInfo.CharacterClass ?? "-";
+                WorldName = basicInfo.WorldName ?? "-";
+
+                _characterLevelInt = basicInfo.CharacterLevel;
+
+                if (SelectedCharacter != null)
+                {
+                    SelectedCharacter.ImageUrl = CharacterImage;
+                    SelectedCharacter.Level = basicInfo.CharacterLevel;
+                    SelectedCharacter.CharacterClass = CharacterClass;
+                    SelectedCharacter.WorldName = WorldName;
+                    SelectedCharacter.LastUpdatedTime = DateTime.Now; // [Caching] 업데이트 시간 갱신
+                    CharacterRepository.Save(_appData);
+                }
+            }
+
+            // 아케인/어센틱 심볼 퀘스트 자동 활성화 로직
+            var itemEquip = await _apiService.GetItemEquipmentAsync(ocid);
+            var symbolEquip = await _apiService.GetSymbolEquipmentAsync(ocid);
+
+            if (SelectedCharacter != null && (itemEquip != null || symbolEquip != null))
+            {
+                UpdateSymbolQuests(character: SelectedCharacter, itemEquip?.Title, symbolEquip?.Symbol);
+            }
+        }
+
+        /*
+        private void UpdateSymbolQuests(CharacterProfile character, ItemEquipmentTitle? title, List<SymbolEquipmentInfo>? symbols)
+        {
+            // 1. 200레벨 이하면 심볼 퀘스트 모두 숨김/비활성 (간단 처리)
+            // (정확히는 퀘스트별 레벨 제한이 있지만, 여기서는 보유 여부로 판단)
+
+            // 심볼 맵: 심볼 이름 -> HomeworkTask 이름
+            // 소멸의 여로, 츄츄 아일랜드, 레헬른, 아르카나, 모라스, 에스페라
+            // 세르니움, 아르크스, 오디움, 도원경, 아르테리아, 카르시온
+
+            // 이미 사용자가 수동으로 켰을 수도 있으므로, "보유 중인데 꺼져있으면 켠다" 로직만 수행
+            // 혹은 "미보유인데 켜져있으면 끈다"? -> 사용자가 수동 관리할 수 있게 두는 게 나을 수도 있음.
+            if (symbolData?.Symbol != null)
+            {
+                // 심볼 계산 로직
+                // 아케인심볼: 교환불가 성장형
+                // 어센틱심볼: 교환불가 성장형
+
+                var symbols = symbolData.Symbol;
+                var maxArcane = symbols.Where(s => s.SymbolName != null && s.SymbolName.Contains("아케인심볼"))
+                                       .All(s => s.SymbolLevel >= 20);
+
+                var maxAuthentic = symbols.Where(s => s.SymbolName != null && s.SymbolName.Contains("어센틱심볼"))
+                                         .All(s => s.SymbolLevel >= 11); // 만랩 기준은 바뀔 수 있음
+
+                IsSymbolDone = maxArcane && maxAuthentic;
+            }
+        }
+        */
+
+        private void UpdateSymbolQuests(CharacterProfile character, ItemEquipmentTitle? title, List<SymbolInfo>? symbols)
+        {
+            if (symbols == null) return;
+
+            bool changed = false;
+
+            var symbolNames = symbols.Select(s => s.SymbolName).Where(n => !string.IsNullOrEmpty(n)).ToList();
+
+            foreach (var symName in symbolNames)
+            {
+                string? questName = SymbolToQuestMap(symName!);
+                if (questName == null) continue;
+
+                var task = character.HomeworkList.FirstOrDefault(t => t.Name == questName && t.Category == TaskCategory.Daily);
+                if (task != null)
+                {
+                    var s = symbols.First(x => x.SymbolName == symName);
+                    // 아케인: 만렙 20, 어센틱: 만렙 11
+
+                    bool isMaxLevel = IsSymbolMaxLevel(symName!, s.SymbolLevel);
+
+                    if (task.IsHidden)
+                    {
+                        task.IsHidden = false; // 보이게 설정
+                        changed = true;
+                    }
+
+                    // 만렙이면? -> 사용자가 원하면 끌 수 있게 둠 (자동으로 끄진 않음, 팬케이크 등 교환 가능)
+                }
+            }
+
+            if (changed)
+            {
+                CharacterRepository.Save(_appData);
+                LoadCharacterTasks(character);
+            }
+        }
+
+        private bool IsSymbolMaxLevel(string name, int level)
+        {
+            if (name.Contains("아케인심볼")) return level >= ArcaneMaxLevel;
+            if (name.Contains("어센틱심볼")) return level >= AuthenticMaxLevel;
+            return false;
+        }
+
+        private const int ArcaneMaxLevel = 20;
+        private const int AuthenticMaxLevel = 11;
+
+        private string? SymbolToQuestMap(string symbolName)
+        {
+            if (symbolName.Contains("소멸의 여로")) return "소멸의 여로";
+            if (symbolName.Contains("츄츄 아일랜드")) return "츄츄 아일랜드";
+            if (symbolName.Contains("레헬른")) return "레헬른";
+            if (symbolName.Contains("아르카나")) return "아르카나";
+            if (symbolName.Contains("모라스")) return "모라스";
+            if (symbolName.Contains("에스페라")) return "에스페라";
+            if (symbolName.Contains("세르니움")) return "세르니움"; // 전/후 포함
+            if (symbolName.Contains("아르크스")) return "호텔 아르크스";
+            if (symbolName.Contains("오디움")) return "오디움";
+            if (symbolName.Contains("도원경")) return "도원경";
+            if (symbolName.Contains("아르테리아")) return "아르테리아";
+            if (symbolName.Contains("카르시온")) return "카르시온";
+            return null;
+        }
+
+        // --- Theme Application ---
+
+        private void UpdateThemeColors()
+        {
+            var res = System.Windows.Application.Current.Resources;
+
+            // ThemeService에서 설정한 DynamicResource를 가져와서 ViewModel 속성에 할당
+            // 주의: ViewModel의 속성 타입은 Brush이므로, Resource에서 Brush를 가져와야 함.
+
+            // 헬퍼 함수: 리소스에서 Brush 가져오기 (없으면 투명)
+            Brush GetBrush(string key) => res[key] as Brush ?? Brushes.Transparent;
+
+            if (IsDarkTheme)
+            {
+                Background = GetBrush("ThemeBackgroundColor"); // #1E1E2E
+                Surface = GetBrush("ThemeBackgroundColor");    // 메인 배경과 동일하게
+                SurfaceContainer = GetBrush("ThemeSurfaceColor"); // #2D2D3D (카드 배경)
+                OnSurface = GetBrush("ThemeTextColor");        // #FFFFFF
+                OnSurfaceVariant = GetBrush("ThemeSecondaryTextColor"); // #888888
+
+                Primary = GetBrush("ThemePrimaryColor");       // #5AC8FA
+                Outline = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 255, 255, 255)); // 옅은 흰색 테두리
+                CompletedSurface = new SolidColorBrush(System.Windows.Media.Color.FromArgb(20, 255, 255, 255));
+            }
+            else
+            {
+                Background = GetBrush("ThemeBackgroundColor"); // #F2F2F7
+                Surface = GetBrush("ThemeBackgroundColor");
+                SurfaceContainer = GetBrush("ThemeSurfaceColor"); // #FFFFFF
+                OnSurface = GetBrush("ThemeTextColor");        // #000000
+                OnSurfaceVariant = GetBrush("ThemeSecondaryTextColor"); // #646464
+
+                Primary = GetBrush("ThemePrimaryColor");       // #007AFF
+                Outline = GetBrush("BorderColor");             // #E2E8F0
+                CompletedSurface = new SolidColorBrush(System.Windows.Media.Color.FromArgb(20, 0, 0, 0));
+            }
+
+            ThemeIcon = IsDarkTheme ? "WeatherMoon24" : "WeatherSunny24";
+        }
+
+        public void SaveAllData()
+        {
             CharacterRepository.Save(_appData);
         }
 
-        /// <summary>
-        /// 자동 시작 설정을 ViewModel의 AppData와 함께 동기화
-        /// (설정 창에서 저장 시 in-memory 데이터가 덮어써지는 문제 방지)
-        /// </summary>
-        public void UpdateAutoStart(bool autoStartEnabled)
-        {
-            _appData.AutoStartEnabled = autoStartEnabled;
-            CharacterRepository.Save(_appData);
-        }
 
-        /// <summary>
-        /// 닉네임과 자동 시작 설정을 함께 저장
-        /// </summary>
-        public void UpdateNicknameAndAutoStart(string nickname, bool autoStartEnabled)
+
+        public void UpdateNicknameAndAutoStart(string nickname, bool autoStart)
         {
-            _appData.AutoStartEnabled = autoStartEnabled;
-            
-            // 현재 선택된 캐릭터의 닉네임도 저장
             if (SelectedCharacter != null)
             {
                 SelectedCharacter.Nickname = nickname;
             }
-            
-            CharacterRepository.Save(_appData);
+            _appData.AutoStartEnabled = autoStart;
+            SaveAllData();
         }
 
-        /// <summary>
-        /// 새 캐릭터를 닉네임으로 추가하고 선택
-        /// </summary>
         public void AddNewCharacterWithNickname(string nickname)
         {
+            if (string.IsNullOrWhiteSpace(nickname)) return;
+
             var newChar = CharacterRepository.AddCharacter(_appData, nickname);
             if (newChar != null)
             {
                 Characters.Add(newChar);
                 SelectedCharacter = newChar;
-                _appData.SelectedCharacterId = newChar.Id;
                 CharacterRepository.Save(_appData);
+                OnPropertyChanged(nameof(CanAddCharacter));
+                NotifyDataChanged();
             }
         }
 
-        /// <summary>
-        /// 프로그램 종료 시 모든 데이터 저장
-        /// </summary>
-        public void SaveAllData()
-        {
-            // 현재 캐릭터의 숙제 데이터 저장
-            if (SelectedCharacter != null)
-            {
-                SelectedCharacter.DailyTasks = new List<HomeworkTask>(DailyList);
-                SelectedCharacter.WeeklyTasks = new List<HomeworkTask>(WeeklyList);
-                SelectedCharacter.BossTasks = new List<HomeworkTask>(BossList);
-                SelectedCharacter.MonthlyTasks = new List<HomeworkTask>(MonthlyList);
-                _appData.SelectedCharacterId = SelectedCharacter.Id;
-            }
 
-            // 테마 설정 저장
-            _appData.IsDarkTheme = IsDarkTheme;
 
-            // 캐릭터 데이터 저장
-            CharacterRepository.Save(_appData);
-
-            // config.json에도 테마 저장 (호환성)
-            var settings = ConfigManager.Load();
-            settings.IsDarkTheme = IsDarkTheme;
-            ConfigManager.Save(settings);
-        }
-
-        private void OnTaskChanged(object? s, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(HomeworkTask.IsChecked) ||
-                e.PropertyName == nameof(HomeworkTask.IsActive) ||
-                e.PropertyName == nameof(HomeworkTask.Difficulty))
-            {
-                if (e.PropertyName == nameof(HomeworkTask.IsActive) && s is HomeworkTask task)
-                {
-                    if (task.Category == TaskCategory.Daily && task.IsActive)
-                    {
-                        if (task.RequiredLevel > 0 && task.RequiredLevel > _characterLevelInt)
-                        {
-                            task.IsActive = false;
-                            return;
-                        }
-                    }
-
-                    if (task.Category == TaskCategory.Boss && task.IsActive)
-                    {
-                        int activeBossCount = BossList.Count(b => b.IsActive);
-                        if (activeBossCount > 12)
-                        {
-                            task.IsActive = false;
-                            return;
-                        }
-                    }
-                }
-
-                SaveData();
-                UpdateProgress();
-                if (e.PropertyName == nameof(HomeworkTask.Difficulty)) BossView.Refresh();
-            }
-        }
-
-        /// <summary>
-        /// 테마를 토글 버튼/설정창 모두에서 공용으로 적용하고 저장
-        /// </summary>
         public void ApplyThemeAndPersist(bool isDark)
         {
             IsDarkTheme = isDark;
             _appData.IsDarkTheme = isDark;
-
-            // in-memory → 저장소 동기화
             CharacterRepository.Save(_appData);
 
-            // config.json에도 저장 (설정 창과 동기화)
-            var settings = ConfigManager.Load();
-            settings.IsDarkTheme = isDark;
-            settings.ThemeMode = isDark ? ThemeMode.Dark : ThemeMode.Light;
-            ConfigManager.Save(settings);
+            ThemeService.ApplyTheme(isDark); // 전역 리소스 변경
+            UpdateThemeColors(); // 바인딩 속성 갱신
 
-            // UI 리소스 갱신
-            UpdateThemeColors();
-            OnPropertyChanged(nameof(IsDarkTheme));
-            OnPropertyChanged(nameof(ThemeIcon));
-
-            // 열려 있는 모든 창 갱신
-            NotifyThemeChanged();
+            NotifyThemeChanged(); // 다른 창에 알림
         }
 
-        private void UpdateProgress()
+        // OnPropertyChanged Implementation
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
-            var activeDaily = DailyList.Where(t => t.IsActive).ToList();
-            var dailyTarget = activeDaily.Any() ? (double)activeDaily.Count(t => t.IsChecked) / activeDaily.Count * 100 : 0;
-
-            var activeWeekly = WeeklyList.Where(t => t.IsActive).ToList();
-            var weeklyTarget = activeWeekly.Any() ? (double)activeWeekly.Count(t => t.IsChecked) / activeWeekly.Count * 100 : 0;
-
-            var activeBoss = BossList.Where(t => t.IsActive).ToList();
-            var bossTarget = activeBoss.Any() ? (double)activeBoss.Count(t => t.IsChecked) / activeBoss.Count * 100 : 0;
-
-            SetProgressWithAnimation(dailyTarget, weeklyTarget, bossTarget);
-
-            int bossCheckCount = BossList.Where(t => t.IsActive && t.IsChecked).Count();
-            BossCountText = $"{bossCheckCount}/12";
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+    }
 
-        private void UpdateThemeColors()
+    public class TaskSectionViewModel : INotifyPropertyChanged
+    {
+        public string Title { get; set; } = "";
+        public Brush HeaderBackground { get; set; } = Brushes.Gray;
+        public TaskCategory Category { get; set; }
+        public ICollectionView ItemsView { get; set; } = null!;
+        public ICommand ToggleFavoriteCommand { get; set; } = null!;
+
+        private bool _isFavorite;
+        public bool IsFavorite { get => _isFavorite; set { _isFavorite = value; OnPropertyChanged(); } }
+
+        private string _progressText = "";
+        public string ProgressText { get => _progressText; set { _progressText = value; OnPropertyChanged(); } }
+
+        private double _progressValue;
+        public double ProgressValue
         {
-            var resources = System.Windows.Application.Current.Resources;
-            
-            if (IsDarkTheme)
+            get => _progressValue;
+            set
             {
-                ThemeIcon = "WeatherMoon24";
-                Background = new SolidColorBrush(Color.FromRgb(61, 74, 92));
-                Surface = new SolidColorBrush(Color.FromRgb(74, 90, 110));
-                SurfaceContainer = new SolidColorBrush(Color.FromRgb(85, 85, 95));
-                OnSurface = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                OnSurfaceVariant = new SolidColorBrush(Color.FromRgb(200, 210, 220));
-                Primary = new SolidColorBrush(Color.FromRgb(90, 200, 250));
-                Outline = new SolidColorBrush(Color.FromRgb(100, 110, 125));
-                CompletedSurface = new SolidColorBrush(Color.FromRgb(70, 85, 100));
-                
-                // Application Resources 업데이트 (다크 모드)
-                resources["WindowBackground"] = new SolidColorBrush(Color.FromRgb(26, 29, 46));
-                resources["CardBackground"] = new SolidColorBrush(Color.FromRgb(40, 45, 65));
-                resources["CardBackgroundHover"] = new SolidColorBrush(Color.FromRgb(50, 55, 75));
-                resources["CardBackgroundAlt"] = new SolidColorBrush(Color.FromRgb(35, 40, 58));
-                resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(240, 240, 245));
-                resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(180, 185, 195));
-                resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(140, 145, 155));
-                resources["TextInverse"] = new SolidColorBrush(Color.FromRgb(30, 35, 45));
-                resources["DividerColor"] = new SolidColorBrush(Color.FromRgb(60, 65, 85));
-                resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(70, 75, 95));
-                resources["ApiCardBackground"] = new SolidColorBrush(Color.FromRgb(50, 45, 40));
-                resources["ApiCardBorder"] = new SolidColorBrush(Color.FromRgb(90, 75, 55));
-                resources["ItemCardBackground"] = new SolidColorBrush(Color.FromRgb(45, 50, 70));
-                resources["ItemCardBorder"] = new SolidColorBrush(Color.FromRgb(65, 70, 90));
-                resources["ItemCardHover"] = new SolidColorBrush(Color.FromRgb(55, 60, 80));
-                resources["BadgeBackground"] = new SolidColorBrush(Color.FromRgb(45, 50, 75));
-                resources["BadgeText"] = new SolidColorBrush(Color.FromRgb(165, 180, 255));
-                resources["DetailViewBackground"] = new SolidColorBrush(Color.FromRgb(26, 29, 46));
-            }
-            else
-            {
-                ThemeIcon = "WeatherSunny24";
-                Background = new SolidColorBrush(Color.FromRgb(61, 74, 92));
-                Surface = new SolidColorBrush(Color.FromRgb(250, 250, 252));
-                SurfaceContainer = new SolidColorBrush(Color.FromRgb(235, 235, 240));
-                OnSurface = new SolidColorBrush(Color.FromRgb(50, 55, 65));
-                OnSurfaceVariant = new SolidColorBrush(Color.FromRgb(100, 105, 115));
-                Primary = new SolidColorBrush(Color.FromRgb(90, 200, 250));
-                Outline = new SolidColorBrush(Color.FromRgb(210, 215, 220));
-                CompletedSurface = new SolidColorBrush(Color.FromRgb(245, 248, 250));
-                
-                // Application Resources 업데이트 (라이트 모드)
-                resources["WindowBackground"] = new SolidColorBrush(Color.FromRgb(245, 247, 251));
-                resources["CardBackground"] = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                resources["CardBackgroundHover"] = new SolidColorBrush(Color.FromRgb(238, 242, 247));
-                resources["CardBackgroundAlt"] = new SolidColorBrush(Color.FromRgb(248, 250, 252));
-                resources["TextPrimary"] = new SolidColorBrush(Color.FromRgb(15, 23, 42));
-                resources["TextSecondary"] = new SolidColorBrush(Color.FromRgb(71, 85, 105));
-                resources["TextMuted"] = new SolidColorBrush(Color.FromRgb(100, 116, 139));
-                resources["TextInverse"] = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-                resources["DividerColor"] = new SolidColorBrush(Color.FromRgb(226, 232, 240));
-                resources["BorderColor"] = new SolidColorBrush(Color.FromRgb(226, 232, 240));
-                resources["ApiCardBackground"] = new SolidColorBrush(Color.FromRgb(255, 246, 236));
-                resources["ApiCardBorder"] = new SolidColorBrush(Color.FromRgb(255, 227, 194));
-                resources["ItemCardBackground"] = new SolidColorBrush(Color.FromRgb(250, 251, 252));
-                resources["ItemCardBorder"] = new SolidColorBrush(Color.FromRgb(229, 233, 240));
-                resources["ItemCardHover"] = new SolidColorBrush(Color.FromRgb(240, 244, 248));
-                resources["BadgeBackground"] = new SolidColorBrush(Color.FromRgb(238, 242, 255));
-                resources["BadgeText"] = new SolidColorBrush(Color.FromRgb(99, 102, 241));
-                resources["DetailViewBackground"] = new SolidColorBrush(Color.FromRgb(26, 29, 46));
+                _progressValue = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ProgressOffset));
             }
         }
+
+        public double ProgressOffset => 150.8 * (1 - (ProgressValue / 100.0));
+
+        private bool _isAllCompleted;
+        public bool IsAllCompleted { get => _isAllCompleted; set { _isAllCompleted = value; OnPropertyChanged(); } }
+
+        // 편집 모드 여부 (섹션 가시성 제어용) -> 섹션 자체가 아니라 외부에서 ItemsControl 바인딩으로 처리하지만,
+        // 필요하다면 추가. 여기서는 없어도 됨.
+
+        // 보스 섹션 전용
+        private string _secondaryText = "";
+        public string SecondaryText { get => _secondaryText; set { _secondaryText = value; OnPropertyChanged(); OnPropertyChanged(nameof(ShowSecondaryText)); } }
+        public bool ShowSecondaryText => !string.IsNullOrEmpty(SecondaryText);
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

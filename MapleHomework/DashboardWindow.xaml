@@ -61,7 +61,7 @@
                             Visibility="{Binding HasPendingTasks, Converter={StaticResource BoolToVis}}">
                         <StackPanel Orientation="Horizontal">
                             <ui:SymbolIcon Symbol="AlertOn24" FontSize="16" Foreground="#F97316" Margin="0,0,8,0"/>
-                            <TextBlock Text="{Binding TotalPendingCount}" Foreground="#F97316" FontWeight="Bold" FontSize="14"/>
+                            <TextBlock Text="{Binding TotalPendingCount}" Foreground="#F97316" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
                             <TextBlock Text="개 남음" Foreground="{DynamicResource TextMuted}" FontSize="12" Margin="4,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>

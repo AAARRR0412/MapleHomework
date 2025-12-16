@@ -30,7 +30,7 @@ namespace MapleHomework
             {
                 TxtNickname.Text = _viewModel.SelectedCharacter.Nickname ?? "";
             }
-            
+
             // 자동 시작 상태 로드
             AutoStartToggle.IsChecked = ConfigManager.IsAutoStartEnabled();
 
@@ -53,19 +53,19 @@ namespace MapleHomework
 
             // 알림 설정 로드
             NotificationToggle.IsChecked = settings.IsNotificationEnabled;
-            
+
             // 일일 알림 (n시간 전)
             NotifyDailyCheck.IsChecked = settings.NotifyDailyTasks;
             int dailyIndex = settings.DailyNotifyHoursBefore - 1;
             if (dailyIndex >= 0 && dailyIndex < 12)
                 DailyHoursCombo.SelectedIndex = dailyIndex;
-            
+
             // 주간/보스 알림 (n일 전)
             NotifyWeeklyCheck.IsChecked = settings.NotifyWeeklyTasks;
             int weeklyIndex = settings.WeeklyNotifyDaysBefore - 1;
             if (weeklyIndex >= 0 && weeklyIndex < 6)
                 WeeklyDaysCombo.SelectedIndex = weeklyIndex;
-            
+
             NotifyBossCheck.IsChecked = settings.NotifyBossTasks;
             int bossIndex = settings.BossNotifyDaysBefore - 1;
             if (bossIndex >= 0 && bossIndex < 6)
@@ -78,20 +78,20 @@ namespace MapleHomework
             OverlayToggle.IsChecked = settings.IsOverlayEnabled;
             ShowOnlyFavoritesToggle.IsChecked = settings.ShowOnlyFavorites;
             OverlayProcessNameBox.Text = settings.OverlayProcessName ?? "MapleStory";
-            
+
             // 투명도 슬라이더 초기화 (0.0~1.0 → 0~100)
             OverlayOpacitySlider.Value = settings.OverlayOpacity * 100;
             OpacityValueText.Text = $"{(int)(settings.OverlayOpacity * 100)}%";
 
             // 알림 패널 활성화 상태
             UpdateNotificationDetailPanel();
-            
+
             // 엔터 키로 저장
             this.KeyDown += SettingsWindow_KeyDown;
-            
+
             _isInitializing = false;
         }
-        
+
         private void SettingsWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -109,11 +109,11 @@ namespace MapleHomework
 
             // 일일: 1~12시간 전
             DailyHoursCombo.ItemsSource = Enumerable.Range(1, 12).ToList();
-            
+
             // 주간/보스: 1~6일 전
             WeeklyDaysCombo.ItemsSource = Enumerable.Range(1, 6).ToList();
             BossDaysCombo.ItemsSource = Enumerable.Range(1, 6).ToList();
-            
+
         }
 
         private void UpdateNotificationDetailPanel()
@@ -188,7 +188,7 @@ namespace MapleHomework
         private void OverlayOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (_isInitializing) return;
-            
+
             int percent = (int)OverlayOpacitySlider.Value;
             OpacityValueText.Text = $"{percent}%";
             SaveSettings();
@@ -276,23 +276,23 @@ namespace MapleHomework
                     _ => ThemeMode.System
                 };
             }
-            
+
             // 레거시 필드 동기화 + ViewModel에 즉시 적용
             settings.IsDarkTheme = ThemeService.ShouldUseDarkTheme(settings);
 
             // 알림 설정
             settings.IsNotificationEnabled = NotificationToggle.IsChecked == true;
-            
+
             // 일일 알림 (n시간 전)
             settings.NotifyDailyTasks = NotifyDailyCheck.IsChecked == true;
             if (DailyHoursCombo.SelectedItem is int dailyHours)
                 settings.DailyNotifyHoursBefore = dailyHours;
-            
+
             // 주간 알림 (n일 전)
             settings.NotifyWeeklyTasks = NotifyWeeklyCheck.IsChecked == true;
             if (WeeklyDaysCombo.SelectedItem is int weeklyDays)
                 settings.WeeklyNotifyDaysBefore = weeklyDays;
-            
+
             // 보스 알림 (n일 전)
             settings.NotifyBossTasks = NotifyBossCheck.IsChecked == true;
             if (BossDaysCombo.SelectedItem is int bossDays)
@@ -304,7 +304,7 @@ namespace MapleHomework
             // 오버레이 설정
             settings.IsOverlayEnabled = OverlayToggle.IsChecked == true;
             settings.ShowOnlyFavorites = ShowOnlyFavoritesToggle.IsChecked == true;
-            
+
             // 프로세스 이름 저장
             string processName = OverlayProcessNameBox.Text.Trim();
             if (!string.IsNullOrEmpty(processName))
@@ -316,7 +316,7 @@ namespace MapleHomework
             settings.OverlayOpacity = OverlayOpacitySlider.Value / 100.0;
 
             ConfigManager.Save(settings);
-            
+
             // ViewModel 상태를 설정값에 맞춰 반영 + 전체 창 알림
             _viewModel.ApplyThemeAndPersist(settings.IsDarkTheme);
         }
@@ -328,19 +328,19 @@ namespace MapleHomework
             // 중복 실행 방지
             if (_isSaving) return;
             _isSaving = true;
-            
+
             try
             {
-            string nickname = TxtNickname.Text.Trim();
+                string nickname = TxtNickname.Text.Trim();
 
                 if (string.IsNullOrEmpty(nickname))
-            {
+                {
                     MessageBox.Show("대표 닉네임을 입력해주세요.", "오류");
-                return;
-            }
+                    return;
+                }
 
                 // 1. 먼저 기존 캐릭터 목록에서 해당 닉네임 검색
-                var existingChar = _viewModel.Characters.FirstOrDefault(c => 
+                var existingChar = _viewModel.Characters.FirstOrDefault(c =>
                     c.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase));
 
                 if (existingChar != null)
@@ -349,35 +349,38 @@ namespace MapleHomework
                     _viewModel.SelectedCharacter = existingChar;
                 }
                 else if (_viewModel.SelectedCharacter == null)
-            {
+                {
                     // 캐릭터가 없으면 새로 추가
                     _viewModel.AddNewCharacterWithNickname(nickname);
                 }
                 else
                 {
                     // 현재 선택된 캐릭터의 닉네임 변경 (새 닉네임으로 API 호출)
-                _viewModel.SelectedCharacter.Nickname = nickname;
-            }
+                    _viewModel.SelectedCharacter.Nickname = nickname;
+                }
 
                 // ViewModel 및 AppData 동기화 (닉네임 포함)
                 _viewModel.UpdateNicknameAndAutoStart(nickname, AutoStartToggle.IsChecked == true);
 
                 // config.json에도 동기화 (대표 캐릭터)
-            var settings = ConfigManager.Load();
-            settings.CharacterName = nickname;
-            ConfigManager.Save(settings);
+                var settings = ConfigManager.Load();
+                settings.CharacterName = nickname;
+                ConfigManager.Save(settings);
 
-            // 설정도 저장
-            SaveSettings();
+                // 설정도 저장
+                SaveSettings();
 
                 // API에서 캐릭터 정보 로드 (내장 API 키 사용)
-                await _viewModel.LoadCharacterDataFromApi(nickname);
-                
+                if (_viewModel.SelectedCharacter != null)
+                {
+                    await _viewModel.LoadCharacterDataFromApi(_viewModel.SelectedCharacter.Nickname);
+                }
+
                 // 데이터 변경 알림 (다른 창들 업데이트)
                 _viewModel.NotifyDataChanged();
-            
-            MessageBox.Show("성공적으로 저장되었습니다!", "알림");
-            this.Close();
+
+                MessageBox.Show("성공적으로 저장되었습니다!", "알림");
+                this.Close();
             }
             catch (Exception ex)
             {

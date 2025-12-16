@@ -25,33 +25,33 @@ namespace MapleHomework
         public int PartySize { get; set; } = 1;
         public bool IsChecked { get; set; }
         public bool IsMonthly { get; set; }
-        
+
         public long TotalReward { get; set; }
         public long PersonalReward => TotalReward / PartySize;
-        
+
         // UI 바인딩용 속성들
         public string TotalRewardText => PartySize > 1 ? $"(총 {BossRewardData.FormatMeso(TotalReward)})" : "";
         public string PersonalRewardText => BossRewardData.FormatMeso(PersonalReward);
         public string PartyInfoText => PartySize > 1 ? $"{PartySize}인 파티" : "솔로";
-        
+
         // 파티원 2인 이상일 때만 총 보상 표시
         public Visibility ShowTotalReward => PartySize > 1 ? Visibility.Visible : Visibility.Collapsed;
-        
+
         // 배경색 - 어두운 테마에 맞게
-        public Brush Background => IsChecked 
+        public Brush Background => IsChecked
             ? new SolidColorBrush(Color.FromArgb(40, 76, 217, 100))   // 녹색 (완료)
             : new SolidColorBrush(Color.FromRgb(85, 95, 110));        // 기본 어두운 색
-        
-        public Brush BorderColor => IsChecked 
+
+        public Brush BorderColor => IsChecked
             ? new SolidColorBrush(Color.FromArgb(80, 76, 217, 100))   // 녹색 테두리
             : new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)); // 투명한 테두리
-        
-        public Brush CheckBackground => IsChecked 
+
+        public Brush CheckBackground => IsChecked
             ? new SolidColorBrush(Color.FromRgb(76, 217, 100))        // 녹색
             : new SolidColorBrush(Color.FromRgb(100, 110, 125));      // 회색
-        
+
         public Visibility CheckVisibility => IsChecked ? Visibility.Visible : Visibility.Collapsed;
-        
+
         public Brush DifficultyBackground => Difficulty switch
         {
             BossDifficulty.Easy => new SolidColorBrush(Color.FromRgb(90, 200, 250)),    // 파란색
@@ -61,44 +61,44 @@ namespace MapleHomework
             BossDifficulty.Extreme => new SolidColorBrush(Color.FromRgb(175, 82, 222)), // 보라색
             _ => new SolidColorBrush(Color.FromRgb(128, 128, 128))
         };
-        
+
         // 텍스트 색상 - 어두운 배경에 밝은 글씨
-        public Brush TextForeground => IsChecked 
+        public Brush TextForeground => IsChecked
             ? new SolidColorBrush(Color.FromArgb(180, 200, 210, 220))  // 흐릿한 밝은 색
             : new SolidColorBrush(Color.FromRgb(255, 255, 255));       // 흰색
-        
-        public Brush RewardForeground => IsChecked 
+
+        public Brush RewardForeground => IsChecked
             ? new SolidColorBrush(Color.FromRgb(95, 224, 134))         // 밝은 녹색 (완료)
             : new SolidColorBrush(Color.FromRgb(255, 215, 0));         // 금색
     }
-    
+
     public partial class BossRewardWindow : FluentWindow
     {
         private readonly AppData _appData;
         private readonly MapleHomework.ViewModels.MainViewModel _viewModel;
         private CharacterProfile? _selectedCharacter;
-        
+
         public BossRewardWindow(AppData appData, MapleHomework.ViewModels.MainViewModel viewModel)
         {
             InitializeComponent();
             _appData = appData;
             _viewModel = viewModel;
-            
+
             ApplyThemeResources();
-            _viewModel.ThemeChanged += OnThemeChanged;
+            ThemeService.OnThemeChanged += OnThemeChanged_Service;
             _viewModel.DataChanged += OnDataChanged;
-            
+
             CmbCharacter.ItemsSource = appData.Characters;
             if (appData.Characters.Any())
             {
                 CmbCharacter.SelectedIndex = 0;
             }
-            
+
             TxtTotalCharacters.Text = $"총 {appData.Characters.Count}개 캐릭터";
             CalculateTotalRewards();
         }
 
-        private void OnThemeChanged()
+        private void OnThemeChanged_Service(bool isDark)
         {
             Dispatcher.Invoke(() => ApplyThemeResources());
         }
@@ -124,19 +124,22 @@ namespace MapleHomework
 
         protected override void OnClosed(System.EventArgs e)
         {
-            _viewModel.ThemeChanged -= OnThemeChanged;
+            ThemeService.OnThemeChanged -= OnThemeChanged_Service;
             _viewModel.DataChanged -= OnDataChanged;
             base.OnClosed(e);
         }
-        
+
         /// <summary>
         /// 테마 리소스 적용 (다크/라이트 모드)
         /// 새 디자인은 DynamicResource를 사용하므로 App.xaml의 리소스만 업데이트하면 자동 적용됨
         /// </summary>
         public void ApplyThemeResources()
         {
-            // DynamicResource를 사용하므로 별도의 수동 적용 불필요
-            // App.xaml의 테마 리소스가 자동으로 적용됨
+            // MainGrid가 DynamicResource를 사용하도록 강제
+            if (MainGrid != null)
+            {
+                MainGrid.SetResourceReference(System.Windows.Controls.Panel.BackgroundProperty, "WindowBackground");
+            }
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -154,7 +157,7 @@ namespace MapleHomework
         {
             this.Close();
         }
-        
+
         private void CmbCharacter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _selectedCharacter = CmbCharacter.SelectedItem as CharacterProfile;
@@ -169,18 +172,18 @@ namespace MapleHomework
             RefreshBossRewardList();
             CalculateTotalRewards();
         }
-        
+
         private void RefreshBossRewardList()
         {
             if (_selectedCharacter == null) return;
-            
+
             var items = new List<BossRewardItem>();
             int checkedCount = 0;
             long earnedWeeklyReward = 0;      // 획득한 수익
             long expectedWeeklyReward = 0;    // 예상 수익 (전체)
             long earnedMonthlyReward = 0;     // 획득한 월간 수익
             long expectedMonthlyReward = 0;   // 예상 월간 수익
-            
+
             // 주간 보스
             foreach (var boss in _selectedCharacter.BossTasks.Where(b => b.IsActive))
             {
@@ -195,34 +198,34 @@ namespace MapleHomework
                     IsMonthly = false,
                     TotalReward = BossRewardData.GetReward(boss.Name, boss.Difficulty, 1, false)
                 };
-                
+
                 items.Add(item);
-                
+
                 // 예상 수익은 항상 더함
                 expectedWeeklyReward += item.PersonalReward;
-                
+
                 if (boss.IsChecked)
                 {
                     checkedCount++;
                     earnedWeeklyReward += item.PersonalReward;
                 }
             }
-            
+
             // 보상 높은 순으로 정렬
             items = items.OrderByDescending(i => i.TotalReward).ToList();
-            
+
             // 월간 보스 수익 계산
             foreach (var boss in _selectedCharacter.MonthlyTasks.Where(b => b.IsActive))
             {
                 var reward = BossRewardData.GetReward(boss.Name, boss.Difficulty, boss.PartySize, true);
                 expectedMonthlyReward += reward;
-                
+
                 if (boss.IsChecked)
                 {
                     earnedMonthlyReward += reward;
                 }
             }
-            
+
             BossRewardList.ItemsSource = items;
             TxtCompletedBossCount.Text = $"{checkedCount}/{_selectedCharacter.BossTasks.Count(b => b.IsActive)}";
             TxtWeeklyBossReward.Text = BossRewardData.FormatMeso(earnedWeeklyReward);
@@ -230,12 +233,12 @@ namespace MapleHomework
             TxtMonthlyBossReward.Text = BossRewardData.FormatMeso(earnedMonthlyReward);
             TxtMonthlyBossExpected.Text = BossRewardData.FormatMeso(expectedMonthlyReward);
         }
-        
+
         private void CalculateTotalRewards()
         {
             long totalWeeklyEarned = 0;    // 획득한 주간 수익
             long totalWeeklyExpected = 0;  // 예상 주간 수익
-            
+
             foreach (var character in _appData.Characters)
             {
                 // 주간 보스 - 예상 수익 (전체)
@@ -243,14 +246,14 @@ namespace MapleHomework
                 {
                     var reward = BossRewardData.GetReward(boss.Name, boss.Difficulty, boss.PartySize, false);
                     totalWeeklyExpected += reward;
-                    
+
                     if (boss.IsChecked)
                     {
                         totalWeeklyEarned += reward;
                     }
                 }
             }
-            
+
             TxtTotalWeeklyReward.Text = $"{BossRewardData.FormatMeso(totalWeeklyEarned)} 메소";
             TxtTotalWeeklyExpected.Text = $"{BossRewardData.FormatMeso(totalWeeklyExpected)} 메소";
         }

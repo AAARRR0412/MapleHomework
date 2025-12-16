@@ -41,6 +41,8 @@ namespace MapleHomework.Models
     {
         [JsonPropertyName("symbol_name")]
         public string? SymbolName { get; set; }
+        [JsonPropertyName("symbol_icon")]
+        public string? SymbolIcon { get; set; }
         [JsonPropertyName("symbol_level")]
         public int SymbolLevel { get; set; }
         [JsonPropertyName("symbol_force")]
@@ -55,6 +57,10 @@ namespace MapleHomework.Models
         public string? SymbolLuk { get; set; }
         [JsonPropertyName("symbol_hp")]
         public string? SymbolHp { get; set; }
+        [JsonPropertyName("symbol_growth_count")]
+        public long SymbolGrowthCount { get; set; }
+        [JsonPropertyName("symbol_require_growth_count")]
+        public long SymbolRequireGrowthCount { get; set; }
     }
 
     public class UnionChampionResponse
@@ -103,7 +109,7 @@ namespace MapleHomework.Models
         public List<UnionBlockInfo>? UnionRaiderPreset5 { get; set; }
     }
 
-    public class UnionBlockInfo 
+    public class UnionBlockInfo
     {
         [JsonPropertyName("block_type")]
         public string? BlockType { get; set; }
@@ -223,6 +229,22 @@ namespace MapleHomework.Models
         public List<ItemEquipmentInfo>? ItemEquipmentPreset2 { get; set; }
         [JsonPropertyName("item_equipment_preset_3")]
         public List<ItemEquipmentInfo>? ItemEquipmentPreset3 { get; set; }
+        [JsonPropertyName("title")]
+        public ItemEquipmentTitle? Title { get; set; }
+    }
+
+    public class ItemEquipmentTitle
+    {
+        [JsonPropertyName("title_name")]
+        public string? TitleName { get; set; }
+        [JsonPropertyName("title_icon")]
+        public string? TitleIcon { get; set; }
+        [JsonPropertyName("title_description")]
+        public string? TitleDescription { get; set; }
+        [JsonPropertyName("date_expire")]
+        public string? DateExpire { get; set; }
+        [JsonPropertyName("date_option_expire")]
+        public string? DateOptionExpire { get; set; }
     }
 
     // [신규] 시드링 교체 슬롯 응답 (단일 링 정보 - API 응답이 배열이 아닌 직접 필드)
@@ -245,7 +267,7 @@ namespace MapleHomework.Models
 
         [JsonPropertyName("special_ring_exchange_description")]
         public string? SpecialRingExchangeDescription { get; set; }
-        
+
         // 유효한 시드링 데이터인지 확인
         public bool HasRing => !string.IsNullOrEmpty(SpecialRingExchangeName) && SpecialRingExchangeLevel > 0;
     }

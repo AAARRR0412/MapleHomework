@@ -24,7 +24,7 @@ namespace MapleHomework.Models
     public class CharacterProfile : INotifyPropertyChanged
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        
+
         private string _nickname = "";
         public string Nickname
         {
@@ -196,6 +196,8 @@ namespace MapleHomework.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public IEnumerable<HomeworkTask> HomeworkList => DailyTasks.Concat(WeeklyTasks).Concat(BossTasks).Concat(MonthlyTasks);
 
         public void NotifyProgressChanged()
         {

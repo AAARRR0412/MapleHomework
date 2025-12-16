@@ -24,7 +24,7 @@ namespace MapleHomework.Services
         public int MonthlyCompleted { get; set; }
         public int MonthlyTotal { get; set; }
         public long BossRewardEarned { get; set; }
-        
+
         public double DailyCompletionRate => DailyTotal > 0 ? (double)DailyCompleted / DailyTotal * 100 : 0;
         public double WeeklyCompletionRate => WeeklyTotal > 0 ? (double)WeeklyCompleted / WeeklyTotal * 100 : 0;
         public double BossCompletionRate => BossTotal > 0 ? (double)BossCompleted / BossTotal * 100 : 0;
@@ -87,7 +87,7 @@ namespace MapleHomework.Services
         public string ChangeSummary { get; set; } = ""; // 옵션 차이 요약 (예: 스타포스 15성 -> 20성)
         public string OptionChangesJson { get; set; } = ""; // 상세 옵션 변경 내역 JSON
         public string ItemIcon { get; set; } = ""; // 아이템 아이콘 URL
-        
+
         // UI 바인딩용: JSON에서 파싱된 옵션 변경 목록
         public List<ItemOptionChange> OptionChanges
         {
@@ -97,7 +97,7 @@ namespace MapleHomework.Services
                     return new List<ItemOptionChange>();
                 try
                 {
-                    return System.Text.Json.JsonSerializer.Deserialize<List<ItemOptionChange>>(OptionChangesJson) 
+                    return System.Text.Json.JsonSerializer.Deserialize<List<ItemOptionChange>>(OptionChangesJson)
                            ?? new List<ItemOptionChange>();
                 }
                 catch
@@ -106,9 +106,13 @@ namespace MapleHomework.Services
                 }
             }
         }
-        
+
         // 신규 아이템 여부
         public bool IsNewItem => ChangeType == "장착" || OptionChanges.Any(c => c.IsNewItem);
+
+        // UI 렌더링용 (저장되지 않아도 됨, 런타임에 채움)
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string JobClass { get; set; } = "";
     }
 
     /// <summary>
@@ -142,26 +146,70 @@ namespace MapleHomework.Services
     public static class StatisticsService
     {
         private static readonly string DataFolder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
-        private static readonly string FilePath = System.IO.Path.Combine(DataFolder, "statistics_data.json");
-        
+        private static readonly string LegacyFilePath = System.IO.Path.Combine(DataFolder, "statistics_data.json");
+
+        private static string GetCharacterFolder(string characterName)
+        {
+            // 윈도우 파일명으로 사용할 수 없는 문자 제거
+            var safeName = string.Join("_", characterName.Split(Path.GetInvalidFileNameChars()));
+            return Path.Combine(DataFolder, safeName);
+        }
+
+        private static string GetFilePath(string characterName)
+        {
+            var folder = GetCharacterFolder(characterName);
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+            return Path.Combine(folder, "statistics.json");
+        }
+
         static StatisticsService()
         {
             if (!System.IO.Directory.Exists(DataFolder))
                 System.IO.Directory.CreateDirectory(DataFolder);
         }
-        private static readonly JsonSerializerOptions JsonOptions = new() 
-        { 
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
             WriteIndented = true,
             PropertyNameCaseInsensitive = true
         };
 
-        public static DateTime GetLastUpdated()
+        /// <summary>
+        /// 마이그레이션: 기존 statistics_data.json이 있다면 캐릭터별로 분리
+        /// </summary>
+        public static void MigrateLegacyData()
         {
             try
             {
-                if (!File.Exists(FilePath)) return DateTime.MinValue;
-                string json = File.ReadAllText(FilePath);
+                if (!File.Exists(LegacyFilePath)) return;
+
+                string json = File.ReadAllText(LegacyFilePath);
                 var data = JsonSerializer.Deserialize<StatisticsData>(json, JsonOptions);
+                if (data == null) return;
+
+                // 2. 캐릭터별로 데이터 분리 및 저장
+                SaveAll(data);
+
+                // 3. 기존 파일 백업 (.bak)
+                string backupPath = LegacyFilePath + ".bak";
+                if (File.Exists(backupPath)) File.Delete(backupPath);
+                File.Move(LegacyFilePath, backupPath);
+            }
+            catch (Exception ex)
+            {
+                // 로깅 필요 시 추가
+                System.Diagnostics.Debug.WriteLine($"Migration failed: {ex.Message}");
+            }
+        }
+
+        public static DateTime GetLastUpdated(string characterName)
+        {
+            try
+            {
+                MigrateLegacyData();
+                var file = GetFilePath(characterName);
+                if (!File.Exists(file)) return DateTime.MinValue;
+                // 파일 수정 시간 or 파일 내부 시간? 파일 내부가 정확함
+                var data = Load(characterName);
                 return data?.LastUpdated ?? DateTime.MinValue;
             }
             catch
@@ -170,88 +218,185 @@ namespace MapleHomework.Services
             }
         }
 
-        /// <summary>
-        /// 특정 캐릭터의 마지막 데이터 수집 날짜 반환
-        /// </summary>
-        public static DateTime GetLastUpdatedForCharacter(string characterId)
+        // 전역 마지막 업데이트 (가장 최근 수정된 파일 기준)
+        public static DateTime GetLastUpdated()
         {
+            MigrateLegacyData();
+            if (!Directory.Exists(DataFolder)) return DateTime.MinValue;
+
+            var statsFiles = Directory.GetFiles(DataFolder, "statistics.json", SearchOption.AllDirectories);
+            if (statsFiles.Length == 0) return DateTime.MinValue;
+
+            DateTime maxDate = DateTime.MinValue;
+            foreach (var file in statsFiles)
+            {
+                if (File.GetLastWriteTime(file) > maxDate)
+                {
+                    maxDate = File.GetLastWriteTime(file);
+                }
+            }
+            return maxDate;
+        }
+
+        /// <summary>
+        /// 특정 캐릭터의 데이터 로드 (파일 분리 적용)
+        /// </summary>
+        public static StatisticsData Load(string characterName)
+        {
+            MigrateLegacyData();
             try
             {
-                var data = Load();
-                var lastGrowth = data.GrowthRecords
-                    .Where(r => r.CharacterId == characterId)
-                    .OrderByDescending(r => r.Date)
-                    .FirstOrDefault();
-                
-                return lastGrowth?.Date ?? DateTime.MinValue;
+                string file = GetFilePath(characterName);
+                if (!File.Exists(file)) return new StatisticsData();
+
+                string json = File.ReadAllText(file);
+                var data = JsonSerializer.Deserialize<StatisticsData>(json, JsonOptions);
+                return data ?? new StatisticsData();
             }
             catch
             {
-                return DateTime.MinValue;
+                return new StatisticsData();
             }
         }
+
+        /// <summary>
+        /// 백업용: 모든 캐릭터 데이터 통합 로드
+        /// </summary>
+        public static StatisticsData LoadAll()
+        {
+            MigrateLegacyData();
+            var result = new StatisticsData();
+
+            if (!Directory.Exists(DataFolder)) return result;
+
+            var userFolders = Directory.GetDirectories(DataFolder);
+            foreach (var folder in userFolders)
+            {
+                var file = Path.Combine(folder, "statistics.json");
+                if (File.Exists(file))
+                {
+                    try
+                    {
+                        var json = File.ReadAllText(file);
+                        var data = JsonSerializer.Deserialize<StatisticsData>(json, JsonOptions);
+                        if (data != null)
+                        {
+                            result.DailyRecords.AddRange(data.DailyRecords);
+                            result.GrowthRecords.AddRange(data.GrowthRecords);
+                            result.BossRewardRecords.AddRange(data.BossRewardRecords);
+                            result.HexaSkillRecords.AddRange(data.HexaSkillRecords);
+                            result.ItemChangeRecords.AddRange(data.ItemChangeRecords);
+                            if (data.LastUpdated > result.LastUpdated)
+                                result.LastUpdated = data.LastUpdated;
+                        }
+                    }
+                    catch { }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 특정 캐릭터 데이터 저장
+        /// </summary>
+        public static void Save(string characterName, StatisticsData data)
+        {
+            try
+            {
+                data.LastUpdated = DateTime.Now;
+                string file = GetFilePath(characterName);
+                string json = JsonSerializer.Serialize(data, JsonOptions);
+                File.WriteAllText(file, json);
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// 백업 복원 및 마이그레이션용: 통합 데이터를 캐릭터별로 분리 저장
+        /// </summary>
+        public static void SaveAll(StatisticsData data)
+        {
+            // 모든 기록을 CharacterName 기준으로 그룹화
+            // CharacterName이 없는 경우(ID만 있는 경우)는... 별도 처리 필요하지만
+            // 현재 구조상 Name이 무조건 있어야 함. 없다면 "Unknown" 폴더?
+
+            var names = new HashSet<string>();
+            names.UnionWith(data.DailyRecords.Select(r => r.CharacterName));
+            names.UnionWith(data.GrowthRecords.Select(r => r.CharacterName));
+            names.UnionWith(data.BossRewardRecords.Select(r => r.CharacterName));
+            names.UnionWith(data.HexaSkillRecords.Select(r => r.CharacterName));
+            names.UnionWith(data.ItemChangeRecords.Select(r => r.CharacterName));
+            names.Remove(""); // 빈 이름 제거
+
+            foreach (var name in names)
+            {
+                var subset = new StatisticsData
+                {
+                    LastUpdated = data.LastUpdated,
+                    DailyRecords = data.DailyRecords.Where(r => r.CharacterName == name).ToList(),
+                    GrowthRecords = data.GrowthRecords.Where(r => r.CharacterName == name).ToList(),
+                    BossRewardRecords = data.BossRewardRecords.Where(r => r.CharacterName == name).ToList(),
+                    HexaSkillRecords = data.HexaSkillRecords.Where(r => r.CharacterName == name).ToList(),
+                    ItemChangeRecords = data.ItemChangeRecords.Where(r => r.CharacterName == name).ToList(),
+                };
+                Save(name, subset);
+            }
+        }
+
+        #region Helper Methods (Updated signatures)
 
         /// <summary>
         /// 특정 캐릭터의 데이터가 존재하는지 확인
         /// </summary>
-        public static bool HasDataForCharacter(string characterId)
+        /// <summary>
+        /// 특정 캐릭터의 데이터가 존재하는지 확인
+        /// </summary>
+        public static bool HasDataForCharacter(string characterId, string characterName)
         {
-            try
-            {
-                var data = Load();
-                return data.GrowthRecords.Any(r => r.CharacterId == characterId);
-            }
-            catch
-            {
-                return false;
-            }
+            var data = Load(characterName);
+            return data.GrowthRecords.Any(r => r.CharacterId == characterId);
         }
 
+        /// <summary>
+        /// 특정 캐릭터의 수집된 데이터 일수 반환 (캐릭터 이름 필요하면 오버로딩)
+        /// </summary>
         /// <summary>
         /// 특정 캐릭터의 수집된 데이터 일수 반환
         /// </summary>
-        public static int GetCollectedDaysCount(string characterId)
+        public static int GetCollectedDaysCount(string characterId, string characterName)
         {
-            try
-            {
-                var data = Load();
-                return data.GrowthRecords
-                    .Where(r => r.CharacterId == characterId)
-                    .Select(r => r.Date.Date)
-                    .Distinct()
-                    .Count();
-            }
-            catch
-            {
-                return 0;
-            }
+            var data = Load(characterName);
+            return data.GrowthRecords
+                .Where(r => r.CharacterId == characterId)
+                .Select(r => r.Date.Date)
+                .Distinct()
+                .Count();
         }
 
         /// <summary>
-        /// 특정 캐릭터의 수집된 날짜 목록 반환 (캘린더용)
+        /// 특정 캐릭터의 수집된 날짜 목록 반환
         /// </summary>
-        public static HashSet<DateTime> GetCollectedDatesForCharacter(string characterId)
+        /// <summary>
+        /// 특정 캐릭터의 수집된 날짜 목록 반환
+        /// </summary>
+        public static HashSet<DateTime> GetCollectedDatesForCharacter(string characterId, string characterName)
         {
-            try
-            {
-                var data = Load();
-                return data.GrowthRecords
-                    .Where(r => r.CharacterId == characterId)
-                    .Select(r => r.Date.Date)
-                    .ToHashSet();
-            }
-            catch
-            {
-                return new HashSet<DateTime>();
-            }
+            var data = Load(characterName);
+            return data.GrowthRecords
+                .Where(r => r.CharacterId == characterId)
+                .Select(r => r.Date.Date)
+                .ToHashSet();
         }
 
         /// <summary>
         /// 특정 캐릭터의 누락 날짜 목록 반환 (최근 N일 기준)
         /// </summary>
-        public static List<DateTime> GetMissingDatesForCharacter(string characterId, DateTime startDate, DateTime endDate)
+        /// <summary>
+        /// 특정 캐릭터의 누락 날짜 목록 반환 (최근 N일 기준)
+        /// </summary>
+        public static List<DateTime> GetMissingDatesForCharacter(string characterId, string characterName, DateTime startDate, DateTime endDate)
         {
-            var collectedDates = GetCollectedDatesForCharacter(characterId);
+            var collectedDates = GetCollectedDatesForCharacter(characterId, characterName);
             var missingDates = new List<DateTime>();
 
             for (var date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
@@ -269,15 +414,15 @@ namespace MapleHomework.Services
         /// <summary>
         /// 특정 날짜에 완전한 데이터가 있는지 확인 (경험치 데이터 기준)
         /// </summary>
-        public static bool HasCompleteDataForDate(string characterId, DateTime date)
+        public static bool HasCompleteDataForDate(string characterId, string characterName, DateTime date)
         {
             try
             {
-                var data = Load();
+                var data = Load(characterName);
                 // 해당 날짜에 GrowthRecord가 있는지 확인
                 var hasGrowthRecord = data.GrowthRecords
                     .Any(r => r.CharacterId == characterId && r.Date.Date == date.Date);
-                
+
                 return hasGrowthRecord;
             }
             catch
@@ -289,18 +434,18 @@ namespace MapleHomework.Services
         /// <summary>
         /// 특정 날짜의 불완전한 데이터 제거
         /// </summary>
-        public static void RemoveIncompleteDataForDate(string characterId, DateTime date)
+        public static void RemoveIncompleteDataForDate(string characterId, string characterName, DateTime date)
         {
             try
             {
-                var data = Load();
-                
+                var data = Load(characterName);
+
                 // 해당 날짜의 모든 관련 레코드 제거
                 data.GrowthRecords.RemoveAll(r => r.CharacterId == characterId && r.Date.Date == date.Date);
                 data.HexaSkillRecords.RemoveAll(r => r.CharacterId == characterId && r.Date.Date == date.Date);
                 data.ItemChangeRecords.RemoveAll(r => r.CharacterId == characterId && r.Date.Date == date.Date);
-                
-                Save(data);
+
+                Save(characterName, data);
             }
             catch { }
         }
@@ -309,21 +454,21 @@ namespace MapleHomework.Services
         /// 특정 캐릭터의 분석 데이터(장비 변경, 스킬 변경)를 초기화합니다.
         /// 새로고침(재분석) 시 사용됩니다.
         /// </summary>
-        public static void ClearAnalysisData(string characterId)
+        public static void ClearAnalysisData(string characterId, string characterName)
         {
             try
             {
-                var data = Load();
-                
+                var data = Load(characterName);
+
                 // 해당 캐릭터의 장비 변경 내역 삭제
                 int removedItems = data.ItemChangeRecords.RemoveAll(r => r.CharacterId == characterId);
-                
+
                 // 해당 캐릭터의 6차 스킬 변경 내역 삭제
                 int removedSkills = data.HexaSkillRecords.RemoveAll(r => r.CharacterId == characterId);
-                
+
                 // 성장 기록(GrowthRecords)은 유지합니다 (원본 API 데이터가 없을 수도 있으므로)
-                
-                Save(data);
+
+                Save(characterName, data);
             }
             catch (Exception ex)
             {
@@ -331,32 +476,7 @@ namespace MapleHomework.Services
             }
         }
 
-        public static StatisticsData Load()
-        {
-            try
-            {
-                if (!File.Exists(FilePath))
-                    return new StatisticsData();
 
-                string json = File.ReadAllText(FilePath);
-                return JsonSerializer.Deserialize<StatisticsData>(json, JsonOptions) ?? new StatisticsData();
-            }
-            catch
-            {
-                return new StatisticsData();
-            }
-        }
-
-        public static void Save(StatisticsData data)
-        {
-            try
-            {
-                data.LastUpdated = DateTime.Now;
-                string json = JsonSerializer.Serialize(data, JsonOptions);
-                File.WriteAllText(FilePath, json);
-            }
-            catch { }
-        }
 
         public static void RecordDailyCompletion(string characterId, string characterName,
             int dailyCompleted, int dailyTotal,
@@ -365,7 +485,7 @@ namespace MapleHomework.Services
             int monthlyCompleted, int monthlyTotal,
             long bossRewardEarned)
         {
-            var data = Load();
+            var data = Load(characterName);
             var today = DateTime.Today;
 
             var existingRecord = data.DailyRecords
@@ -406,22 +526,22 @@ namespace MapleHomework.Services
                 .Where(r => r.Date >= DateTime.Today.AddDays(-90))
                 .ToList();
 
-            Save(data);
+            Save(characterName, data);
         }
 
-        public static void RecordCharacterGrowth(string characterId, string characterName, 
+        public static void RecordCharacterGrowth(string characterId, string characterName,
             int level, long experience = 0, double experienceRate = 0,
             long combatPower = 0, int unionLevel = 0, long unionPower = 0)
         {
-            RecordCharacterGrowthForDate(DateTime.Today, characterId, characterName, 
+            RecordCharacterGrowthForDate(DateTime.Today, characterId, characterName,
                 level, experience, experienceRate, combatPower, unionLevel, unionPower);
         }
 
-        public static void RecordCharacterGrowthForDate(DateTime date, string characterId, string characterName, 
+        public static void RecordCharacterGrowthForDate(DateTime date, string characterId, string characterName,
             int level, long experience = 0, double experienceRate = 0,
             long combatPower = 0, int unionLevel = 0, long unionPower = 0)
         {
-            var data = Load();
+            var data = Load(characterName);
 
             // 해당 캐릭터의 역대 최고 전투력 조회
             var historicalMaxCombatPower = data.GrowthRecords
@@ -442,14 +562,14 @@ namespace MapleHomework.Services
                 existingRecord.Experience = experience;
                 existingRecord.ExperienceRate = experienceRate;
                 existingRecord.TotalExp = totalExp;
-                
+
                 // 전투력: 항상 최신 값으로 업데이트 (그래프 표시를 위해)
                 if (combatPower > 0)
                 {
                     existingRecord.CombatPower = combatPower;
                     existingRecord.HighestCombatPower = Math.Max(combatPower, Math.Max(existingRecord.HighestCombatPower, historicalMaxCombatPower));
                 }
-                
+
                 existingRecord.UnionLevel = unionLevel;
                 existingRecord.UnionPower = unionPower;
             }
@@ -476,7 +596,7 @@ namespace MapleHomework.Services
                 .Where(r => r.Date >= DateTime.Today.AddDays(-365))
                 .ToList();
 
-            Save(data);
+            Save(characterName, data);
         }
 
         public static void RecordHexaSkillChange(string characterId, string characterName,
@@ -485,11 +605,11 @@ namespace MapleHomework.Services
             if (oldLevel == newLevel) return;
 
             var recordDate = date ?? DateTime.Now;
-            var data = Load();
-            
-            if (data.HexaSkillRecords.Any(r => r.Date.Date == recordDate.Date && 
-                                               r.CharacterId == characterId && 
-                                               r.SkillName == skillName && 
+            var data = Load(characterName);
+
+            if (data.HexaSkillRecords.Any(r => r.Date.Date == recordDate.Date &&
+                                               r.CharacterId == characterId &&
+                                               r.SkillName == skillName &&
                                                r.NewLevel == newLevel))
             {
                 return;
@@ -510,7 +630,7 @@ namespace MapleHomework.Services
                 .Where(r => r.Date >= DateTime.Today.AddDays(-180))
                 .ToList();
 
-            Save(data);
+            Save(characterName, data);
         }
 
         public static void RecordItemChange(string characterId, string characterName,
@@ -522,13 +642,13 @@ namespace MapleHomework.Services
             if (oldItemName == newItemName && changeType != "옵션 변경") return;
 
             var recordDate = date ?? DateTime.Now;
-            var data = Load();
+            var data = Load(characterName);
 
             // 중복 체크 완화: 같은 날짜에 같은 슬롯에서 같은 아이템이 같은 변경 타입이어도
             // 옵션 변경 내용이 다르면 기록 (옵션 변경 내용으로 구분)
-            if (data.ItemChangeRecords.Any(r => r.Date.Date == recordDate.Date && 
-                                                r.CharacterId == characterId && 
-                                                r.ItemSlot == itemSlot && 
+            if (data.ItemChangeRecords.Any(r => r.Date.Date == recordDate.Date &&
+                                                r.CharacterId == characterId &&
+                                                r.ItemSlot == itemSlot &&
                                                 r.NewItemName == newItemName &&
                                                 r.ChangeType == changeType &&
                                                 r.OptionChangesJson == optionChangesJson))
@@ -556,14 +676,14 @@ namespace MapleHomework.Services
                 .Where(r => r.Date >= DateTime.Today.AddDays(-180))
                 .ToList();
 
-            Save(data);
+            Save(characterName, data);
         }
 
         public static void RecordWeeklyBossReward(string characterId, string characterName,
             long totalReward, Dictionary<string, long> bossRewards)
         {
-            var data = Load();
-            
+            var data = Load(characterName);
+
             var today = DateTime.Today;
             int daysUntilThursday = ((int)DayOfWeek.Thursday - (int)today.DayOfWeek + 7) % 7;
             if (daysUntilThursday == 0 && today.TimeOfDay < TimeSpan.Zero)
@@ -594,23 +714,23 @@ namespace MapleHomework.Services
                 .Where(r => r.WeekStartDate >= DateTime.Today.AddDays(-365))
                 .ToList();
 
-            Save(data);
+            Save(characterName, data);
         }
 
-        public static List<DailyRecord> GetDailyRecords(string? characterId, DateTime startDate, DateTime endDate)
+        public static List<DailyRecord> GetDailyRecords(string? characterId, string characterName, DateTime startDate, DateTime endDate)
         {
-            var data = Load();
+            var data = Load(characterName);
             var query = data.DailyRecords.Where(r => r.Date >= startDate && r.Date <= endDate);
-            
+
             if (!string.IsNullOrEmpty(characterId))
                 query = query.Where(r => r.CharacterId == characterId);
 
             return query.OrderBy(r => r.Date).ToList();
         }
 
-        public static DateTime? CalculateEstimatedLevelUpDate(string characterId)
+        public static DateTime? CalculateEstimatedLevelUpDate(string characterId, string characterName)
         {
-            var data = Load();
+            var data = Load(characterName);
             var records = data.GrowthRecords
                 .Where(r => r.CharacterId == characterId)
                 .OrderByDescending(r => r.Date)
@@ -623,15 +743,15 @@ namespace MapleHomework.Services
             var oldestRecord = records.Last();
 
             // 실제 경험치 계산 (ExpTable 사용)
-            long latestTotalExp = latestRecord.TotalExp > 0 
-                ? latestRecord.TotalExp 
+            long latestTotalExp = latestRecord.TotalExp > 0
+                ? latestRecord.TotalExp
                 : ExpTable.CalculateTotalExp(latestRecord.Level, latestRecord.ExperienceRate);
-            long oldestTotalExp = oldestRecord.TotalExp > 0 
-                ? oldestRecord.TotalExp 
+            long oldestTotalExp = oldestRecord.TotalExp > 0
+                ? oldestRecord.TotalExp
                 : ExpTable.CalculateTotalExp(oldestRecord.Level, oldestRecord.ExperienceRate);
 
             long expGain = latestTotalExp - oldestTotalExp;
-            
+
             int daysDiff = (latestRecord.Date - oldestRecord.Date).Days;
             if (daysDiff <= 0) return null;
 
@@ -651,9 +771,9 @@ namespace MapleHomework.Services
         /// <summary>
         /// 최근 30일 기준 일간 평균 경험치 상승 (경험치, %)
         /// </summary>
-        public static (long ExpPerDay, double PercentPerDay) GetMonthlyDailyAverageExpGain(string characterId, int days = 30)
+        public static (long ExpPerDay, double PercentPerDay) GetMonthlyDailyAverageExpGain(string characterId, string characterName, int days = 30)
         {
-            var data = Load();
+            var data = Load(characterName);
             var records = data.GrowthRecords
                 .Where(r => r.CharacterId == characterId && r.Date >= DateTime.Today.AddDays(-days))
                 .OrderBy(r => r.Date)
@@ -687,9 +807,9 @@ namespace MapleHomework.Services
         /// <summary>
         /// 레벨업 예상 날짜 (한국어 포맷)
         /// </summary>
-        public static string GetEstimatedLevelUpDateFormatted(string characterId)
+        public static string GetEstimatedLevelUpDateFormatted(string characterId, string characterName)
         {
-            var estimatedDate = CalculateEstimatedLevelUpDate(characterId);
+            var estimatedDate = CalculateEstimatedLevelUpDate(characterId, characterName);
             if (!estimatedDate.HasValue) return "계산 불가";
 
             var daysRemaining = (estimatedDate.Value - DateTime.Today).Days;
@@ -701,9 +821,9 @@ namespace MapleHomework.Services
             return $"약 {daysRemaining / 365}년 후";
         }
 
-        public static List<ExpGrowthInfo> GetExperienceGrowth(string characterId, int days = 7, string mode = "day")
+        public static List<ExpGrowthInfo> GetExperienceGrowth(string characterId, string characterName, int days = 7, string mode = "day")
         {
-            var data = Load();
+            var data = Load(characterName);
             var records = data.GrowthRecords
                 .Where(r => r.CharacterId == characterId && r.Date >= DateTime.Today.AddDays(-days))
                 .OrderBy(r => r.Date)
@@ -757,7 +877,7 @@ namespace MapleHomework.Services
                 double minRate = result.Min(x => x.ExperienceRate);
                 double maxRate = result.Max(x => x.ExperienceRate);
                 double range = maxRate - minRate;
-                
+
                 foreach (var item in result)
                 {
                     if (range > 0.1) // 범위가 0.1% 이상일 때만 스케일링
@@ -770,9 +890,9 @@ namespace MapleHomework.Services
             return result;
         }
 
-        public static List<CombatPowerGrowthInfo> GetCombatPowerGrowth(string characterId, int days = 30, string mode = "day", bool onlyNewHigh = false)
+        public static List<CombatPowerGrowthInfo> GetCombatPowerGrowth(string characterId, string characterName, int days = 30, string mode = "day", bool onlyNewHigh = false)
         {
-            var data = Load();
+            var data = Load(characterName);
             var records = data.GrowthRecords
                 .Where(r => r.CharacterId == characterId && r.Date >= DateTime.Today.AddDays(-days) && r.CombatPower > 0)
                 .OrderBy(r => r.Date)
@@ -787,7 +907,7 @@ namespace MapleHomework.Services
 
             var result = new List<CombatPowerGrowthInfo>();
             long runningMax = 0;
-            
+
             // onlyNewHigh 모드: 가장 오래된 날짜부터 최신 날짜까지 순서대로 순회하며
             // 전투력이 최고 기록을 갱신할 때마다 기록
             if (onlyNewHigh)
@@ -796,7 +916,7 @@ namespace MapleHomework.Services
                 {
                     var curr = buckets[i];
                     long newPower = curr.CombatPower;
-                    
+
                     if (newPower > runningMax)
                     {
                         result.Add(new CombatPowerGrowthInfo
@@ -836,7 +956,7 @@ namespace MapleHomework.Services
                 long maxPower = result.Max(x => x.NewPower);
                 long minPower = result.Min(x => x.NewPower);
                 long range = maxPower - minPower;
-                
+
                 foreach (var item in result)
                 {
                     if (range > 0)
@@ -866,9 +986,9 @@ namespace MapleHomework.Services
             return dt.Date.AddDays(-diff);
         }
 
-        public static List<HexaSkillRecord> GetHexaSkillHistory(string? characterId = null, int limit = 20)
+        public static List<HexaSkillRecord> GetHexaSkillHistory(string? characterId, string characterName, int limit = 20)
         {
-            var data = Load();
+            var data = Load(characterName);
             var query = data.HexaSkillRecords.AsEnumerable();
 
             if (!string.IsNullOrEmpty(characterId))
@@ -877,9 +997,9 @@ namespace MapleHomework.Services
             return query.OrderByDescending(r => r.Date).Take(limit).ToList();
         }
 
-        public static List<ItemChangeRecord> GetItemChangeHistory(string? characterId = null, int limit = 20)
+        public static List<ItemChangeRecord> GetItemChangeHistory(string? characterId, string characterName, int limit = 20)
         {
-            var data = Load();
+            var data = Load(characterName);
             var query = data.ItemChangeRecords.AsEnumerable();
 
             if (!string.IsNullOrEmpty(characterId))
@@ -888,9 +1008,9 @@ namespace MapleHomework.Services
             return query.OrderByDescending(r => r.Date).Take(limit).ToList();
         }
 
-        public static WeeklyReportData GetWeeklyReport(DateTime weekStartDate)
+        public static WeeklyReportData GetWeeklyReport(string characterName, DateTime weekStartDate)
         {
-            var data = Load();
+            var data = Load(characterName);
             var weekEndDate = weekStartDate.AddDays(7);
 
             var records = data.DailyRecords
@@ -913,9 +1033,9 @@ namespace MapleHomework.Services
             };
         }
 
-        public static MonthlyReportData GetMonthlyReport(int year, int month)
+        public static MonthlyReportData GetMonthlyReport(string characterName, int year, int month)
         {
-            var data = Load();
+            var data = Load(characterName);
             var monthStart = new DateTime(year, month, 1);
             var monthEnd = monthStart.AddMonths(1);
 
@@ -942,16 +1062,16 @@ namespace MapleHomework.Services
                 TotalBossReward = bossRecords.Sum(r => r.TotalReward),
                 AverageCompletionRate = records.Any() ? records.Average(r => r.OverallCompletionRate) : 0,
                 CompletionByDayOfWeek = completionByDayOfWeek,
-                MostProductiveDay = completionByDayOfWeek.Any() 
-                    ? completionByDayOfWeek.OrderByDescending(x => x.Value).First().Key 
+                MostProductiveDay = completionByDayOfWeek.Any()
+                    ? completionByDayOfWeek.OrderByDescending(x => x.Value).First().Key
                     : DayOfWeek.Monday,
                 TotalActiveDays = records.Select(r => r.Date.Date).Distinct().Count()
             };
         }
 
-        public static List<CharacterGrowthRecord> GetGrowthHistory(string characterId, int days = 30)
+        public static List<CharacterGrowthRecord> GetGrowthHistory(string characterId, string characterName, int days = 30)
         {
-            var data = Load();
+            var data = Load(characterName);
             var cutoffDate = DateTime.Today.AddDays(-days);
 
             return data.GrowthRecords
@@ -967,24 +1087,25 @@ namespace MapleHomework.Services
         {
             try
             {
-                // statistics_data.json 내용 비우기
-            var data = Load();
-            data.GrowthRecords.Clear();
-            data.HexaSkillRecords.Clear();
-            data.ItemChangeRecords.Clear();
-            Save(data);
-                
+                // 백업용: 모든 통계 파일 삭제
+                if (Directory.Exists(DataFolder))
+                {
+                    var files = Directory.GetFiles(DataFolder, "statistics.json", SearchOption.AllDirectories);
+                    foreach (var f in files)
+                        File.Delete(f);
+                }
+
                 // api-raw 폴더 삭제
                 var apiRawPath = System.IO.Path.Combine(DataFolder, "api-raw");
                 if (System.IO.Directory.Exists(apiRawPath))
                 {
                     System.IO.Directory.Delete(apiRawPath, true);
                 }
-                
-                // statistics_data.json 파일 삭제
-                if (System.IO.File.Exists(FilePath))
+
+                // Legacy file
+                if (System.IO.File.Exists(LegacyFilePath))
                 {
-                    System.IO.File.Delete(FilePath);
+                    System.IO.File.Delete(LegacyFilePath);
                 }
             }
             catch (Exception ex)
@@ -992,6 +1113,7 @@ namespace MapleHomework.Services
                 System.Diagnostics.Debug.WriteLine($"ClearGrowthData error: {ex.Message}");
             }
         }
+        #endregion
     }
 
     public class ExpGrowthInfo
@@ -1001,17 +1123,17 @@ namespace MapleHomework.Services
         public double ExperienceRate { get; set; }
         public double DailyGrowth { get; set; } // % 단위
         public double GraphRate { get; set; }
-        
+
         // 실제 경험치 값 (ExpTable 기반)
         public long TotalExp { get; set; } // 누적 경험치
         public long DailyExpGain { get; set; } // 일일 경험치 획득량
         public long RequiredExp { get; set; } // 현재 레벨업 필요 경험치
-        
+
         // 한국어 포맷팅된 문자열
         public string DailyExpGainFormatted => ExpTable.FormatExpKorean(DailyExpGain);
         public string TotalExpFormatted => ExpTable.FormatExpKorean(TotalExp);
         public string RequiredExpFormatted => ExpTable.FormatExpKorean(RequiredExp);
-        
+
         // 레벨업 여부
         public bool LeveledUp { get; set; }
         public int PreviousLevel { get; set; }
@@ -1033,7 +1155,7 @@ namespace MapleHomework.Services
         public long NewPower { get; set; }
         public long Change { get; set; }
         public double GraphRate { get; set; }
-        
+
         // 한국어 단위 포맷팅
         public string NewPowerFormatted => ExpTable.FormatExpKorean(NewPower);
         public string ChangeFormatted => Change >= 0 ? $"+{ExpTable.FormatExpKorean(Change)}" : ExpTable.FormatExpKorean(Change);
