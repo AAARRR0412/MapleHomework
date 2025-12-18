@@ -1,7 +1,11 @@
 using System;
 using System.Drawing;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using MapleHomework.Controls;
 using MapleHomework.Models;
 using MapleHomework.Services;
 using MapleHomework.ViewModels;
@@ -17,7 +21,7 @@ namespace MapleHomework
         private Forms.NotifyIcon? _notifyIcon;
         private NotificationService? _notificationService;
         private OverlayWindow? _overlayWindow;
-        private SidebarWindow? _sidebarWindow;
+
 
         /// <summary>
         /// NotificationService 인스턴스 (외부 접근용)
@@ -26,94 +30,60 @@ namespace MapleHomework
 
         public MainWindow(MainViewModel viewModel)
         {
+            InitializeComponent();
+
             Instance = this;
 
-            InitializeComponent();
             ViewModel = viewModel;
             this.DataContext = ViewModel;
 
-            // 사이드바 상태 변경 구독
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-
-            // 메인 창 위치/크기 변경 시 사이드바 위치 동기화
-            this.LocationChanged += MainWindow_LocationChanged;
+            // 메인 창 위치/크기 변경 시 사이드바 위치 동기화 (제거: 오버레이이므로 불필요)
             this.SizeChanged += MainWindow_SizeChanged;
-            this.StateChanged += MainWindow_StateChanged;
 
             InitializeNotifyIcon();
             InitializeServices();
             LoadSavedData();
             RestoreWindowPosition(); // 저장된 위치 복원
 
-            // 창 크기 변경 시 열 수 업데이트 및 사이드바 초기화
+            // 창 크기 변경 시 열 수 업데이트
             this.Loaded += (s, e) =>
             {
                 UpdateTaskColumnCount();
-                InitializeSidebarWindow();
+                ShowTutorialIfFirstRun();
             };
         }
 
-        private void InitializeSidebarWindow()
+        private void ShowTutorialIfFirstRun()
         {
-            _sidebarWindow = new SidebarWindow(ViewModel, OnSidebarCharacterSelected);
-            _sidebarWindow.Owner = this;
-        }
-
-        private void OnSidebarCharacterSelected(CharacterProfile character)
-        {
-            ViewModel.SelectedCharacter = character;
-        }
-
-        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ViewModel.IsSidebarOpen))
+            try
             {
-                ToggleSidebarWindow();
+                var settings = Models.ConfigManager.Load();
+                if (!settings.HasSeenTutorial)
+                {
+                    var tutorial = new TutorialOverlay();
+                    tutorial.Owner = this;
+                    tutorial.ShowDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                // 튜토리얼 오류 시 건너뛰기
+                System.Diagnostics.Debug.WriteLine($"Tutorial error: {ex.Message}");
+                var settings = Models.ConfigManager.Load();
+                settings.HasSeenTutorial = true;
+                Models.ConfigManager.Save(settings);
             }
         }
 
-        private void ToggleSidebarWindow()
+
+
+        // 사이드바 오버레이 배경 클릭 시 닫기
+        private void SidebarOverlay_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_sidebarWindow == null) return;
-
-            if (ViewModel.IsSidebarOpen)
+            // 배경 부분만 클릭했을 때 닫기 (내부 컨텐츠 클릭 제외)
+            if (e.OriginalSource == sender || (e.OriginalSource is System.Windows.Controls.Border b && b.Name == ""))
             {
-                UpdateSidebarPosition();
-                _sidebarWindow.ShowWithAnimation();
-            }
-            else
-            {
-                _sidebarWindow.HideWithAnimation();
-            }
-        }
-
-        private void UpdateSidebarPosition()
-        {
-            if (_sidebarWindow == null) return;
-
-            _sidebarWindow.UpdatePosition(this.Left, this.Top, this.ActualHeight);
-        }
-
-        private void MainWindow_LocationChanged(object? sender, EventArgs e)
-        {
-            if (ViewModel.IsSidebarOpen)
-            {
-                UpdateSidebarPosition();
-            }
-        }
-
-        private void MainWindow_StateChanged(object? sender, EventArgs e)
-        {
-            if (_sidebarWindow == null) return;
-
-            if (this.WindowState == WindowState.Minimized)
-            {
-                _sidebarWindow.Hide();
-            }
-            else if (this.WindowState == WindowState.Normal && ViewModel.IsSidebarOpen)
-            {
-                UpdateSidebarPosition();
-                _sidebarWindow.Show();
+                ViewModel.IsSidebarOpen = false;
             }
         }
 
@@ -167,28 +137,29 @@ namespace MapleHomework
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateTaskColumnCount();
-
-            // 사이드바 위치도 업데이트
-            if (ViewModel.IsSidebarOpen)
-            {
-                UpdateSidebarPosition();
-            }
         }
 
         private void UpdateTaskColumnCount()
         {
-            // 콘텐츠 영역 너비 기준으로 열 수 결정
-            double contentWidth = this.ActualWidth - 80; // 좌우 패딩 고려
+            // 콘텐츠 영역 너비 (좌우 패딩 제외)
+            double contentWidth = this.ActualWidth - 80;
 
-            // 각 박스당 최소 200px 필요
-            const double minItemWidth = 200;
+            // 사용자 요청: 3열 기준 670px로 조정
+            // 3열: 670px 이상
+            // 2열: 430px 이상
 
-            if (contentWidth >= minItemWidth * 3)
+            if (contentWidth >= 670)
+            {
                 ViewModel.TaskColumnCount = 3;
-            else if (contentWidth >= minItemWidth * 2)
+            }
+            else if (contentWidth >= 430)
+            {
                 ViewModel.TaskColumnCount = 2;
+            }
             else
+            {
                 ViewModel.TaskColumnCount = 1;
+            }
         }
 
         private void InitializeNotifyIcon()
@@ -231,6 +202,8 @@ namespace MapleHomework
             contextMenu.Items.Add("열기", null, (s, e) => ShowWindow());
             contextMenu.Items.Add("-"); // 구분선
             contextMenu.Items.Add("알림 테스트", null, (s, e) => _notificationService?.TestNotification());
+            contextMenu.Items.Add("시작 팝업 테스트", null, (s, e) => ShowStartupPopupTest());
+            contextMenu.Items.Add("튜토리얼 보기", null, (s, e) => ShowTutorialManually());
             contextMenu.Items.Add("-"); // 구분선
             contextMenu.Items.Add("종료", null, (s, e) => ExitApplication());
             _notifyIcon.ContextMenuStrip = contextMenu;
@@ -255,6 +228,38 @@ namespace MapleHomework
             this.Show();
             this.WindowState = WindowState.Normal;
             this.Activate();
+        }
+
+        /// <summary>
+        /// 시작 팝업 테스트 (트레이 메뉴)
+        /// </summary>
+        private void ShowStartupPopupTest()
+        {
+            var popup = new StartupPopupWindow();
+            popup.Show();
+        }
+
+        /// <summary>
+        /// 튜토리얼 수동 표시 (트레이 메뉴)
+        /// </summary>
+        private void ShowTutorialManually()
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    ShowWindow(); // 윈도우 보이기 및 활성화
+
+                    var tutorial = new TutorialOverlay();
+                    tutorial.Owner = this;
+                    tutorial.ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Tutorial error: {ex.Message}");
+                    System.Windows.MessageBox.Show($"튜토리얼 실행 중 오류가 발생했습니다:\n{ex.Message}", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            });
         }
 
         private void ExitApplication()
@@ -318,7 +323,7 @@ namespace MapleHomework
             _notificationService?.Stop();
             _overlayWindow?.StopOverlay();
             _overlayWindow?.Close();
-            _sidebarWindow?.Close();
+            // _sidebarWindow?.Close(); // 통합으로 인해 제거
             _notifyIcon?.Dispose();
             base.OnClosed(e);
         }
@@ -388,12 +393,200 @@ namespace MapleHomework
             settingsWindow.ShowDialog();
         }
 
-        private void ThemeToggleButton_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region Character Drag & Drop
+
+        private CharacterProfile? _draggedCharacter;
+        private System.Windows.Point _dragStartPoint;
+        private DragAdorner? _dragAdorner;
+        private AdornerLayer? _adornerLayer;
+        private FrameworkElement? _draggedElement;
+        private CharacterProfile? _lastHoveredCharacter;
+
+        private void CharacterCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // 다크/라이트 모드 전환 (현재는 다크 모드만 지원)
-            // TODO: 라이트 모드 구현
-            System.Windows.MessageBox.Show("라이트 모드는 추후 지원 예정입니다.", "알림",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            _dragStartPoint = e.GetPosition(null);
+            if (sender is FrameworkElement element && element.DataContext is CharacterProfile character)
+            {
+                _draggedCharacter = character;
+                _draggedElement = element;
+            }
+        }
+
+        private void CharacterCard_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed || _draggedCharacter == null || _draggedElement == null) return;
+
+            var currentPos = e.GetPosition(null);
+            var diff = _dragStartPoint - currentPos;
+
+            // 드래그 시작 임계값 (5픽셀)
+            if (Math.Abs(diff.X) > 5 || Math.Abs(diff.Y) > 5)
+            {
+                // Adorner 생성
+                CreateDragAdorner(_draggedElement);
+
+                var data = new System.Windows.DataObject("CharacterProfile", _draggedCharacter);
+
+                // 드래그 중 위치 업데이트를 위한 이벤트 연결
+                _draggedElement.QueryContinueDrag += OnQueryContinueDrag;
+
+                DragDrop.DoDragDrop(_draggedElement, data, System.Windows.DragDropEffects.Move);
+
+                // 드래그 종료 후 정리
+                _draggedElement.QueryContinueDrag -= OnQueryContinueDrag;
+                RemoveDragAdorner();
+                ResetCardTransforms();
+
+                _draggedCharacter = null;
+                _draggedElement = null;
+                _lastHoveredCharacter = null;
+            }
+        }
+
+        private void CreateDragAdorner(FrameworkElement element)
+        {
+            if (_adornerLayer != null) return;
+
+            _adornerLayer = AdornerLayer.GetAdornerLayer(this);
+            if (_adornerLayer == null) return;
+
+            // VisualBrush로 카드 복제
+            var visualBrush = new VisualBrush(element)
+            {
+                Opacity = 0.9,
+                Stretch = Stretch.None
+            };
+
+            _dragAdorner = new DragAdorner(this, element.ActualWidth, element.ActualHeight, visualBrush);
+
+            // 마우스 오프셋 설정
+            var mousePos = System.Windows.Input.Mouse.GetPosition(element);
+            _dragAdorner.SetOffsets(mousePos.X, mousePos.Y);
+
+            _adornerLayer.Add(_dragAdorner);
+
+            // 초기 위치 설정
+            var screenPos = System.Windows.Input.Mouse.GetPosition(this);
+            _dragAdorner.UpdatePosition(screenPos.X, screenPos.Y);
+        }
+
+        private void RemoveDragAdorner()
+        {
+            if (_adornerLayer != null && _dragAdorner != null)
+            {
+                _adornerLayer.Remove(_dragAdorner);
+            }
+            _adornerLayer = null;
+            _dragAdorner = null;
+        }
+
+        private void OnQueryContinueDrag(object sender, System.Windows.QueryContinueDragEventArgs e)
+        {
+            // 드래그 중 Adorner 위치 업데이트
+            if (_dragAdorner != null)
+            {
+                var pos = System.Windows.Input.Mouse.GetPosition(this);
+                _dragAdorner.UpdatePosition(pos.X, pos.Y);
+            }
+        }
+
+        private void CharacterList_DragOver(object sender, System.Windows.DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent("CharacterProfile"))
+            {
+                e.Effects = System.Windows.DragDropEffects.None;
+                e.Handled = true;
+                return;
+            }
+
+            e.Effects = System.Windows.DragDropEffects.Move;
+
+            // 현재 마우스 위치의 캐릭터 찾기
+            var targetCharacter = FindCharacterAtPosition(e);
+
+            // 타겟 변경 시 카드 이동 애니메이션
+            if (targetCharacter != null && targetCharacter != _lastHoveredCharacter && targetCharacter != _draggedCharacter)
+            {
+                AnimateCardShift(targetCharacter);
+                _lastHoveredCharacter = targetCharacter;
+            }
+
+            // Adorner 위치 업데이트
+            if (_dragAdorner != null)
+            {
+                var pos = e.GetPosition(this);
+                _dragAdorner.UpdatePosition(pos.X, pos.Y);
+            }
+
+            e.Handled = true;
+        }
+
+        private CharacterProfile? FindCharacterAtPosition(System.Windows.DragEventArgs e)
+        {
+            if (e.OriginalSource is FrameworkElement element)
+            {
+                var current = element;
+                while (current != null && !(current.DataContext is CharacterProfile))
+                {
+                    current = LogicalTreeHelper.GetParent(current) as FrameworkElement
+                           ?? VisualTreeHelper.GetParent(current) as FrameworkElement;
+                }
+                return current?.DataContext as CharacterProfile;
+            }
+            return null;
+        }
+
+        private void AnimateCardShift(CharacterProfile hoveredCharacter)
+        {
+            // 간단한 시각적 피드백: 호버된 카드의 테두리 하이라이트
+            // (복잡한 TranslateTransform 애니메이션은 ItemsControl 구조상 어려움)
+            // 실제 재정렬은 Drop에서 처리
+        }
+
+        private void CharacterCard_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // 드래그가 시작되지 않았으면 클릭으로 선택
+            if (_draggedCharacter != null && _dragAdorner == null)
+            {
+                // Adorner가 생성되지 않았다면 드래그가 시작되지 않은 것 = 클릭
+                ViewModel.SelectCharacterCommand.Execute(_draggedCharacter);
+            }
+            _draggedCharacter = null;
+            _draggedElement = null;
+        }
+
+        private void ResetCardTransforms()
+        {
+            // 모든 카드의 Transform 초기화
+            _lastHoveredCharacter = null;
+        }
+
+        private void CharacterList_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            RemoveDragAdorner();
+            ResetCardTransforms();
+
+            if (!e.Data.GetDataPresent("CharacterProfile")) return;
+
+            var sourceCharacter = e.Data.GetData("CharacterProfile") as CharacterProfile;
+            if (sourceCharacter == null) return;
+
+            var targetCharacter = FindCharacterAtPosition(e);
+
+            if (targetCharacter != null && sourceCharacter != targetCharacter)
+            {
+                ViewModel.MoveCharacter(sourceCharacter, targetCharacter);
+            }
+        }
+
+        private void CharacterDragDropList_ItemsReordered(object sender, RoutedEventArgs e)
+        {
+            if (e is Controls.ItemsReorderedEventArgs args)
+            {
+                ViewModel.MoveCharacterByIndex(args.OldIndex, args.NewIndex);
+            }
         }
 
         #endregion

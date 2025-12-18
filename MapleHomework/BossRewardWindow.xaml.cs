@@ -13,69 +13,13 @@ using SolidColorBrush = System.Windows.Media.SolidColorBrush;
 
 namespace MapleHomework
 {
-    /// <summary>
-    /// 보스 수익 항목 (UI 바인딩용)
-    /// </summary>
-    public class BossRewardItem
-    {
-        public string BossName { get; set; } = "";
-        public string DisplayName { get; set; } = "";
-        public BossDifficulty Difficulty { get; set; }
-        public string DifficultyText { get; set; } = "";
-        public int PartySize { get; set; } = 1;
-        public bool IsChecked { get; set; }
-        public bool IsMonthly { get; set; }
 
-        public long TotalReward { get; set; }
-        public long PersonalReward => TotalReward / PartySize;
-
-        // UI 바인딩용 속성들
-        public string TotalRewardText => PartySize > 1 ? $"(총 {BossRewardData.FormatMeso(TotalReward)})" : "";
-        public string PersonalRewardText => BossRewardData.FormatMeso(PersonalReward);
-        public string PartyInfoText => PartySize > 1 ? $"{PartySize}인 파티" : "솔로";
-
-        // 파티원 2인 이상일 때만 총 보상 표시
-        public Visibility ShowTotalReward => PartySize > 1 ? Visibility.Visible : Visibility.Collapsed;
-
-        // 배경색 - 어두운 테마에 맞게
-        public Brush Background => IsChecked
-            ? new SolidColorBrush(Color.FromArgb(40, 76, 217, 100))   // 녹색 (완료)
-            : new SolidColorBrush(Color.FromRgb(85, 95, 110));        // 기본 어두운 색
-
-        public Brush BorderColor => IsChecked
-            ? new SolidColorBrush(Color.FromArgb(80, 76, 217, 100))   // 녹색 테두리
-            : new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)); // 투명한 테두리
-
-        public Brush CheckBackground => IsChecked
-            ? new SolidColorBrush(Color.FromRgb(76, 217, 100))        // 녹색
-            : new SolidColorBrush(Color.FromRgb(100, 110, 125));      // 회색
-
-        public Visibility CheckVisibility => IsChecked ? Visibility.Visible : Visibility.Collapsed;
-
-        public Brush DifficultyBackground => Difficulty switch
-        {
-            BossDifficulty.Easy => new SolidColorBrush(Color.FromRgb(90, 200, 250)),    // 파란색
-            BossDifficulty.Normal => new SolidColorBrush(Color.FromRgb(52, 199, 89)),   // 녹색
-            BossDifficulty.Hard => new SolidColorBrush(Color.FromRgb(255, 149, 0)),     // 주황색
-            BossDifficulty.Chaos => new SolidColorBrush(Color.FromRgb(255, 59, 48)),    // 빨간색
-            BossDifficulty.Extreme => new SolidColorBrush(Color.FromRgb(175, 82, 222)), // 보라색
-            _ => new SolidColorBrush(Color.FromRgb(128, 128, 128))
-        };
-
-        // 텍스트 색상 - 어두운 배경에 밝은 글씨
-        public Brush TextForeground => IsChecked
-            ? new SolidColorBrush(Color.FromArgb(180, 200, 210, 220))  // 흐릿한 밝은 색
-            : new SolidColorBrush(Color.FromRgb(255, 255, 255));       // 흰색
-
-        public Brush RewardForeground => IsChecked
-            ? new SolidColorBrush(Color.FromRgb(95, 224, 134))         // 밝은 녹색 (완료)
-            : new SolidColorBrush(Color.FromRgb(255, 215, 0));         // 금색
-    }
 
     public partial class BossRewardWindow : FluentWindow
     {
         private readonly AppData _appData;
         private readonly MapleHomework.ViewModels.MainViewModel _viewModel;
+        public MapleHomework.ViewModels.MainViewModel ViewModel => _viewModel;
         private CharacterProfile? _selectedCharacter;
 
         public BossRewardWindow(AppData appData, MapleHomework.ViewModels.MainViewModel viewModel)
@@ -83,6 +27,7 @@ namespace MapleHomework
             InitializeComponent();
             _appData = appData;
             _viewModel = viewModel;
+            DataContext = this; // 바인딩을 위해 추가
 
             ApplyThemeResources();
             ThemeService.OnThemeChanged += OnThemeChanged_Service;
@@ -95,7 +40,52 @@ namespace MapleHomework
             }
 
             TxtTotalCharacters.Text = $"총 {appData.Characters.Count}개 캐릭터";
+            TxtTotalCharacters.Text = $"총 {appData.Characters.Count}개 캐릭터";
+
+            // [New] 서버 변경 감지
+            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+
             CalculateTotalRewards();
+        }
+
+        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MapleHomework.ViewModels.MainViewModel.SelectedServer))
+            {
+                // UI 스레드에서 실행
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateCharacterFilter();
+                    CalculateTotalRewards();
+                });
+            }
+        }
+
+        private void UpdateCharacterFilter()
+        {
+            var selectedServer = _viewModel.SelectedServer;
+            var filteredList = (selectedServer == "전체")
+                ? _appData.Characters.ToList()
+                : _appData.Characters.Where(c => c.WorldName == selectedServer).ToList();
+
+            CmbCharacter.ItemsSource = filteredList;
+
+            if (filteredList.Any())
+            {
+                if (_selectedCharacter == null || !filteredList.Contains(_selectedCharacter))
+                {
+                    CmbCharacter.SelectedIndex = 0;
+                }
+                else
+                {
+                    CmbCharacter.SelectedItem = _selectedCharacter;
+                }
+            }
+            else
+            {
+                _selectedCharacter = null;
+            }
+            RefreshBossRewardList();
         }
 
         private void OnThemeChanged_Service(bool isDark)
@@ -108,15 +98,7 @@ namespace MapleHomework
             Dispatcher.Invoke(() =>
             {
                 // 캐릭터 목록 새로고침
-                CmbCharacter.ItemsSource = null;
-                CmbCharacter.ItemsSource = _appData.Characters;
-                if (_appData.Characters.Any())
-                {
-                    if (_selectedCharacter != null && _appData.Characters.Contains(_selectedCharacter))
-                        CmbCharacter.SelectedItem = _selectedCharacter;
-                    else
-                        CmbCharacter.SelectedIndex = 0;
-                }
+                UpdateCharacterFilter();
                 TxtTotalCharacters.Text = $"총 {_appData.Characters.Count}개 캐릭터";
                 RefreshData();
             });
@@ -126,6 +108,7 @@ namespace MapleHomework
         {
             ThemeService.OnThemeChanged -= OnThemeChanged_Service;
             _viewModel.DataChanged -= OnDataChanged;
+            _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
             base.OnClosed(e);
         }
 
@@ -239,7 +222,18 @@ namespace MapleHomework
             long totalWeeklyEarned = 0;    // 획득한 주간 수익
             long totalWeeklyExpected = 0;  // 예상 주간 수익
 
-            foreach (var character in _appData.Characters)
+            // [New] 현재 선택된 서버 필터링 적용
+            var selectedServer = _viewModel.SelectedServer;
+            var targetCharacters = (selectedServer == "전체")
+                ? _appData.Characters.ToList()
+                : _appData.Characters.Where(c => c.WorldName == selectedServer).ToList();
+
+            // 라벨 업데이트
+            TxtTotalLabel.Text = (selectedServer == "전체")
+                ? "전체 캐릭터 합산"
+                : $"{selectedServer} 서버 합산";
+
+            foreach (var character in targetCharacters)
             {
                 // 주간 보스 - 예상 수익 (전체)
                 foreach (var boss in character.BossTasks.Where(b => b.IsActive))
@@ -254,8 +248,8 @@ namespace MapleHomework
                 }
             }
 
-            TxtTotalWeeklyReward.Text = $"{BossRewardData.FormatMeso(totalWeeklyEarned)} 메소";
-            TxtTotalWeeklyExpected.Text = $"{BossRewardData.FormatMeso(totalWeeklyExpected)} 메소";
+            TxtTotalWeeklyReward.Text = $"{BossRewardData.FormatMeso(totalWeeklyEarned)}";
+            TxtTotalWeeklyExpected.Text = $"{BossRewardData.FormatMeso(totalWeeklyExpected)}";
         }
     }
 }

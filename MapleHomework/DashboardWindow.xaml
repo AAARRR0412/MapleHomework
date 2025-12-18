@@ -44,7 +44,10 @@
                 BorderBrush="{DynamicResource BorderColor}" BorderThickness="0,0,0,1"
                 Padding="24,16" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <Grid>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Grid Column 제거하고 각 요소를 절대적 위치로 정렬 -->
+                
+                <!-- 좌측: 타이틀 -->
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Center">
                     <Border Background="#155AC8FA" CornerRadius="12" Padding="12" Margin="0,0,16,0">
                         <ui:SymbolIcon Symbol="DataBarVertical24" FontSize="24" Foreground="#5AC8FA"/>
                     </Border>
@@ -56,7 +59,51 @@
                     </StackPanel>
                 </StackPanel>
                 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <!-- 중앙: 서버 탭 (서브 윈도우) -->
+                <!-- 좌우 요소 너비와 상관없이 항상 윈도우 중앙 유지 -->
+                <ListBox HorizontalAlignment="Center" ItemsSource="{Binding ViewModel.ServerList}" 
+                         SelectedItem="{Binding ViewModel.SelectedServer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Visibility="{Binding ViewModel.IsServerTabVisible, Converter={StaticResource BoolToVis}}"
+                         Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                         VerticalAlignment="Center"
+                         Margin="16,0">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Bd" CornerRadius="12" Padding="12,6" Margin="4,0"
+                                                Background="Transparent" Cursor="Hand">
+                                            <TextBlock Text="{Binding}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Border}}" 
+                                                       FontWeight="Bold" FontSize="13"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{Binding ViewModel.Primary, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="False">
+                                                <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackgroundAlt}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+
+                <!-- 우측: 알림 및 윈도우 버튼 -->
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
                     <Border Background="{DynamicResource CardBackgroundAlt}" CornerRadius="8" Padding="12,8" Margin="0,0,16,0"
                             Visibility="{Binding HasPendingTasks, Converter={StaticResource BoolToVis}}">
                         <StackPanel Orientation="Horizontal">

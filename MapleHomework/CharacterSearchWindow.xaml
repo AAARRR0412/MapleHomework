@@ -29,6 +29,7 @@
             <Setter Property="Height" Value="42"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Margin" Value="2"/>
+            <EventSetter Event="MouseMove" Handler="EquipSlot_MouseMove"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Effect">
@@ -1089,7 +1090,11 @@
                                                         </Style>
                                                     </Grid.Style>
                                                     <Border CornerRadius="12" Background="{DynamicResource CardBackgroundAlt}" 
-                                                            BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                                                            BorderBrush="{DynamicResource BorderColor}" BorderThickness="1"
+                                                            Tag="{Binding}"
+                                                            MouseEnter="HexaCore_MouseEnter"
+                                                            MouseLeave="HexaCore_MouseLeave"
+                                                            MouseMove="HexaCore_MouseMove">
                                                         <Grid>
                                                             <!-- 게이지 배경 (GradientBrush) -->
                                                             <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="12">
@@ -1109,8 +1114,8 @@
                                                                 
                                                                 <!-- 아이콘 (배지 제거됨) -->
                                                                 <Grid Grid.Column="0" Width="44" Height="44" Margin="0,0,12,0" VerticalAlignment="Center">
-                                                                    <Border CornerRadius="8" Background="#20000000">
-                                                                        <Image Source="{Binding SkillIconUrl}" Stretch="Uniform" Margin="4"/>
+                                                                    <Border CornerRadius="8" Background="Transparent">
+                                                                        <Image Source="{Binding SkillIcon}" Stretch="Uniform" Margin="4"/>
                                                                     </Border>
                                                                     <!-- 레벨 (좌측 하단) -->
                                                                     <Border Background="#CC000000" CornerRadius="4" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="4,1" Margin="-4,0,0,-4">
@@ -1337,12 +1342,12 @@
         <!-- 툴팁 (Popup으로 창 밖으로도 표시 가능) -->
         <Popup x:Name="TooltipPopup" Placement="Mouse" AllowsTransparency="True" 
                IsHitTestVisible="False" PopupAnimation="None">
-            <Border x:Name="TooltipBorder" CornerRadius="6" 
-                    Background="#F0121212" BorderBrush="#666666" BorderThickness="1">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.8"/>
-                </Border.Effect>
-                <Image x:Name="TooltipImage" Stretch="None" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <Border x:Name="TooltipBorder" Background="Transparent" BorderThickness="0">
+                <Image x:Name="TooltipImage" Stretch="None" RenderOptions.BitmapScalingMode="NearestNeighbor">
+                    <Image.Effect>
+                        <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.6"/>
+                    </Image.Effect>
+                </Image>
             </Border>
         </Popup>
     </Grid>

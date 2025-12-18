@@ -145,8 +145,14 @@ namespace MapleHomework.Services
     /// </summary>
     public static class StatisticsService
     {
-        private static readonly string DataFolder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
-        private static readonly string LegacyFilePath = System.IO.Path.Combine(DataFolder, "statistics_data.json");
+
+        // OLD Path: Documents/MapleScheduler
+        private static readonly string RootDataFolder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
+
+        // NEW Path: Documents/MapleScheduler/statistics
+        private static readonly string DataFolder = System.IO.Path.Combine(RootDataFolder, "statistics");
+
+        private static readonly string LegacyFilePath = System.IO.Path.Combine(RootDataFolder, "statistics_data.json");
 
         private static string GetCharacterFolder(string characterName)
         {
@@ -164,8 +170,34 @@ namespace MapleHomework.Services
 
         static StatisticsService()
         {
+            if (!System.IO.Directory.Exists(RootDataFolder))
+                System.IO.Directory.CreateDirectory(RootDataFolder);
+
             if (!System.IO.Directory.Exists(DataFolder))
                 System.IO.Directory.CreateDirectory(DataFolder);
+
+            // 폴더 구조 마이그레이션 (Root -> statistics)
+            try
+            {
+                var directories = Directory.GetDirectories(RootDataFolder);
+                foreach (var dir in directories)
+                {
+                    var dirName = Path.GetFileName(dir);
+                    if (dirName.Equals("statistics", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (dirName.Equals("config", StringComparison.OrdinalIgnoreCase)) continue; // 설정 폴더 제외 (혹시 있다면)
+
+                    // 캐릭터 폴더로 추정되면 이동
+                    var destDir = Path.Combine(DataFolder, dirName);
+                    if (!Directory.Exists(destDir))
+                    {
+                        Directory.Move(dir, destDir);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Folder Migration Error: {ex}");
+            }
         }
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
@@ -473,6 +505,33 @@ namespace MapleHomework.Services
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"ClearAnalysisData error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 특정 캐릭터의 모든 데이터를 삭제합니다. (캐시 삭제)
+        /// </summary>
+        public static void ClearCharacterData(string characterId, string characterName)
+        {
+            try
+            {
+                // 캐릭터별 파일 삭제가 가장 깔끔함
+                var filePath = GetFilePath(characterName);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                // 폴더도 비어있으면 삭제
+                var folder = GetCharacterFolder(characterName);
+                if (Directory.Exists(folder) && !Directory.EnumerateFileSystemEntries(folder).Any())
+                {
+                    Directory.Delete(folder);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ClearCharacterData error: {ex.Message}");
             }
         }
 
@@ -871,19 +930,14 @@ namespace MapleHomework.Services
                 });
             }
 
-            // GraphRate: 경험치 범위를 0.05~1.0에 매핑 (변화를 더 명확히 보이게)
+            // GraphRate: 경험치 %를 0.0~1.0 범위로 직접 매핑 (절대적 기준)
+            // 사용자 요청: 상대적 기준이 아닌 절대적 기준으로 변경
             if (result.Any())
             {
-                double minRate = result.Min(x => x.ExperienceRate);
-                double maxRate = result.Max(x => x.ExperienceRate);
-                double range = maxRate - minRate;
-
                 foreach (var item in result)
                 {
-                    if (range > 0.1) // 범위가 0.1% 이상일 때만 스케일링
-                        item.GraphRate = 0.05 + 0.95 * ((item.ExperienceRate - minRate) / range);
-                    else
-                        item.GraphRate = Math.Max(0.05, item.ExperienceRate / 100.0); // 범위가 작으면 실제 %를 반영
+                    // 경험치 0~100%를 0.05~1.0 범위로 매핑 (최소 높이 보장)
+                    item.GraphRate = 0.05 + 0.95 * (item.ExperienceRate / 100.0);
                 }
             }
 

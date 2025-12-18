@@ -13,53 +13,12 @@ using Wpf.Ui.Controls;
 
 namespace MapleHomework
 {
-    /// <summary>
-    /// 오늘의 할 일 항목
-    /// </summary>
-    public class TodoItem
-    {
-        public string CharacterName { get; set; } = "";
-        public string TaskName { get; set; } = "";
-        public TaskCategory Category { get; set; }
-        public string CategoryText => Category switch
-        {
-            TaskCategory.Daily => "일일",
-            TaskCategory.Weekly => "주간",
-            TaskCategory.Boss => "보스",
-            TaskCategory.Monthly => "월간",
-            _ => ""
-        };
-        public string CategoryColor => Category switch
-        {
-            TaskCategory.Daily => "#3B82F6",   // Blue
-            TaskCategory.Weekly => "#F97316",  // Orange
-            TaskCategory.Boss => "#E11D48",    // Rose (Soft Red)
-            TaskCategory.Monthly => "#8B5CF6", // Violet
-            _ => "#64748B"
-        };
-    }
 
-    /// <summary>
-    /// 캐릭터별 그룹화된 숙제
-    /// </summary>
-    public class CharacterTaskGroup : INotifyPropertyChanged
-    {
-        public string Nickname { get; set; } = "";
-        public string ImageUrl { get; set; } = "";
-        public int Level { get; set; }
-        public ObservableCollection<TodoItem> Tasks { get; set; } = new();
-        public int PendingCount => Tasks.Count;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-    }
 
     public partial class DashboardWindow : FluentWindow, INotifyPropertyChanged
     {
         private MainViewModel _viewModel;
+        public MainViewModel ViewModel => _viewModel;
         private AppData _appData;
 
         public ObservableCollection<CharacterProfile> Characters { get; set; }
@@ -103,6 +62,8 @@ namespace MapleHomework
             ApplyThemeResources();
             _viewModel.ThemeChanged += OnThemeChanged;
             _viewModel.DataChanged += OnDataChanged;
+            // [New] 서버 변경 감지
+            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             RefreshTodayTasks();
 
@@ -120,14 +81,7 @@ namespace MapleHomework
         {
             Dispatcher.Invoke(() =>
             {
-                // 캐릭터 목록 새로고침
-                Characters.Clear();
-                foreach (var c in _appData.Characters)
-                {
-                    Characters.Add(c);
-                }
-                RefreshTodayTasks();
-                OnPropertyChanged(nameof(CharacterCount));
+                RefreshData();
             });
         }
 
@@ -135,7 +89,17 @@ namespace MapleHomework
         {
             _viewModel.ThemeChanged -= OnThemeChanged;
             _viewModel.DataChanged -= OnDataChanged;
+            _viewModel.PropertyChanged -= ViewModel_PropertyChanged; // 구독 해제
             base.OnClosed(e);
+        }
+
+        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MainViewModel.SelectedServer))
+            {
+                // UI 스레드에서 실행
+                Dispatcher.Invoke(() => RefreshData());
+            }
         }
 
         /// <summary>
@@ -179,11 +143,21 @@ namespace MapleHomework
         {
             get
             {
+                var serverName = _viewModel.SelectedServer;
+                var filteredCharCount = Characters.Count;
+
+                if (filteredCharCount == 0)
+                {
+                    return serverName == "전체"
+                        ? "등록된 캐릭터가 없습니다."
+                        : $"{serverName} 서버에 등록된 캐릭터가 없습니다.";
+                }
+
                 if (ShowOnlyFavorites)
                 {
                     if (_totalFavoriteCount == 0)
                     {
-                        return "⭐ 즐겨찾기된 숙제가 없습니다";
+                        return $"{serverName} 서버에 즐겨찾기된 숙제가 없습니다";
                     }
                     else
                     {
@@ -205,6 +179,12 @@ namespace MapleHomework
         {
             get
             {
+                var filteredCharCount = Characters.Count;
+                if (filteredCharCount == 0)
+                {
+                    return "메인 화면에서 캐릭터를 추가해주세요";
+                }
+
                 if (ShowOnlyFavorites && _totalFavoriteCount == 0)
                 {
                     return "메인 화면에서 일일/주간/보스/월간 헤더의\n별표(★)를 눌러 즐겨찾기를 추가해보세요";
@@ -218,9 +198,13 @@ namespace MapleHomework
         /// </summary>
         public void RefreshData()
         {
-            // Characters 데이터 갱신
+            // Characters 데이터 갱신 (서버 필터링 적용)
             Characters.Clear();
-            foreach (var c in _appData.Characters)
+            var targetList = _viewModel.SelectedServer == "전체"
+                ? _appData.Characters
+                : _appData.Characters.Where(c => c.WorldName == _viewModel.SelectedServer).ToList();
+
+            foreach (var c in targetList)
             {
                 Characters.Add(c);
             }

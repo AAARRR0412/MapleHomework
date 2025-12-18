@@ -11,11 +11,11 @@ namespace MapleHomework.Rendering
     {
         #region Fonts (22버전 UI - 굴림)
         public static readonly Font ItemNameFont = new Font("굴림", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
-        public static readonly Font ItemDetailFont = new Font("굴림", 12f, GraphicsUnit.Pixel);
+        public static readonly Font ItemDetailFont = new Font("굴림", 11f, GraphicsUnit.Pixel);
         public static readonly Font EquipDetailFont = new Font("굴림", 11f, GraphicsUnit.Pixel);
         public static readonly Font EquipMDMoris9Font = new Font("굴림", 11f, GraphicsUnit.Pixel);
         public static readonly Font EquipMDMoris9FontBold = new Font("굴림", 11f, FontStyle.Bold, GraphicsUnit.Pixel);
-        public static readonly Font ItemGulimFont = new Font("굴림", 12f, GraphicsUnit.Pixel);
+        public static readonly Font ItemGulimFont = new Font("굴림", 11f, GraphicsUnit.Pixel);
         public static readonly Font ItemGulimFontBold = new Font("굴림", 14f, FontStyle.Bold, GraphicsUnit.Pixel);
         #endregion
 

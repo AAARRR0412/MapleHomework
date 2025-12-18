@@ -35,24 +35,24 @@ namespace MapleHomework.Models
     {
         public string ApiKey { get; set; } = "";
         public string CharacterName { get; set; } = "";
-        
+
         [JsonIgnore] // ThemeMode로 대체되었으므로 직렬화에서 제외
         public bool IsDarkTheme { get; set; } = false;
-        
+
         public ThemeMode ThemeMode { get; set; } = ThemeMode.System; // 기본값을 System으로 변경
         public bool AutoStartEnabled { get; set; } = false; // 기본값: 자동 시작 비활성화
 
         // 알림 설정
         public bool IsNotificationEnabled { get; set; } = false;
-        
+
         // 일일 알림: n시간 전 (자정 기준)
         public bool NotifyDailyTasks { get; set; } = true;
         public int DailyNotifyHoursBefore { get; set; } = 4; // 기본값: 자정 4시간 전 (오후 8시)
-        
+
         // 주간 알림: n일 전 (목요일 기준)
         public bool NotifyWeeklyTasks { get; set; } = true;
         public int WeeklyNotifyDaysBefore { get; set; } = 1; // 기본값: 1일 전 (수요일)
-        
+
         // 보스 알림: n일 전 (목요일 기준)
         public bool NotifyBossTasks { get; set; } = true;
         public int BossNotifyDaysBefore { get; set; } = 1; // 기본값: 1일 전 (수요일)
@@ -81,6 +81,24 @@ namespace MapleHomework.Models
         public double MainWindowTop { get; set; } = double.NaN;
         public double MainWindowWidth { get; set; } = 460;
         public double MainWindowHeight { get; set; } = 750;
+
+        // 메인 윈도우 항상 위 설정 (기본값: false)
+        public bool AlwaysOnTop { get; set; } = false;
+
+        // 튜토리얼 표시 여부
+        public bool HasSeenTutorial { get; set; } = false;
+
+        // 카테고리 섹션 순서 (드래그앤드롭)
+        public List<string> SectionOrder { get; set; } = new() { "Daily", "Weekly", "Boss", "Monthly" };
+
+        // 카테고리 섹션 접힌 상태 저장 (true = 펼침, false = 접힘)
+        public Dictionary<string, bool> SectionExpandedState { get; set; } = new()
+        {
+            { "Daily", true },
+            { "Weekly", true },
+            { "Boss", true },
+            { "Monthly", true }
+        };
     }
 
     // 2. 파일 저장/불러오기 담당
@@ -89,7 +107,7 @@ namespace MapleHomework.Models
         private static readonly string DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapleScheduler");
         private static readonly string FilePath = Path.Combine(DataFolder, "config.json");
         private const string AppName = "MapleScheduler";
-        
+
         static ConfigManager()
         {
             // 데이터 폴더가 없으면 생성
@@ -99,8 +117,8 @@ namespace MapleHomework.Models
 
         public static void Save(AppSettings settings)
         {
-            var options = new JsonSerializerOptions 
-            { 
+            var options = new JsonSerializerOptions
+            {
                 WriteIndented = true,
                 NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals
             };
@@ -127,7 +145,7 @@ namespace MapleHomework.Models
                 {
                     settings.ThemeMode = ThemeMode.Dark;
                 }
-                
+
                 return settings;
             }
             catch

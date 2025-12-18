@@ -15,23 +15,7 @@ using MapleHomework.Services;
 
 namespace MapleHomework
 {
-    /// <summary>
-    /// 오버레이에 표시할 숙제 항목
-    /// </summary>
-    public class OverlayTaskItem
-    {
-        public string CharacterName { get; set; } = "";
-        public string TaskName { get; set; } = "";
-        public TaskCategory Category { get; set; }
-        public string CategoryColor => Category switch
-        {
-            TaskCategory.Daily => "#5AC8FA",
-            TaskCategory.Weekly => "#FF9500",
-            TaskCategory.Boss => "#FF3B30",
-            TaskCategory.Monthly => "#AF52DE",
-            _ => "#888888"
-        };
-    }
+
 
     public partial class OverlayWindow : Window, INotifyPropertyChanged
     {
@@ -79,8 +63,8 @@ namespace MapleHomework
         private IntPtr _mapleWindowHandle = IntPtr.Zero;
         private bool _isMapleRunning = false;
 
-        public ObservableCollection<OverlayTaskItem> Tasks { get; set; } = new();
-        
+        public ObservableCollection<TodoItem> Tasks { get; set; } = new();
+
         public bool HasTasks => Tasks.Any();
         public bool AllDone => !Tasks.Any();
         public int TaskCount => Tasks.Count;
@@ -295,7 +279,7 @@ namespace MapleHomework
             // 설정된 프로세스 찾기
             string processName = settings.OverlayProcessName;
             if (string.IsNullOrEmpty(processName)) processName = "MapleStory";
-            
+
             var mapleProcess = Process.GetProcessesByName(processName).FirstOrDefault();
 
             if (mapleProcess == null)
@@ -331,7 +315,7 @@ namespace MapleHomework
             {
                 // DPI 스케일링 적용
                 double dpiScale = GetDpiScale(_mapleWindowHandle);
-                
+
                 // 물리 픽셀을 WPF 논리 픽셀로 변환
                 double windowLeft = rect.Left / dpiScale;
                 double windowTop = rect.Top / dpiScale;
@@ -381,7 +365,7 @@ namespace MapleHomework
 
             // 현재 선택된 캐릭터 찾기
             var selectedCharacter = appData.Characters
-                .FirstOrDefault(c => c.Id == appData.SelectedCharacterId) 
+                .FirstOrDefault(c => c.Id == appData.SelectedCharacterId)
                 ?? appData.Characters.FirstOrDefault();
 
             if (selectedCharacter != null)
@@ -409,22 +393,22 @@ namespace MapleHomework
 
                 // 미완료 숙제 수집
                 var allTasks = new List<HomeworkTask>();
-                
+
                 if (!settings.ShowOnlyFavorites || selectedCharacter.IsDailyFavorite)
                     allTasks.AddRange(selectedCharacter.DailyTasks.Where(t => t.IsActive && !t.IsChecked));
-                
+
                 if (!settings.ShowOnlyFavorites || selectedCharacter.IsWeeklyFavorite)
                     allTasks.AddRange(selectedCharacter.WeeklyTasks.Where(t => t.IsActive && !t.IsChecked));
-                
+
                 if (!settings.ShowOnlyFavorites || selectedCharacter.IsBossFavorite)
                     allTasks.AddRange(selectedCharacter.BossTasks.Where(t => t.IsActive && !t.IsChecked));
-                
+
                 if (!settings.ShowOnlyFavorites || selectedCharacter.IsMonthlyFavorite)
                     allTasks.AddRange(selectedCharacter.MonthlyTasks.Where(t => t.IsActive && !t.IsChecked));
 
                 foreach (var task in allTasks.Take(10))
                 {
-                    Tasks.Add(new OverlayTaskItem
+                    Tasks.Add(new TodoItem
                     {
                         CharacterName = selectedCharacter.Nickname,
                         TaskName = task.DisplayName,
@@ -446,7 +430,7 @@ namespace MapleHomework
             var activeTasks = tasks.Where(t => t.IsActive).ToList();
             int total = activeTasks.Count;
             if (total == 0) return (100, 0, 0);
-            
+
             int completed = activeTasks.Count(t => t.IsChecked);
             double progress = (double)completed / total * 100;
             return (progress, completed, total);

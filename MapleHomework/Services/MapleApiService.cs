@@ -357,7 +357,7 @@ namespace MapleHomework.Services
             if (hasToday)
             {
                 string todayStr = today.ToString("yyyy-MM-dd");
-                string? dateParam = null; // 오늘이므로 null (API 내부에서 처리)
+                string? dateParam = todayStr; // 명시적으로 오늘 날짜를 전달해야 헬퍼 메서드에서 null(오늘)로 변환됨
 
                 try
                 {

@@ -211,6 +211,8 @@ namespace MapleHomework.Models
         public int SkillLevel { get; set; }
         [JsonPropertyName("skill_effect")]
         public string? SkillEffect { get; set; }
+        [JsonPropertyName("skill_effect_next")]
+        public string? SkillEffectNext { get; set; }
         [JsonPropertyName("skill_icon")]
         public string? SkillIcon { get; set; }
     }

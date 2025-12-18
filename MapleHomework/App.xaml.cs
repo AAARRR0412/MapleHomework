@@ -14,6 +14,12 @@ namespace MapleHomework
 {
     public partial class App : Application
     {
+        public App()
+        {
+            // 전역 예외 처리
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+        }
+
         private static Mutex? _mutex;
         private const string MutexName = "MapleHomework_SingleInstance_Mutex";
 
@@ -163,7 +169,7 @@ namespace MapleHomework
         /// <summary>
         /// 백그라운드에서 API 데이터 수집 시작
         /// </summary>
-        public static void StartBackgroundCollect(
+        public static Task StartBackgroundCollect(
             string ocid,
             string characterId,
             string characterName,
@@ -173,7 +179,7 @@ namespace MapleHomework
         {
             if (IsCollecting)
             {
-                return; // 이미 수집 중
+                return Task.CompletedTask; // 이미 수집 중
             }
 
             _collectCancellation = new CancellationTokenSource();
@@ -231,6 +237,8 @@ namespace MapleHomework
                     });
                 }
             }, token);
+
+            return _backgroundCollectTask;
         }
 
         /// <summary>

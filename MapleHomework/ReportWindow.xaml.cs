@@ -24,67 +24,21 @@ namespace MapleHomework
     /// <summary>
     /// 요일별 통계 항목
     /// </summary>
-    public class DayOfWeekStatItem
-    {
-        public string DayName { get; set; } = "";
-        public double Percentage { get; set; }
-        public double BarHeight => Math.Max(5, Percentage * 1.2); // 최소 5px, 최대 120px
-        public Brush BarColor => Percentage >= 80 ? new SolidColorBrush(Color.FromRgb(76, 217, 100)) :
-                                  Percentage >= 50 ? new SolidColorBrush(Color.FromRgb(255, 149, 0)) :
-                                  new SolidColorBrush(Color.FromRgb(255, 59, 48));
-    }
 
-    public class GuideLineItem
-    {
-        public string Label { get; set; } = "";
-        public double Rate { get; set; } // 0~1
-    }
 
-    public class HexaSkillSummary
-    {
-        public string SkillName { get; set; } = "";
-        public string SkillIcon { get; set; } = "";
-        public int StartLevel { get; set; }
-        public int CurrentLevel { get; set; }
-        public int Gain => Math.Max(0, CurrentLevel - StartLevel);
-        public double BarRate { get; set; } // 0~1, UI용
-        public string LevelText => $"Lv.{StartLevel} → Lv.{CurrentLevel}";
-        public string GainText => Gain > 0 ? $"+{Gain}" : "+0";
-    }
+
+
+
 
     /// <summary>
     /// 일일 기록 항목
     /// </summary>
-    public class DailyRecordItem
-    {
-        public string DateText { get; set; } = "";
-        public string CharacterName { get; set; } = "";
-        public string CompletionText { get; set; } = "";
-        public double CompletionRate { get; set; }
-    }
+
 
     /// <summary>
     /// 누락 날짜 선택 항목
     /// </summary>
-    public class MissingDateItem : INotifyPropertyChanged
-    {
-        private bool _isSelected = true;
 
-        public DateTime Date { get; set; }
-        public string DateText => Date.ToString("MM/dd (ddd)");
-
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                _isSelected = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
-            }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-    }
 
     public partial class ReportWindow : Wpf.Ui.Controls.FluentWindow, INotifyPropertyChanged
     {
@@ -97,11 +51,16 @@ namespace MapleHomework
         private List<MissingDateItem> _missingDates = new(); // 누락 날짜 목록
         private TaskCompletionSource<bool>? _collectionTcs; // 수집 완료 대기용
         private bool _isBusy = false; // 수집 중 UI 잠금용
+        private System.Windows.Threading.DispatcherTimer _tooltipCloseTimer;
+
 
         // 카운트다운 타이머 관련
         private System.Windows.Threading.DispatcherTimer? _countdownTimer;
         private int _remainingSeconds = 0;
         private int _lastProgress = 0;
+
+        // 데이터 수집 중인 캐릭터 추적
+        private string? _collectingCharacterId;
 
         // 캘린더 관련 필드
         private DateTime _calendarDisplayMonth = DateTime.Today;
@@ -132,62 +91,11 @@ namespace MapleHomework
         private HashSet<string> _enabledChangeTypes = new HashSet<string> { "장착", "교체", "옵션 변경" }; // 활성화된 변경 타입
         private int _itemDateRangeDays = 0; // 날짜 범위 (0 = 전체)
 
-        public class HexaCoreItem
-        {
-            public string SkillName { get; set; } = "";
-            public string OriginalName { get; set; } = "";
-            public string CoreType { get; set; } = "";
-            public int CoreLevel { get; set; }
-            public string SkillIcon { get; set; } = ""; // Note: CharacterSearchWindow used SkillIconUrl, here we use SkillIcon (from existing code usage)
-            public string BadgeIcon { get; set; } = ""; // Note: CharacterSearchWindow used BadgeIconPath, here BadgeIcon
 
-            // Data properties for UI (Added)
-            public int NextSolErda { get; set; }
-            public int NextFragment { get; set; }
-            public int RemainingSolErda { get; set; }
-            public int RemainingFragment { get; set; }
 
-            // Compatibility properties (restored)
-            public int OldLevel { get; set; }
-            public int NewLevel { get; set; }
 
-            public bool IsMaxLevel => CoreLevel >= 30;
 
-            // UI Display Properties
-            public string NextCostText => IsMaxLevel ? "MAX" : $"{NextSolErda} / {NextFragment}";
-            public string RemainingCostText => IsMaxLevel ? "-" : $"{RemainingSolErda} / {RemainingFragment}";
 
-            public string NextSolErdaText => IsMaxLevel ? "-" : $"{NextSolErda}개";
-            public string NextFragmentText => IsMaxLevel ? "-" : $"{NextFragment}개";
-            public string RemainingSolErdaText => IsMaxLevel ? "-" : $"{RemainingSolErda}개";
-            public string RemainingFragmentText => IsMaxLevel ? "-" : $"{RemainingFragment}개";
-
-            public double ProgressValue => CoreLevel >= 30 ? 100 : (CoreLevel / 30.0 * 100);
-            public double ProgressFactor
-            {
-                get
-                {
-                    if (CoreLevel >= 30) return 1.0;
-                    if (CoreLevel <= 0) return 0.0;
-                    double result = CoreLevel / 30.0;
-                    return double.IsNaN(result) || double.IsInfinity(result) ? 0.0 : result;
-                }
-            }
-            public string ProgressText => $"{ProgressValue:F1}%";
-        }
-
-        private class HexaCoreGroup
-        {
-            public string TypeLabel { get; set; } = "";
-            public string TypeIcon { get; set; } = "";
-            public List<HexaCoreItem> Items { get; set; } = new();
-        }
-
-        private class HexaSkillDailyGroup
-        {
-            public DateTime Date { get; set; }
-            public List<HexaSkillRecord> Items { get; set; } = new();
-        }
 
         public ReportWindow(MainViewModel mainViewModel)
         {
@@ -196,12 +104,23 @@ namespace MapleHomework
             DataContext = this;
             _viewModel = mainViewModel;
             _apiService = new MapleApiService();
-            _apiService = new MapleApiService();
+
+            // 백그라운드 수집 이벤트 구독
+            App.CollectProgressChanged += OnCollectProgressChanged;
+            App.CollectCompleted += OnCollectCompleted;
 
             // 테마 변경 이벤트 구독 (ThemeService 전역 이벤트 사용)
             ThemeService.OnThemeChanged += OnThemeChanged_Service;
 
-            // 테마 적용 (라이트/다크)
+            // 툴팁 닫기 타이머 (깜빡임 방지)
+            _tooltipCloseTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+            _tooltipCloseTimer.Tick += (s, e) =>
+            {
+                if (ItemTooltipPopup != null) ItemTooltipPopup.IsOpen = false;
+                if (SkillTooltipPopup != null) SkillTooltipPopup.IsOpen = false;
+                _tooltipCloseTimer.Stop();
+            };
+
             ApplyThemeResources();
 
             // Loaded 이벤트에서도 테마 적용 (XAML 파싱 완료 후 DynamicResource 경고 방지)
@@ -597,77 +516,30 @@ namespace MapleHomework
 
         private async Task RefreshIfStaleAndLoadAsync()
         {
-            // 데이터 수집 현황 업데이트
-            UpdateDataSummary();
-
-            string? characterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
-            string? characterName = GetSelectedCharacterName() ?? _viewModel.SelectedCharacter?.Nickname;
-
-            // 캐릭터 정보가 없으면 로드하고 종료
-            if (string.IsNullOrEmpty(characterId) || string.IsNullOrEmpty(characterName))
+            try
             {
-                LoadDashboard();
-                return;
-            }
+                // 데이터 수집 현황 업데이트
+                UpdateDataSummary();
 
-            var last = StatisticsService.GetLastUpdated(characterName);
+                string? characterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
+                string? characterName = GetSelectedCharacterName() ?? _viewModel.SelectedCharacter?.Nickname;
 
-            // 1. 통계 파일이 없거나 비어있는 경우
-            bool needRefresh = last == DateTime.MinValue;
-
-            // 2. [Auto-Collect] 최근 7일 내 누락된 데이터가 있는 경우
-            List<DateTime> missingRecentDates = new();
-
-            if (!string.IsNullOrEmpty(characterId))
-            {
-                var endDate = DateTime.Today; // 오늘 포함
-                var startDate = endDate.AddDays(-6);      // 7일 전까지
-                var collected = StatisticsService.GetCollectedDatesForCharacter(characterId, characterName);
-
-                for (var d = startDate; d <= endDate; d = d.AddDays(1))
+                // 캐릭터 정보가 없으면 로드하고 종료
+                if (string.IsNullOrEmpty(characterId) || string.IsNullOrEmpty(characterName))
                 {
-                    if (!collected.Contains(d))
-                    {
-                        missingRecentDates.Add(d);
-                    }
+                    LoadDashboard();
+                    return;
                 }
 
-                if (missingRecentDates.Any())
-                {
-                    needRefresh = true;
-                }
-            }
-
-            if (!needRefresh)
-            {
+                // 이제 자동 수집은 MainViewModel에서 앱 시작 시 수행하므로
+                // 여기서는 단순히 현재 상태를 로드합니다.
                 LoadDashboard();
-                return;
             }
-
-            var character = _viewModel.Characters.FirstOrDefault(c => c.Id == characterId);
-            if (character == null || string.IsNullOrEmpty(character.Ocid))
+            catch (Exception ex)
             {
-                LoadDashboard();
-                return;
+                System.Diagnostics.Debug.WriteLine($"Error in RefreshIfStaleAndLoadAsync: {ex}");
+                LoadDashboard(); // 최소한 대시보드는 로드 시도
             }
-
-            // 누락된 날짜만큼 반복 호출하거나 배치 수집
-            // 여기서는 기존 로직(최근 1일분 or 전체) 대신, 누락된 날짜 리스트를 활용
-            if (missingRecentDates.Any())
-            {
-                // UI 갱신 (선택된 날짜로 표시)
-                _selectedDates.Clear();
-                foreach (var d in missingRecentDates) _selectedDates.Add(d);
-                RenderCalendar();
-
-                // 수집 시작 (기존 버튼 클릭 로직 재활용을 위해 메서드 호출)
-                await StartCollectionAsync(character, missingRecentDates);
-                return;
-            }
-
-            // 여기까지 왔는데 needRefresh가 true라면? (이론상 7일 이내는 다 있는데 파일은 없거나 다른 이유)
-            LoadDashboard();
-            UpdateDataSummary();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -753,16 +625,28 @@ namespace MapleHomework
 
         private void LoadDashboard()
         {
-            if (_isInitializing || GrowthReportSection == null || NoDataPanel == null)
-                return;
+            try
+            {
+                if (_isInitializing || GrowthReportSection == null || NoDataPanel == null)
+                    return;
 
-            // 리소스 먼저 적용 (DynamicResource 경고 방지)
-            ApplyThemeResources();
+                // 리소스 먼저 적용 (DynamicResource 경고 방지)
+                ApplyThemeResources();
 
-            LoadGrowthReport();
+                LoadGrowthReport();
 
-            GrowthReportSection.Visibility = Visibility.Visible;
+                GrowthReportSection.Visibility = Visibility.Visible;
+
+                // 캘린더 업데이트 (수집된 날짜 표시)
+                UpdateDataSummary();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LoadDashboard Error: {ex}");
+                if (DataSummaryText != null) DataSummaryText.Text = "로드 오류";
+            }
         }
+
 
         private void LoadGrowthReport()
         {
@@ -784,8 +668,8 @@ namespace MapleHomework
             // 차트 조회 기간 (0이면 전체 데이터)
             int chartDays = _chartDays > 0 ? _chartDays : 365; // 전체 = 최대 365일
 
-            // 경험치
-            var expGrowth = StatisticsService.GetExperienceGrowth(characterId, characterName, chartDays, _expRangeMode);
+            // 경험치 - 항상 전체 날짜 데이터 출력 (사용자 요청: 드롭다운 선택과 관계없이 전체 데이터)
+            var expGrowth = StatisticsService.GetExperienceGrowth(characterId, characterName, 365, _expRangeMode);
             ExpGrowthList.ItemsSource = expGrowth;
 
             // 최근 30일 일간 평균 경험치 (경험치 + %)
@@ -864,12 +748,17 @@ namespace MapleHomework
             HexaSkillList.ItemsSource = null;
             ItemChangeList.ItemsSource = null;
 
+            // 헥사 스텟 정보도 클리어
+            if (HexaStatCoreList != null) HexaStatCoreList.ItemsSource = null;
+
             WeeklyExpGrowthText.Text = "-";
             EstimatedLevelUpText.Text = "-";
+            MaxCombatPowerText.Text = "-";
 
             NoCombatPowerDataText.Visibility = Visibility.Visible;
             NoHexaSkillDataText.Visibility = Visibility.Visible;
             NoItemChangeDataText.Visibility = Visibility.Visible;
+            if (NoHexaStatText != null) NoHexaStatText.Visibility = Visibility.Visible;
         }
 
         private Task LoadHexaCoreCurrentAsync(string characterId, List<HexaSkillRecord> hexaHistory)
@@ -1072,13 +961,9 @@ namespace MapleHomework
             }
         }
 
-        private class HexaStatItem
-        {
-            public string StatName { get; set; } = "";
-            public string StatValue { get; set; } = "";
-        }
 
-        private class HexaStatCoreItem
+
+        public class HexaStatCoreItem
         {
             public string CoreLabel { get; set; } = "";
             public string MainStatName { get; set; } = "";
@@ -1099,6 +984,12 @@ namespace MapleHomework
             public int SubLevel2 => SubStatLevel2;
         }
 
+        public class HexaStatItem
+        {
+            public string StatName { get; set; } = "";
+            public string StatValue { get; set; } = "";
+        }
+
         private static string CleanCoreName(string name)
         {
             return string.IsNullOrEmpty(name) ? name : name.Replace("/", ",\n");
@@ -1113,7 +1004,7 @@ namespace MapleHomework
 
         private string? GetSelectedCharacterId()
         {
-            if (CharacterFilterCombo.SelectedIndex > 0 && CharacterFilterCombo.SelectedItem is ComboBoxItem charItem)
+            if (CharacterFilterCombo.SelectedIndex >= 0 && CharacterFilterCombo.SelectedItem is ComboBoxItem charItem)
             {
                 return charItem.Tag as string;
             }
@@ -1122,7 +1013,7 @@ namespace MapleHomework
 
         private string? GetSelectedCharacterName()
         {
-            if (CharacterFilterCombo.SelectedIndex > 0 && CharacterFilterCombo.SelectedItem is ComboBoxItem charItem)
+            if (CharacterFilterCombo.SelectedIndex >= 0 && CharacterFilterCombo.SelectedItem is ComboBoxItem charItem)
             {
                 // Content is set to Nickname in InitializeSelectors
                 return charItem.Content as string;
@@ -1263,20 +1154,29 @@ namespace MapleHomework
 
         private void ClearCacheButton_Click(object sender, RoutedEventArgs e)
         {
-            var confirm = MessageBox.Show("성장 리포트 캐시(경험치/유니온/전투력/헥사/장비 기록)를 모두 삭제할까요?\n복구할 수 없습니다.",
-                "캐시 삭제 확인", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var characterName = GetSelectedCharacterName();
+            var characterId = GetSelectedCharacterId();
+
+            if (string.IsNullOrEmpty(characterName) || string.IsNullOrEmpty(characterId))
+            {
+                MessageBox.Show("삭제할 캐릭터를 선택해주세요.", "알림", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var confirm = MessageBox.Show($"'{characterName}' 캐릭터의 성장 리포트 데이터를 삭제할까요?\n통계 정보만 삭제되며 게임 데이터에는 영향이 없습니다.",
+                "데이터 삭제 확인", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
-            StatisticsService.ClearGrowthData();
+            StatisticsService.ClearCharacterData(characterId, characterName);
 
             // 캘린더 및 UI 업데이트
             _collectedDates.Clear();
             _selectedDates.Clear();
             _lastCollectedDate = null;
             UpdateDataSummary();
-            LoadDashboard();
+            LoadDashboard(); // 데이터가 사라졌으므로 초기 화면으로
 
-            MessageBox.Show("성장 리포트 캐시가 삭제되었습니다.", "완료", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"'{characterName}' 데이터가 삭제되었습니다.", "완료", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         #region Quick Navigation
@@ -1354,6 +1254,9 @@ namespace MapleHomework
         {
             if (App.IsCollecting) return Task.CompletedTask;
             if (string.IsNullOrEmpty(character.Ocid)) return Task.CompletedTask;
+
+            // 현재 수집 중인 캐릭터 ID 저장
+            _collectingCharacterId = character.Id;
 
             // UI 업데이트
             if (CollectHistoryButton != null)
@@ -1525,13 +1428,22 @@ namespace MapleHomework
                     // 완료 애니메이션 (성공)
                     ShowCollectCompleteAnimation(true, displayMessage);
 
-                    // 전체 대시보드 새로고침
-                    LoadDashboard();
-                    UpdateDataSummary();
+                    // 전체 대시보드 새로고침 (현재 보고 있는 캐릭터와 수집된 캐릭터가 같을 때만)
+                    string? currentCharacterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
+                    if (currentCharacterId == _collectingCharacterId)
+                    {
+                        LoadDashboard();
+                        UpdateDataSummary();
 
-                    // 선택된 날짜 초기화
-                    _selectedDates.Clear();
-                    RenderCalendar();
+                        // 선택된 날짜 초기화
+                        _selectedDates.Clear();
+                        RenderCalendar();
+                    }
+                    else
+                    {
+                        // 다른 캐릭터를 보고 있다면 알림만 표시하고 리로드하지 않음 (오류 방지)
+                        displayMessage += " (다른 캐릭터)";
+                    }
 
                     // 애니메이션 자동 숨기기
                     await Task.Delay(2500);
@@ -2019,28 +1931,42 @@ namespace MapleHomework
             HideItemTooltip();
         }
 
+        private void ItemSlot_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (ItemTooltipPopup != null && ItemTooltipPopup.IsOpen)
+            {
+                var mousePos = Mouse.GetPosition(this);
+                ItemTooltipPopup.HorizontalOffset = mousePos.X + 15;
+                ItemTooltipPopup.VerticalOffset = mousePos.Y + 15;
+            }
+        }
+
         private void ShowItemTooltip(ItemChangeRecord record, FrameworkElement target)
         {
             if (ItemTooltipPopup == null) return;
 
+            _tooltipCloseTimer.Stop(); // 타이머 중지
+
             // DataContext 설정을 통해 XAML의 Converter가 작동하여 이미지를 생성함
             ItemTooltipPopup.DataContext = record;
 
-            // 팝업 위치 설정
-            ItemTooltipPopup.PlacementTarget = target;
-            ItemTooltipPopup.Placement = PlacementMode.MousePoint;
-            ItemTooltipPopup.HorizontalOffset = 20;
-            ItemTooltipPopup.VerticalOffset = 20;
+            // 팝업 위치 설정 (상대 좌표)
+            ItemTooltipPopup.PlacementTarget = this;
+            ItemTooltipPopup.Placement = PlacementMode.Relative;
 
-            ItemTooltipPopup.IsOpen = true;
+            if (!ItemTooltipPopup.IsOpen)
+            {
+                var mousePos = Mouse.GetPosition(this);
+                ItemTooltipPopup.HorizontalOffset = mousePos.X + 15;
+                ItemTooltipPopup.VerticalOffset = mousePos.Y + 15;
+                ItemTooltipPopup.IsOpen = true;
+            }
         }
 
         private void HideItemTooltip()
         {
-            if (ItemTooltipPopup != null)
-            {
-                ItemTooltipPopup.IsOpen = false;
-            }
+            // 즉시 닫지 않고 타이머 시작 (이동 중 깜빡임 방지)
+            _tooltipCloseTimer.Start();
         }
 
         #endregion
@@ -2206,6 +2132,279 @@ namespace MapleHomework
             NoItemChangeDataText.Visibility = filteredList.Any() ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        #region Hexa Core Tooltip
+        // 캐시 (스킬명+레벨 -> ImageSource)
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, System.Windows.Media.ImageSource> _tooltipCache
+            = new System.Collections.Concurrent.ConcurrentDictionary<string, System.Windows.Media.ImageSource>();
+
+        // API 요청 중복 방지 용
+        private HashSet<string> _pendingSkillLookups = new HashSet<string>();
+
+        // 스킬 API 데이터 캐시 (캐릭터별)
+        private CharacterSkillResponse? _cachedSkillData;
+        private string? _cachedSkillDataCharacter;
+
+        private async void HexaSkill_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is FrameworkElement element)
+            {
+                try
+                {
+                    // DataContext 바인딩이 HexaSkillChangeItem 또는 익명 객체일 수 있음 (ItemsControl)
+                    // 동적 바인딩 속성 확인 (Reflection)
+                    var dataContext = element.DataContext;
+                    if (dataContext == null) return;
+
+                    string skillName = "";
+                    string skillIcon = "";
+                    int level = 0;
+
+                    // Reflection으로 속성 접근
+                    var type = dataContext.GetType();
+                    var pName = type.GetProperty("SkillName");
+                    var pIcon = type.GetProperty("SkillIcon");
+                    var pLevel = type.GetProperty("NewLevel") ?? type.GetProperty("CoreLevel"); // NewLevel 우선, 없으면 CoreLevel
+
+                    if (pName != null) skillName = pName.GetValue(dataContext) as string ?? "";
+                    if (pIcon != null) skillIcon = pIcon.GetValue(dataContext) as string ?? "";
+                    if (pLevel != null) level = (int?)pLevel.GetValue(dataContext) ?? 0;
+
+                    if (string.IsNullOrEmpty(skillName)) return;
+
+                    // 캐시 키
+                    string cacheKey = $"{skillName}_Lv{level}";
+
+                    // 1. 이미 렌더링 된 툴팁 캐시 확인
+                    if (_tooltipCache.TryGetValue(cacheKey, out var cachedImage))
+                    {
+                        SkillTooltipImage.Source = cachedImage;
+                        SkillTooltipPopup.PlacementTarget = this;
+                        SkillTooltipPopup.Placement = PlacementMode.Relative;
+
+                        _tooltipCloseTimer.Stop(); // 타이머 중지
+
+                        if (!SkillTooltipPopup.IsOpen)
+                        {
+                            var mousePos = Mouse.GetPosition(this);
+                            SkillTooltipPopup.HorizontalOffset = mousePos.X + 15;
+                            SkillTooltipPopup.VerticalOffset = mousePos.Y + 15;
+                            SkillTooltipPopup.IsOpen = true;
+                        }
+                        return;
+                    }
+
+                    // 복합 스킬명 처리 (예: "문 스트라이크 VI / 문 엣지 VI / 문 파워 VI")
+                    // 가장 첫 번째 스킬명만 추출하여 정보 조회에 사용
+                    string searchName = skillName;
+                    if (searchName.Contains("/"))
+                    {
+                        var parts = searchName.Split('/');
+                        if (parts.Length > 0)
+                        {
+                            searchName = parts[0].Trim();
+                        }
+                    }
+
+                    // 2. 스킬 상세 정보 데이터 로드 (로컬 캐시 + API Fallback)
+                    // 스킬 API 데터 로드 (캐릭터별 1회만) - 로컬 파일 기준
+                    // 서브 캐릭터 선택 시에도 올바른 OCID를 사용하도록 수정
+                    var characterName = GetSelectedCharacterName() ?? _viewModel.SelectedCharacter?.Nickname;
+                    var characterId = GetSelectedCharacterId() ?? _viewModel.SelectedCharacter?.Id;
+
+                    // 선택된 캐릭터의 OCID 찾기 (ComboBox 선택 기준)
+                    string? ocid = null;
+                    if (!string.IsNullOrEmpty(characterId))
+                    {
+                        var selectedChar = _viewModel.Characters.FirstOrDefault(c => c.Id == characterId);
+                        ocid = selectedChar?.Ocid;
+                    }
+                    if (string.IsNullOrEmpty(ocid))
+                    {
+                        ocid = _viewModel.SelectedCharacter?.Ocid;
+                    }
+
+                    if (!string.IsNullOrEmpty(characterName) && _cachedSkillDataCharacter != characterName)
+                    {
+                        _cachedSkillData = Services.RawDataProcessor.LoadLatestSkill6Info(characterName);
+                        _cachedSkillDataCharacter = characterName;
+                    }
+
+                    // 2-1. 로컬 캐시에서 스킬 찾기
+                    var skillInfo = _cachedSkillData?.CharacterSkill?
+                        .FirstOrDefault(s => s.SkillName == searchName || s.SkillName == searchName + " 강화");
+
+                    // 2-2. 로컬에 없거나 설명이 없으면 API Fallback (비동기 처리)
+                    // (로컬 파일에 이름만 있고 상세 내용이 없는 경우가 있음)
+                    if ((skillInfo == null || string.IsNullOrEmpty(skillInfo.SkillDescription)) && !string.IsNullOrEmpty(ocid))
+                    {
+                        // 이미 요청 중이면 스킵
+                        if (!_pendingSkillLookups.Contains(searchName))
+                        {
+                            _pendingSkillLookups.Add(searchName);
+                            try
+                            {
+                                // API 호출 (Grade 6) - 비동기
+                                var apiData = await _apiService.GetCharacterSkillAsync(ocid, null, "6");
+                                if (apiData != null && apiData.CharacterSkill != null)
+                                {
+                                    // 로컬 캐시에 병합
+                                    if (_cachedSkillData == null)
+                                    {
+                                        _cachedSkillData = apiData;
+                                        _cachedSkillDataCharacter = characterName;
+                                    }
+                                    else
+                                    {
+                                        if (_cachedSkillData.CharacterSkill == null) _cachedSkillData.CharacterSkill = new List<MapleHomework.Models.CharacterSkillInfo>();
+
+                                        // 6차 스킬만 조회 (사용자 요청에 따라 4~5차, hyper 제거)
+                                        var apiData6 = await _apiService.GetCharacterSkillAsync(ocid, null, "6");
+
+                                        // 중복 방지하며 캐시에 추가
+                                        if (apiData6?.CharacterSkill != null)
+                                        {
+                                            foreach (var s in apiData6.CharacterSkill)
+                                            {
+                                                if (!_cachedSkillData.CharacterSkill.Any(x => x.SkillName == s.SkillName))
+                                                    _cachedSkillData.CharacterSkill.Add(s);
+                                            }
+                                        }
+
+                                        // 다시 찾기 (매칭 로직 강화)
+                                        if (!string.IsNullOrEmpty(searchName))
+                                        {
+                                            // VI/V 접미사 제거하여 기본 스킬명 추출
+                                            // 예: "문 스트라이크 VI" -> "문 스트라이크"
+                                            string baseSkillName = searchName
+                                                .Replace(" VI", "").Replace("VI", "")
+                                                .Replace(" V", "").Replace("V", "")
+                                                .Trim();
+                                            string noSpaceBase = baseSkillName.Replace(" ", "");
+
+                                            skillInfo = _cachedSkillData.CharacterSkill
+                                                .FirstOrDefault(s =>
+                                                    s.SkillName == searchName ||                          // 정확히 일치
+                                                    s.SkillName == searchName + " 강화" ||                  // "문 스트라이크 VI 강화"
+                                                    s.SkillName == baseSkillName ||                        // "문 스트라이크"
+                                                    s.SkillName == baseSkillName + " 강화" ||              // "문 스트라이크 강화"
+                                                    (!string.IsNullOrEmpty(s.SkillName) && searchName.StartsWith(s.SkillName)) ||  // "문 스트라이크 VI".StartsWith("문 스트라이크")
+                                                    (!string.IsNullOrEmpty(s.SkillName) && s.SkillName.Contains(baseSkillName)) || // API 이름에 기본명 포함
+                                                    (!string.IsNullOrEmpty(noSpaceBase) && !string.IsNullOrEmpty(s.SkillName) && s.SkillName.Replace(" ", "").Contains(noSpaceBase))); // 공백 제거 후 비교
+                                        }
+
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"API Fallback Failed: {ex.Message}");
+                            }
+                            finally
+                            {
+                                _pendingSkillLookups.Remove(searchName);
+                            }
+                        }
+                    }
+
+                    // SkillTooltipData 생성
+                    string desc = "정보를 불러올 수 없습니다.";
+                    if (skillInfo != null) desc = skillInfo.SkillDescription ?? ""; // null check added
+                    else if (_pendingSkillLookups.Contains(skillName)) desc = "데이터 로딩 중...";
+
+                    var skillData = new MapleHomework.Rendering.Models.SkillTooltipData
+                    {
+                        Name = skillInfo?.SkillName ?? skillName ?? "",
+                        Level = skillInfo?.SkillLevel ?? level,
+                        MaxLevel = 30,
+                        Description = desc,
+                        SkillEffect = skillInfo?.SkillEffect ?? "",
+                        SkillEffectNext = skillInfo?.SkillEffectNext ?? "",
+                        IconUrl = skillInfo?.SkillIcon ?? skillIcon ?? ""
+                    };
+
+                    // 오리진/어센트 판별 로직
+                    // 오리진/어센트 판별 로직
+                    // 오리진: 쿨타임 360초
+                    string descText = skillData.Description ?? "";
+                    string effectText = skillData.SkillEffect ?? "";
+                    string fullText = (descText + effectText).Replace(" ", "");
+
+                    if (fullText.Contains("360초") || fullText.Contains("재사용대기시간360초"))
+                    {
+                        skillData.IsOrigin = true;
+                    }
+
+                    // 어센트 조건: "몬스터 방어율 60% 추가 무시", "보스 몬스터 공격 시 데미지 40% 증가", "크리티컬 확률 100%"
+                    if ((descText.Contains("몬스터 방어율 60% 추가 무시") ||
+                         effectText.Contains("몬스터 방어율 60% 추가 무시")) ||
+                        (descText.Contains("보스 몬스터 공격 시 데미지 40% 증가") ||
+                         effectText.Contains("보스 몬스터 공격 시 데미지 40% 증가")) ||
+                        (descText.Contains("크리티컬 확률 100%") ||
+                         effectText.Contains("크리티컬 확률 100%")))
+                    {
+                        skillData.IsAscent = true;
+                    }
+
+                    // 아이콘 로드 (동기)
+                    if (!string.IsNullOrEmpty(skillData.IconUrl))
+                    {
+                        try
+                        {
+                            var iconBitmap = Rendering.ImageHelper.LoadBitmapFromUrlAsync(skillData.IconUrl).GetAwaiter().GetResult();
+                            skillData.IconBitmap = iconBitmap;
+                        }
+                        catch { }
+                    }
+
+                    // 렌더링
+                    var renderer = new MapleHomework.Rendering.SkillTooltipRenderer(skillData);
+                    using (var bitmap = renderer.Render())
+                    {
+                        var imageSource = MapleHomework.Rendering.WpfBitmapConverter.ToBitmapSource(bitmap);
+                        if (imageSource != null)
+                        {
+                            _tooltipCache[cacheKey] = imageSource;
+                            SkillTooltipImage.Source = imageSource;
+
+                            SkillTooltipPopup.PlacementTarget = this;
+                            SkillTooltipPopup.Placement = PlacementMode.Relative;
+
+                            _tooltipCloseTimer.Stop();
+
+                            if (!SkillTooltipPopup.IsOpen)
+                            {
+                                var mousePos = Mouse.GetPosition(this);
+                                SkillTooltipPopup.HorizontalOffset = mousePos.X + 15;
+                                SkillTooltipPopup.VerticalOffset = mousePos.Y + 15;
+                                SkillTooltipPopup.IsOpen = true;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Tooltip Error: {ex}");
+                }
+            }
+        }
+
+        private void HexaSkill_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _tooltipCloseTimer.Start();
+        }
+
+        private void HexaSkill_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (SkillTooltipPopup != null && SkillTooltipPopup.IsOpen)
+            {
+                var mousePos = Mouse.GetPosition(this);
+                SkillTooltipPopup.HorizontalOffset = mousePos.X + 15;
+                SkillTooltipPopup.VerticalOffset = mousePos.Y + 15;
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// 훈장 또는 칭호 슬롯인지 확인
         /// </summary>
@@ -2214,6 +2413,8 @@ namespace MapleHomework
             if (string.IsNullOrEmpty(slot)) return false;
             return slot.Contains("훈장") || slot.Contains("칭호");
         }
+
+
 
         #endregion
     }

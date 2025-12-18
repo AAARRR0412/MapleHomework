@@ -31,11 +31,11 @@ namespace MapleHomework.ViewModels
         /// </summary>
         public AppData AppData => _appData;
 
-        // 테마 변경 이벤트 (다른 윈도우들에게 알림)
-        public event Action? ThemeChanged;
-
         // 데이터 변경 이벤트 (캐릭터 추가/삭제, 즐겨찾기 변경 등)
         public event Action? DataChanged;
+
+        // 테마 변경 이벤트 (다른 윈도우들에게 알림)
+        public event Action? ThemeChanged;
 
         /// <summary>
         /// 테마 변경 이벤트 발생
@@ -56,6 +56,101 @@ namespace MapleHomework.ViewModels
 
         // 캐릭터 리스트
         public ObservableCollection<CharacterProfile> Characters { get; set; } = new();
+
+        // [New] 서버 탭 표시 여부 (단일 서버일 때 숨김)
+        private bool _isServerTabVisible;
+        public bool IsServerTabVisible
+        {
+            get => _isServerTabVisible;
+            set { _isServerTabVisible = value; OnPropertyChanged(); }
+        }
+
+        // [New] 서버 필터링 관련
+        private readonly Dictionary<string, string> _serverColorMap = new()
+        {
+            { "스카니아", "#4D96FF" }, // Blue
+            { "루나", "#9F7AEA" },    // Purple
+            { "엘리시움", "#48BB78" }, // Green
+            { "크로아", "#F56565" },   // Red
+            { "오로라", "#ED64A6" },   // Pink
+            { "베라", "#ED8936" },     // Orange
+            { "레드", "#E53E3E" },     // Dark Red
+            { "유니온", "#805AD5" },   // Violet
+            { "제니스", "#38B2AC" },   // Teal
+            { "이노시스", "#D69E2E" }, // Yellow/Gold
+            { "아케인", "#667EEA" },   // Indigo
+            { "노바", "#A0AEC0" },     // Gray/Silver
+            { "버닝", "#DD2C00" },     // Burning Red
+            { "버닝2", "#DD2C00" },
+            { "버닝3", "#DD2C00" },
+            { "버닝4", "#DD2C00" },
+        };
+
+        private ObservableCollection<string> _serverList = new ObservableCollection<string>();
+        public ObservableCollection<string> ServerList
+        {
+            get => _serverList;
+            set { _serverList = value; OnPropertyChanged(); }
+        }
+
+        private string _selectedServer = "전체";
+        public string SelectedServer
+        {
+            get => _selectedServer;
+            set
+            {
+                if (_selectedServer != value)
+                {
+                    _selectedServer = value;
+                    OnPropertyChanged();
+                    // 뷰 필터링 갱신
+                    CharactersView?.Refresh();
+                    UpdateServerStats();
+                    UpdateServerTheme(); // [New] 테마 색상 변경
+
+                    // [UX] 해당 서버의 첫 번째 캐릭터로 자동 전환
+                    if (_selectedServer != "전체")
+                    {
+                        var firstChar = Characters.FirstOrDefault(c => c.WorldName == _selectedServer);
+                        if (firstChar != null) SelectedCharacter = firstChar;
+                    }
+                }
+            }
+        }
+
+        private ICollectionView _charactersView;
+        public ICollectionView CharactersView
+        {
+            get => _charactersView;
+            set { _charactersView = value; OnPropertyChanged(); }
+        }
+
+        // [New] 서버별 통계 (결정석/메소)
+        private int _currentServerCrystalCount;
+        public int CurrentServerCrystalCount
+        {
+            get => _currentServerCrystalCount;
+            private set
+            {
+                _currentServerCrystalCount = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CurrentServerCrystalCountText));
+            }
+        }
+        public string CurrentServerCrystalCountText => $"{CurrentServerCrystalCount} / 180";
+
+        private long _currentServerTotalMeso;
+        public long CurrentServerTotalMeso
+        {
+            get => _currentServerTotalMeso;
+            private set
+            {
+                _currentServerTotalMeso = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CurrentServerTotalMesoText));
+            }
+        }
+        public string CurrentServerTotalMesoText => BossRewardData.FormatMeso(CurrentServerTotalMeso);
 
         private CharacterProfile? _selectedCharacter;
         public CharacterProfile? SelectedCharacter
@@ -100,6 +195,27 @@ namespace MapleHomework.ViewModels
         }
 
         public ICommand ToggleSidebarCommand => new RelayCommand(_ => IsSidebarOpen = !IsSidebarOpen);
+
+        // 메인 윈도우 항상 위 설정
+        private bool _isAlwaysOnTop = false;
+        public bool IsAlwaysOnTop
+        {
+            get => _isAlwaysOnTop;
+            set
+            {
+                if (_isAlwaysOnTop != value)
+                {
+                    _isAlwaysOnTop = value;
+                    OnPropertyChanged();
+                    // 설정 저장
+                    var settings = ConfigManager.Load();
+                    settings.AlwaysOnTop = value;
+                    ConfigManager.Save(settings);
+                }
+            }
+        }
+
+        public ICommand ToggleAlwaysOnTopCommand => new RelayCommand(_ => IsAlwaysOnTop = !IsAlwaysOnTop);
 
         // 캐릭터 추가 UI 상태
         private bool _isAddingCharacter = false;
@@ -152,6 +268,22 @@ namespace MapleHomework.ViewModels
                 catch { }
 
                 RefreshAllViews();
+            }
+        }
+
+        // [New] 즐겨찾기만 보기 모드
+        private bool _isFavoriteOnlyMode = false;
+        public bool IsFavoriteOnlyMode
+        {
+            get => _isFavoriteOnlyMode;
+            set
+            {
+                _isFavoriteOnlyMode = value;
+                OnPropertyChanged();
+
+                // 뷰 갱신
+                ActiveSectionsView?.Refresh();
+                HiddenSectionsView?.Refresh();
             }
         }
 
@@ -305,7 +437,7 @@ namespace MapleHomework.ViewModels
         public ICommand ToggleTaskCommand { get; }
         public ICommand ToggleEditModeCommand { get; }
         public ICommand SelectCharacterCommand { get; }
-        public ICommand AddCharacterCommand { get; } // Deprecated
+        // public ICommand AddCharacterCommand { get; } // Deprecated -> Removed
         public ICommand StartAddCharacterCommand { get; }
         public ICommand ConfirmAddCharacterCommand { get; }
         public ICommand CancelAddCharacterCommand { get; }
@@ -321,6 +453,8 @@ namespace MapleHomework.ViewModels
         public ICommand ToggleBossFavoriteCommand { get; }
         public ICommand ToggleMonthlyFavoriteCommand { get; }
         public ICommand OpenReportCommand { get; }
+        public ICommand MoveSectionUpCommand { get; }
+        public ICommand MoveSectionDownCommand { get; }
 
         public MainViewModel(AppData appData, IMapleApiService apiService, IWindowService windowService)
         {
@@ -332,6 +466,10 @@ namespace MapleHomework.ViewModels
 
             IsDarkTheme = _appData.IsDarkTheme;
             UpdateThemeColors();
+
+            // AlwaysOnTop 설정 로드
+            var settings = ConfigManager.Load();
+            _isAlwaysOnTop = settings.AlwaysOnTop;
 
             // 캐릭터 로드
             foreach (var character in _appData.Characters)
@@ -394,7 +532,7 @@ namespace MapleHomework.ViewModels
                 }
             });
 
-            AddCharacterCommand = new RelayCommand(_ => { }); // Deprecated
+            // AddCharacterCommand = new RelayCommand(_ => { }); // Deprecated -> Removed
 
             StartAddCharacterCommand = new RelayCommand(_ =>
             {
@@ -405,21 +543,96 @@ namespace MapleHomework.ViewModels
                 }
             });
 
-            ConfirmAddCharacterCommand = new RelayCommand(_ =>
+            ConfirmAddCharacterCommand = new RelayCommand(async _ =>
             {
                 if (!string.IsNullOrWhiteSpace(NewCharacterName))
                 {
-                    var newChar = CharacterRepository.AddCharacter(_appData, NewCharacterName);
-                    if (newChar != null)
+                    var nameInput = NewCharacterName;
+                    IsAddingCharacter = false; // UI 닫기
+
+                    try
                     {
-                        Characters.Add(newChar);
-                        SelectedCharacter = newChar;
-                        CharacterRepository.Save(_appData);
-                        OnPropertyChanged(nameof(CanAddCharacter));
-                        NotifyDataChanged(); // 다른 창에 알림
+                        // 1. OCID 조회
+                        var ocid = await _apiService.GetOcidAsync(nameInput);
+                        if (string.IsNullOrEmpty(ocid))
+                        {
+                            System.Windows.MessageBox.Show($"'{nameInput}' 캐릭터를 찾을 수 없습니다.", "캐릭터 확인 불가",
+                                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            return;
+                        }
+
+                        // 2. 캐릭터 정보 조회 (서버 확인용)
+                        var basicInfo = await _apiService.GetCharacterInfoAsync(ocid, DateTime.Now.ToString("yyyy-MM-dd"));
+                        // 오늘 날짜 데이터가 없으면 과거 데이터 시도 (최대 3일)
+                        if (basicInfo == null)
+                        {
+                            for (int i = 1; i <= 3; i++)
+                            {
+                                basicInfo = await _apiService.GetCharacterInfoAsync(ocid, DateTime.Now.AddDays(-i).ToString("yyyy-MM-dd"));
+                                if (basicInfo != null) break;
+                            }
+                        }
+
+                        if (basicInfo == null)
+                        {
+                            System.Windows.MessageBox.Show("캐릭터 정보를 가져올 수 없습니다. 메이플스토리 점검 중이거나 API 오류일 수 있습니다.", "오류",
+                                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                            return;
+                        }
+
+                        var worldName = basicInfo.WorldName;
+
+                        // 3. 서버 제한 확인
+                        // 현재 등록된 서버 목록 (전체 제외, 중복 제외, null 제외)
+                        var currentServers = Characters
+                            .Select(c => c.WorldName)
+                            .Where(s => !string.IsNullOrEmpty(s))
+                            .Distinct()
+                            .ToList();
+
+                        // 이미 등록된 서버인지 확인
+                        if (!currentServers.Contains(worldName))
+                        {
+                            // 새로운 서버라면, 등록된 서버 개수 확인
+                            if (currentServers.Count >= 3)
+                            {
+                                System.Windows.MessageBox.Show(
+                                    $"최대 3개의 서버까지만 등록할 수 있습니다.\n\n[현재 등록된 서버]\n{string.Join(", ", currentServers)}\n\n[추가하려는 서버]\n{worldName}",
+                                    "서버 등록 제한",
+                                    System.Windows.MessageBoxButton.OK,
+                                    System.Windows.MessageBoxImage.Warning);
+                                return;
+                            }
+                        }
+
+                        // 4. 통과 시 캐릭터 추가
+                        var newChar = CharacterRepository.AddCharacter(_appData, nameInput);
+                        if (newChar != null)
+                        {
+                            // [Optimization] 이미 조회한 정보로 초기값 설정 (UI 즉시 반영)
+                            newChar.WorldName = worldName;
+                            newChar.ImageUrl = basicInfo.CharacterImage;
+                            newChar.Level = basicInfo.CharacterLevel;
+                            newChar.CharacterClass = basicInfo.CharacterClass;
+                            // GuildName은 CharacterProfile에 없음
+
+                            Characters.Add(newChar);
+                            SelectedCharacter = newChar;
+                            CharacterRepository.Save(_appData);
+                            OnPropertyChanged(nameof(CanAddCharacter));
+                            NotifyDataChanged(); // 다른 창에 알림
+                        }
                     }
-                    IsAddingCharacter = false;
-                    NewCharacterName = "";
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show($"캐릭터 추가 중 오류가 발생했습니다:\n{ex.Message}", "시스템 오류",
+                            System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    }
+                    finally
+                    {
+                        NewCharacterName = "";
+                        // IsAddingCharacter는 이미 false로 설정됨
+                    }
                 }
             });
 
@@ -517,6 +730,33 @@ namespace MapleHomework.ViewModels
                 _windowService.OpenReport(this);
             });
 
+            // 섹션 순서 이동
+            MoveSectionUpCommand = new RelayCommand(param =>
+            {
+                if (param is TaskSectionViewModel section)
+                {
+                    int index = Sections.IndexOf(section);
+                    if (index > 0)
+                    {
+                        Sections.Move(index, index - 1);
+                        SaveSectionOrder();
+                    }
+                }
+            });
+
+            MoveSectionDownCommand = new RelayCommand(param =>
+            {
+                if (param is TaskSectionViewModel section)
+                {
+                    int index = Sections.IndexOf(section);
+                    if (index < Sections.Count - 1)
+                    {
+                        Sections.Move(index, index + 1);
+                        SaveSectionOrder();
+                    }
+                }
+            });
+
             UpdateThemeColors();
             InitializeViews();
 
@@ -541,6 +781,78 @@ namespace MapleHomework.ViewModels
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
             _timer.Tick += (s, e) => CheckAndResetTasks();
             _timer.Start();
+
+            // 앱 시작 시 전체 캐릭터 데이터 점검 (비동기 실행)
+            _ = RunStartupChecksAsync();
+
+        }
+
+        private async Task RunStartupChecksAsync()
+        {
+            await Task.Delay(3000); // 앱 초기화 안정화를 위해 잠시 대기
+
+            // UI 컬렉션 변경 방지를 위해 리스트 복사 후 순회
+            var characters = _appData.Characters.ToList();
+
+            foreach (var character in characters)
+            {
+                bool needsSave = false;
+
+                // 1. OCID 복구
+                if (string.IsNullOrEmpty(character.Ocid))
+                {
+                    try
+                    {
+                        var ocid = await _apiService.GetOcidAsync(character.Nickname);
+                        if (!string.IsNullOrEmpty(ocid))
+                        {
+                            character.Ocid = ocid;
+                            needsSave = true;
+                        }
+                    }
+                    catch { /* 무시하고 다음으로 진행 */ }
+                }
+
+                if (needsSave)
+                {
+                    CharacterRepository.Save(_appData);
+                }
+
+                // OCID가 없으면 수집 불가능하므로 스킵
+                if (string.IsNullOrEmpty(character.Ocid)) continue;
+
+                // 2. 최근 7일 내 누락 데이터 확인 및 수집
+                var missingDates = new List<DateTime>();
+                var endDate = DateTime.Today;
+                var startDate = endDate.AddDays(-6);
+
+                // 해당 캐릭터의 수집된 날짜 조회
+                var collected = StatisticsService.GetCollectedDatesForCharacter(character.Id, character.Nickname);
+
+                for (var d = startDate; d <= endDate; d = d.AddDays(1))
+                {
+                    if (!collected.Contains(d))
+                    {
+                        missingDates.Add(d);
+                    }
+                }
+
+                if (missingDates.Any())
+                {
+                    // 순차적 수집 (API 부하 조절)
+                    await App.StartBackgroundCollect(
+                        character.Ocid,
+                        character.Id,
+                        character.Nickname,
+                        0, // days unused
+                        missingDates,
+                        null // notification service (optional)
+                    );
+
+                    // 다음 캐릭터 처리 전 딜레이
+                    await Task.Delay(1000);
+                }
+            }
         }
 
         private void RemoveDuplicateCharacters()
@@ -583,6 +895,8 @@ namespace MapleHomework.ViewModels
             MonthlyView.Filter = item => FilterTask(item, TaskCategory.Monthly);
             MonthlyView.SortDescriptions.Add(new SortDescription(nameof(HomeworkTask.Order), ListSortDirection.Ascending));
 
+            var settings = ConfigManager.Load();
+
             // Sections 초기화
             Sections.Clear();
             Sections.Add(new TaskSectionViewModel
@@ -591,7 +905,9 @@ namespace MapleHomework.ViewModels
                 Category = TaskCategory.Daily,
                 ItemsView = DailyView,
                 ToggleFavoriteCommand = ToggleDailyFavoriteCommand,
-                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleCyanGradient") as Brush ?? Brushes.Cyan
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleCyanGradient") as Brush ?? Brushes.Cyan,
+                IsEditModeFunc = () => IsEditMode,
+                IsExpanded = settings.SectionExpandedState.TryGetValue("Daily", out bool dailyExpanded) ? dailyExpanded : true
             });
             Sections.Add(new TaskSectionViewModel
             {
@@ -599,7 +915,9 @@ namespace MapleHomework.ViewModels
                 Category = TaskCategory.Weekly,
                 ItemsView = WeeklyView,
                 ToggleFavoriteCommand = ToggleWeeklyFavoriteCommand,
-                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleOrangeGradient") as Brush ?? Brushes.Orange
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleOrangeGradient") as Brush ?? Brushes.Orange,
+                IsEditModeFunc = () => IsEditMode,
+                IsExpanded = settings.SectionExpandedState.TryGetValue("Weekly", out bool weeklyExpanded) ? weeklyExpanded : true
             });
             Sections.Add(new TaskSectionViewModel
             {
@@ -607,7 +925,9 @@ namespace MapleHomework.ViewModels
                 Category = TaskCategory.Boss,
                 ItemsView = BossView,
                 ToggleFavoriteCommand = ToggleBossFavoriteCommand,
-                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleRedGradient") as Brush ?? Brushes.Red
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MapleRedGradient") as Brush ?? Brushes.Red,
+                IsEditModeFunc = () => IsEditMode,
+                IsExpanded = settings.SectionExpandedState.TryGetValue("Boss", out bool bossExpanded) ? bossExpanded : true
             });
             Sections.Add(new TaskSectionViewModel
             {
@@ -615,18 +935,209 @@ namespace MapleHomework.ViewModels
                 Category = TaskCategory.Monthly,
                 ItemsView = MonthlyView,
                 ToggleFavoriteCommand = ToggleMonthlyFavoriteCommand,
-                HeaderBackground = System.Windows.Application.Current.TryFindResource("MaplePurpleGradient") as Brush ?? Brushes.Purple
+                HeaderBackground = System.Windows.Application.Current.TryFindResource("MaplePurpleGradient") as Brush ?? Brushes.Purple,
+                IsEditModeFunc = () => IsEditMode,
+                IsExpanded = settings.SectionExpandedState.TryGetValue("Monthly", out bool monthlyExpanded) ? monthlyExpanded : true
             });
+
+            // 상태 변경 시 저장 이벤트 구독
+            foreach (var section in Sections)
+            {
+                section.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(TaskSectionViewModel.IsExpanded))
+                    {
+                        SaveSectionExpandedState();
+                    }
+                };
+            }
 
             var activeCvs = new CollectionViewSource { Source = Sections };
             ActiveSectionsView = activeCvs.View;
             // 편집 모드에서는 모든 섹션 표시, 일반 모드에서는 완료되지 않은 섹션만 표시
-            ActiveSectionsView.Filter = o => IsEditMode || !((TaskSectionViewModel)o).IsAllCompleted;
+            ActiveSectionsView = activeCvs.View;
+            // 편집 모드에서는 모든 섹션 표시
+            // [Updated] 즐겨찾기 모드 반영
+            ActiveSectionsView.Filter = o =>
+            {
+                var section = (TaskSectionViewModel)o;
+                if (IsFavoriteOnlyMode && !section.IsFavorite) return false;
+                return IsEditMode || !section.IsAllCompleted;
+            };
 
             var hiddenCvs = new CollectionViewSource { Source = Sections };
             HiddenSectionsView = hiddenCvs.View;
-            // 편집 모드에서는 숨김 섹션 없음, 일반 모드에서는 완료된 섹션만 표시
-            HiddenSectionsView.Filter = o => !IsEditMode && ((TaskSectionViewModel)o).IsAllCompleted;
+            // [Updated] 즐겨찾기 모드 반영
+            HiddenSectionsView.Filter = o =>
+            {
+                var section = (TaskSectionViewModel)o;
+                if (IsFavoriteOnlyMode && !section.IsFavorite) return false;
+                return !IsEditMode && section.IsAllCompleted;
+            };
+
+            // [New] 캐릭터 뷰 초기화
+            CharactersView = CollectionViewSource.GetDefaultView(Characters);
+            CharactersView.Filter = FilterCharacters;
+
+            // 캐릭터 변경 시 서버 리스트 업데이트 구독
+            Characters.CollectionChanged += Characters_CollectionChanged;
+
+            // 기존 캐릭터들에 대해서도 PropertyChanged 구독
+            foreach (var character in Characters)
+            {
+                character.PropertyChanged += OnCharacterPropertyChanged;
+            }
+
+            UpdateServerList();
+            UpdateServerStats();
+        }
+
+        private void Characters_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (CharacterProfile item in e.NewItems)
+                {
+                    item.PropertyChanged += OnCharacterPropertyChanged;
+                }
+            }
+            if (e.OldItems != null)
+            {
+                foreach (CharacterProfile item in e.OldItems)
+                {
+                    item.PropertyChanged -= OnCharacterPropertyChanged;
+                }
+            }
+            UpdateServerList();
+            UpdateServerStats();
+            NotifyDataChanged();
+        }
+
+        private void OnCharacterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // 월드 이름이 변경되면 서버 리스트 갱신 (API 로드 직후 등)
+            if (e.PropertyName == nameof(CharacterProfile.WorldName))
+            {
+                UpdateServerList();
+            }
+            // 보스 체크나 정보가 변경되면 통계 갱신
+            if (e.PropertyName == nameof(CharacterProfile.BossCheckedCount) ||
+                e.PropertyName == nameof(CharacterProfile.WeeklyBossExpectedReward))
+            {
+                UpdateServerStats();
+            }
+        }
+
+        /// <summary>
+        /// 캐릭터 순서 변경 (드래그 앤 드롭)
+        /// </summary>
+        public void MoveCharacter(CharacterProfile source, CharacterProfile target)
+        {
+            if (source == null || target == null || source == target) return;
+
+            int sourceIndex = Characters.IndexOf(source);
+            int targetIndex = Characters.IndexOf(target);
+
+            if (sourceIndex < 0 || targetIndex < 0) return;
+
+            // 컬렉션에서 이동
+            Characters.Move(sourceIndex, targetIndex);
+
+            // AppData 동기화
+            _appData.Characters.Clear();
+            foreach (var c in Characters)
+            {
+                _appData.Characters.Add(c);
+            }
+            SaveData();
+
+            // View 갱신
+            CharactersView?.Refresh();
+        }
+
+        /// <summary>
+        /// 캐릭터 순서 변경 (인덱스 기반)
+        /// </summary>
+        public void MoveCharacterByIndex(int oldIndex, int newIndex)
+        {
+            if (oldIndex < 0 || newIndex < 0 || oldIndex >= Characters.Count || newIndex >= Characters.Count) return;
+            if (oldIndex == newIndex) return;
+
+            Characters.Move(oldIndex, newIndex);
+
+            // AppData 동기화
+            _appData.Characters.Clear();
+            foreach (var c in Characters)
+            {
+                _appData.Characters.Add(c);
+            }
+            SaveData();
+
+            // View 갱신
+            CharactersView?.Refresh();
+        }
+
+
+        // [New] 캐릭터 필터링 로직
+        private bool FilterCharacters(object obj)
+        {
+            if (obj is not CharacterProfile character) return false;
+
+            // "전체" 탭이면 모든 캐릭터 표시
+            if (SelectedServer == "전체") return true;
+
+            // 월드 이름이 없는 경우(초기 상태)는 "전체"에서만 보이거나 기타 처리
+            if (string.IsNullOrEmpty(character.WorldName)) return false;
+
+            return character.WorldName == SelectedServer;
+        }
+
+        // [New] 서버 리스트 갱신
+        private void UpdateServerList()
+        {
+            // 현재 캐릭터들의 월드 이름을 수집 (중복 제거)
+            var worlds = Characters.Select(c => c.WorldName)
+                                   .Where(w => !string.IsNullOrEmpty(w) && w != "-")
+                                   .Distinct()
+                                   .OrderBy(w => w)
+                                   .ToList();
+
+            // 기존 선택값 유지 로직
+            var oldSelection = SelectedServer;
+
+            ServerList.Clear();
+            ServerList.Add("전체");
+            foreach (var w in worlds)
+            {
+                ServerList.Add(w);
+            }
+
+            if (ServerList.Contains(oldSelection))
+                SelectedServer = oldSelection;
+            else
+                SelectedServer = "전체";
+
+            // [New] 서버가 1개 이하면(전체 포함 2개 이하) 탭 숨김
+            // worlds 리스트는 "전체"를 제외한 실제 서버 목록이므로, worlds.Count > 1 이어야 다중 서버임.
+            // (예: 스카니아 하나만 있으면 worlds.Count=1 -> 탭 숨김)
+            IsServerTabVisible = worlds.Count > 1;
+        }
+
+        // [New] 서버 통계 갱신
+        private void UpdateServerStats()
+        {
+            if (SelectedServer == "전체")
+            {
+                // 전체일 때는 단순 합산 (결정석 제한은 각 서버별이므로 전체 합산은 참고용)
+                CurrentServerCrystalCount = Characters.Sum(c => c.BossCheckedCount);
+                CurrentServerTotalMeso = Characters.Sum(c => c.WeeklyBossExpectedReward);
+            }
+            else
+            {
+                var targetChars = Characters.Where(c => c.WorldName == SelectedServer);
+                CurrentServerCrystalCount = targetChars.Sum(c => c.BossCheckedCount);
+                CurrentServerTotalMeso = targetChars.Sum(c => c.WeeklyBossExpectedReward);
+            }
         }
 
 
@@ -654,6 +1165,10 @@ namespace MapleHomework.ViewModels
             MonthlyView?.Refresh();
 
             UpdateProgress();
+
+            // [New] 캐릭터 및 서버 통계 갱신
+            CharactersView?.Refresh();
+            UpdateServerStats();
         }
 
         public void RefreshExternalWindows()
@@ -797,6 +1312,21 @@ namespace MapleHomework.ViewModels
             CharacterRepository.Save(_appData);
             UpdateProgress();
             NotifyDataChanged();
+        }
+
+        private void SaveSectionOrder()
+        {
+            var settings = ConfigManager.Load();
+            settings.SectionOrder = Sections.Select(s => s.Category.ToString()).ToList();
+            ConfigManager.Save(settings);
+            ActiveSectionsView?.Refresh();
+        }
+
+        private void SaveSectionExpandedState()
+        {
+            var settings = ConfigManager.Load();
+            settings.SectionExpandedState = Sections.ToDictionary(s => s.Category.ToString(), s => s.IsExpanded);
+            ConfigManager.Save(settings);
         }
 
         private void UpdateProgress()
@@ -1089,6 +1619,34 @@ namespace MapleHomework.ViewModels
             }
 
             ThemeIcon = IsDarkTheme ? "WeatherMoon24" : "WeatherSunny24";
+
+            // 현재 선택된 서버의 테마가 있다면 덮어쓰기
+            UpdateServerTheme();
+        }
+
+        private void UpdateServerTheme()
+        {
+            // 리소스 딕셔너리 접근
+            var res = System.Windows.Application.Current.Resources;
+
+            if (_serverColorMap.TryGetValue(SelectedServer, out var colorHex))
+            {
+                try
+                {
+                    var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(colorHex);
+                    Primary = new SolidColorBrush(color);
+                }
+                catch
+                {
+                    // 파싱 실패 시 기본테마 복구
+                    Primary = res["ThemePrimaryColor"] as Brush ?? Brushes.DodgerBlue;
+                }
+            }
+            else
+            {
+                // "전체" 혹은 매핑 없는 서버 -> 기본 테마 색상 사용
+                Primary = res["ThemePrimaryColor"] as Brush ?? Brushes.DodgerBlue;
+            }
         }
 
         public void SaveAllData()
@@ -1143,51 +1701,60 @@ namespace MapleHomework.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-    }
-
-    public class TaskSectionViewModel : INotifyPropertyChanged
-    {
-        public string Title { get; set; } = "";
-        public Brush HeaderBackground { get; set; } = Brushes.Gray;
-        public TaskCategory Category { get; set; }
-        public ICollectionView ItemsView { get; set; } = null!;
-        public ICommand ToggleFavoriteCommand { get; set; } = null!;
-
-        private bool _isFavorite;
-        public bool IsFavorite { get => _isFavorite; set { _isFavorite = value; OnPropertyChanged(); } }
-
-        private string _progressText = "";
-        public string ProgressText { get => _progressText; set { _progressText = value; OnPropertyChanged(); } }
-
-        private double _progressValue;
-        public double ProgressValue
+        // 카드 배경 이미지 (MainViewModel로 이동됨)
+        private ImageSource? _cardBackgroundImage;
+        public ImageSource? CardBackgroundImage
         {
-            get => _progressValue;
-            set
+            get
             {
-                _progressValue = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(ProgressOffset));
+                if (_cardBackgroundImage == null)
+                {
+                    try
+                    {
+                        // 1. 실행 파일 위치의 Data/background.png 확인 (사용자 커스텀 지원)
+                        string basePath = AppContext.BaseDirectory;
+                        var fsPath = System.IO.Path.Combine(basePath, "Data", "background.png");
+
+
+
+                        if (System.IO.File.Exists(fsPath))
+                        {
+                            var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.UriSource = new Uri(fsPath, UriKind.Absolute);
+                            bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                            bitmap.EndInit();
+                            bitmap.Freeze();
+                            _cardBackgroundImage = bitmap;
+                        }
+                        else
+                        {
+                            // 2. 파일이 없으면 내부 리소스 확인 (fallback)
+                            var uri = new Uri("pack://application:,,,/Data/background.png", UriKind.Absolute);
+
+
+
+                            if (System.Windows.Application.GetResourceStream(uri) != null)
+                            {
+                                var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.UriSource = uri;
+                                bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                                bitmap.EndInit();
+                                bitmap.Freeze();
+                                _cardBackgroundImage = bitmap;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Failed to load background image: {ex.Message}");
+                    }
+                }
+                return _cardBackgroundImage;
             }
         }
-
-        public double ProgressOffset => 150.8 * (1 - (ProgressValue / 100.0));
-
-        private bool _isAllCompleted;
-        public bool IsAllCompleted { get => _isAllCompleted; set { _isAllCompleted = value; OnPropertyChanged(); } }
-
-        // 편집 모드 여부 (섹션 가시성 제어용) -> 섹션 자체가 아니라 외부에서 ItemsControl 바인딩으로 처리하지만,
-        // 필요하다면 추가. 여기서는 없어도 됨.
-
-        // 보스 섹션 전용
-        private string _secondaryText = "";
-        public string SecondaryText { get => _secondaryText; set { _secondaryText = value; OnPropertyChanged(); OnPropertyChanged(nameof(ShowSecondaryText)); } }
-        public bool ShowSecondaryText => !string.IsNullOrEmpty(SecondaryText);
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
     }
+
+
 }

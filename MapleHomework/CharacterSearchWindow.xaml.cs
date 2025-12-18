@@ -15,7 +15,9 @@ using MapleHomework.Data;
 using MapleHomework.Models;
 using MapleHomework.Services;
 using MapleHomework.Rendering;
+using MapleHomework.Rendering.Models;
 using WpfImage = System.Windows.Controls.Image;
+using System.IO;
 
 namespace MapleHomework
 {
@@ -55,71 +57,10 @@ namespace MapleHomework
         private List<SymbolDisplayItem> _authenticSymbols = new();
         private List<SymbolDisplayItem> _grandSymbols = new();
         private readonly Dictionary<string, Grid> _equipSlots = new();
+        private System.Windows.Threading.DispatcherTimer _tooltipCloseTimer;
 
-        // 헥사코어 아이템 클래스 (ReportWindow와 동일)
-        // 헥사코어 아이템 클래스 (ViewModel)
-        public class HexaCoreItem
-        {
-            public string SkillName { get; set; } = "";
-            public string OriginalName { get; set; } = "";
-            public string CoreType { get; set; } = "";
-            public int CoreLevel { get; set; }
-            public string SkillIconUrl { get; set; } = "";
-            public string BadgeIconPath { get; set; } = "";
 
-            // 강화 비용 정보
-            public int NextSolErda { get; set; }
-            public int NextFragment { get; set; }
-            public int RemainingSolErda { get; set; }
-            public int RemainingFragment { get; set; }
-            public bool IsMaxLevel => CoreLevel >= 30;
 
-            // UI 표시용
-            public string NextCostText => IsMaxLevel ? "MAX" : $"{NextSolErda} / {NextFragment}";
-            public string RemainingCostText => IsMaxLevel ? "-" : $"{RemainingSolErda} / {RemainingFragment}";
-
-            // 포맷팅된 텍스트 (단위 포함)
-            public string NextSolErdaText => IsMaxLevel ? "-" : $"{NextSolErda}개";
-            public string NextFragmentText => IsMaxLevel ? "-" : $"{NextFragment}개";
-            public string RemainingSolErdaText => IsMaxLevel ? "-" : $"{RemainingSolErda}개";
-            public string RemainingFragmentText => IsMaxLevel ? "-" : $"{RemainingFragment}개";
-
-            public double ProgressValue => CoreLevel >= 30 ? 100 : (CoreLevel / 30.0 * 100);
-            public double ProgressFactor
-            {
-                get
-                {
-                    if (CoreLevel >= 30) return 1.0;
-                    if (CoreLevel <= 0) return 0.0;
-                    double result = CoreLevel / 30.0;
-                    return double.IsNaN(result) || double.IsInfinity(result) ? 0.0 : result;
-                }
-            }
-            public string ProgressText => $"{ProgressValue:F1}%";
-        }
-
-        // 경험치 그래프 아이템
-        public class ExpGraphItem
-        {
-            public string DateLabel { get; set; } = "";
-            public double ExpRate { get; set; }
-            public string ExpRateText { get; set; } = "";
-            public double GraphRate { get; set; }
-            public long ExpGain { get; set; }
-        }
-
-        // 헥사스텟 아이템
-        public class HexaStatItem
-        {
-            public string MainStat { get; set; } = "";
-            public int MainLevel { get; set; }
-            public string SubStat1 { get; set; } = "";
-            public int SubLevel1 { get; set; }
-            public string SubStat2 { get; set; } = "";
-            public int SubLevel2 { get; set; }
-            public int Grade { get; set; }
-            public int SlotIndex { get; set; }
-        }
 
         private int _currentLevel;
         private int _currentPreset = 1;
@@ -129,6 +70,15 @@ namespace MapleHomework
         {
             InitializeComponent();
             _apiService = new MapleApiService();
+
+            // 툴팁 닫기 타이머 (깜빡임 방지)
+            _tooltipCloseTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+            _tooltipCloseTimer.Tick += (s, e) =>
+            {
+                TooltipPopup.IsOpen = false;
+                _tooltipCloseTimer.Stop();
+            };
+
 
             // 현재 테마 상태 확인 및 적용
             var settings = ConfigManager.Load();
@@ -759,8 +709,8 @@ namespace MapleHomework
                         SkillName = TruncateSkillName(core.HexaCoreName ?? "", 8),
                         CoreType = coreType,
                         CoreLevel = currentLevel,
-                        BadgeIconPath = GetBadgePath(coreType),
-                        SkillIconUrl = ResolveIcon(core.HexaCoreName ?? "", core.LinkedSkill),
+                        BadgeIcon = GetBadgePath(coreType),
+                        SkillIcon = ResolveIcon(core.HexaCoreName ?? "", core.LinkedSkill),
 
                         NextSolErda = nextSol,
                         NextFragment = nextFrag,
@@ -893,6 +843,7 @@ namespace MapleHomework
 
         private void ShowItemTooltip(ItemEquipmentInfo item)
         {
+            _tooltipCloseTimer.Stop(); // 타이머 중지
             try
             {
                 var tooltipBitmap = MapleTooltipRenderer.RenderEquipmentTooltip(item);
@@ -900,10 +851,18 @@ namespace MapleHomework
                 {
                     TooltipImage.Source = WpfBitmapConverter.ToBitmapSource(tooltipBitmap);
 
-                    // Popup을 마우스 위치에 표시 (창 밖으로도 나감)
-                    TooltipPopup.HorizontalOffset = 20;
-                    TooltipPopup.VerticalOffset = 10;
-                    TooltipPopup.IsOpen = true;
+                    // 화면(Window) 기준 상대 좌표로 설정하여 마우스 따라가기 지원
+                    TooltipPopup.PlacementTarget = this;
+                    TooltipPopup.Placement = PlacementMode.Relative;
+
+                    if (!TooltipPopup.IsOpen)
+                    {
+                        // 초기 위치 설정
+                        var mousePos = Mouse.GetPosition(this);
+                        TooltipPopup.HorizontalOffset = mousePos.X + 15;
+                        TooltipPopup.VerticalOffset = mousePos.Y + 15;
+                        TooltipPopup.IsOpen = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -914,8 +873,110 @@ namespace MapleHomework
 
         private void HideItemTooltip()
         {
-            TooltipPopup.IsOpen = false;
+            // 즉시 닫지 않고 타이머 시작 (이동 중 깜빡임 방지)
+            _tooltipCloseTimer.Start();
         }
+
+        private void EquipSlot_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (TooltipPopup.IsOpen)
+            {
+                var mousePos = Mouse.GetPosition(this);
+                TooltipPopup.HorizontalOffset = mousePos.X + 15;
+                TooltipPopup.VerticalOffset = mousePos.Y + 15;
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════
+        // HEXA CORE TOOLTIP & UI EVENTS
+        // ════════════════════════════════════════════════════════════
+
+        private void HexaCore_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.Tag is HexaCoreItem item)
+            {
+                ShowSkillTooltip(item);
+            }
+        }
+
+        private void HexaCore_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            HideItemTooltip();
+        }
+
+        private void HexaCore_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (TooltipPopup.IsOpen)
+            {
+                var mousePos = Mouse.GetPosition(this);
+                TooltipPopup.HorizontalOffset = mousePos.X + 15;
+                TooltipPopup.VerticalOffset = mousePos.Y + 15;
+            }
+        }
+
+        private void ShowSkillTooltip(HexaCoreItem item)
+        {
+            _tooltipCloseTimer.Stop();
+            try
+            {
+                // HexaCoreItem -> SkillTooltipData 변환
+                var data = new SkillTooltipData
+                {
+                    Name = item.SkillName, // or item.OriginalName ?
+                    IconUrl = item.SkillIcon,
+                    Level = item.CoreLevel,
+                    MaxLevel = 30, // 가정
+                    Description = $"코어 종류: {item.CoreType}\n\n[다음 레벨 조건]\n솔 에르다: {item.NextSolErdaText}\n솔 에르다 조각: {item.NextFragmentText}\n\n[졸업까지 남은 비용]\n솔 에르다: {item.RemainingSolErdaText}\n솔 에르다 조각: {item.RemainingFragmentText}",
+                    SkillEffect = "6차 스킬 코어입니다.", // 상세 효과 데이터 없음
+                    SkillEffectNext = ""
+                };
+
+                // 아이콘 변환 (URL -> BitmapImage -> Bitmap)
+                if (!string.IsNullOrEmpty(item.SkillIcon))
+                {
+                    var bmpImage = GetSkillIcon(item.SkillIcon);
+                    if (bmpImage != null)
+                    {
+                        data.IconBitmap = BitmapImageToBitmap(bmpImage);
+                    }
+                }
+
+                var renderer = new SkillTooltipRenderer(data);
+                var bitmap = renderer.Render();
+
+                if (bitmap != null)
+                {
+                    TooltipImage.Source = WpfBitmapConverter.ToBitmapSource(bitmap);
+
+                    TooltipPopup.PlacementTarget = this;
+                    TooltipPopup.Placement = PlacementMode.Relative;
+
+                    if (!TooltipPopup.IsOpen)
+                    {
+                        var mousePos = Mouse.GetPosition(this);
+                        TooltipPopup.HorizontalOffset = mousePos.X + 15;
+                        TooltipPopup.VerticalOffset = mousePos.Y + 15;
+                        TooltipPopup.IsOpen = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Skill Tooltip Error: {ex.Message}");
+            }
+        }
+
+        private System.Drawing.Bitmap BitmapImageToBitmap(BitmapImage bitmapImage)
+        {
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new PngBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+                enc.Save(outStream);
+                return new System.Drawing.Bitmap(outStream);
+            }
+        }
+
 
         private void ShowLoading(bool show, string? message = null)
         {

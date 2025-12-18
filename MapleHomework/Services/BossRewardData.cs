@@ -29,14 +29,14 @@ namespace MapleHomework.Services
             if (meso >= 100_000_000)
             {
                 double eok = meso / 100_000_000.0;
-                return $"{eok:N1}억";
+                return $"{eok:N1}억 메소";
             }
             else if (meso >= 10_000)
             {
                 double man = meso / 10_000.0;
-                return $"{man:N0}만";
+                return $"{man:N0}만 메소";
             }
-            return $"{meso:N0}";
+            return $"{meso:N0} 메소";
         }
 
         /// <summary>

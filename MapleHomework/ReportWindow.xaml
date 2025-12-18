@@ -1,11 +1,11 @@
-<ui:FluentWindow x:Class="MapleHomework.ReportWindow"
+﻿<ui:FluentWindow x:Class="MapleHomework.ReportWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:converters="clr-namespace:MapleHomework.Converters"
         Title="통계 리포트" 
         Height="950" Width="1400"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -860,6 +860,317 @@
                         </Grid>
                     </StackPanel>
 
+                    <!-- HEXA Core Status (New Row Ported) -->
+                     <Border x:Name="HexaCoreSection" Margin="0,20,0,0" CornerRadius="12" Padding="20"
+                             Background="{DynamicResource SurfaceContainer}" BorderBrush="{DynamicResource Outline}" BorderThickness="1">
+                         <Border.Effect>
+                             <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.08" Color="#000000"/>
+                         </Border.Effect>
+                         <Grid>
+                             <Grid.RowDefinitions>
+                                 <RowDefinition Height="Auto"/>
+                                 <RowDefinition Height="*"/>
+                             </Grid.RowDefinitions>
+                             <Grid.ColumnDefinitions>
+                                 <ColumnDefinition Width="7*"/>
+                                 <ColumnDefinition Width="3*"/>
+                             </Grid.ColumnDefinitions>
+                             
+                             <!-- Header (Spans both columns) -->
+                             <Border Grid.Row="0" Grid.ColumnSpan="2" CornerRadius="12,12,0,0" Margin="-21,-21,-21,20">
+                                 <Border.Background>
+                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                         <GradientStop Color="#A78BFA" Offset="0"/>
+                                         <GradientStop Color="#C084FC" Offset="0.5"/>
+                                         <GradientStop Color="#E879F9" Offset="1"/>
+                                     </LinearGradientBrush>
+                                 </Border.Background>
+                                 <Grid Margin="20,16">
+                                     <StackPanel Orientation="Horizontal">
+                                         <Border Background="#20FFFFFF" CornerRadius="8" Padding="8" Margin="0,0,14,0">
+                                             <Image Source="/Data/hexa.png" Width="20" Height="20"/>
+                                         </Border>
+                                         <StackPanel VerticalAlignment="Center">
+                                             <TextBlock Text="HEXA CORE" Foreground="White" FontSize="17" FontWeight="Bold"/>
+                                             <TextBlock Text="6차 스킬 코어 정보" Foreground="#C0FFFFFF" FontSize="11" Margin="0,2,0,0"/>
+                                         </StackPanel>
+                                     </StackPanel>
+                                     
+                                     <!-- 확대/축소 토글 버튼 -->
+                                     <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                   IsChecked="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded, Mode=TwoWay}"
+                                                   Cursor="Hand" Background="Transparent" BorderThickness="0" Padding="8">
+                                         <ToggleButton.Style>
+                                             <Style TargetType="ToggleButton">
+                                                 <Setter Property="Template">
+                                                     <Setter.Value>
+                                                         <ControlTemplate TargetType="ToggleButton">
+                                                             <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                                 <StackPanel Orientation="Horizontal">
+                                                                     <TextBlock x:Name="ToggleText" Text="확대" Foreground="#E0E0E0" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                                     <ui:SymbolIcon x:Name="ToggleIcon" Symbol="ArrowMaximize16" FontSize="16" Foreground="White" />
+                                                                 </StackPanel>
+                                                             </Border>
+                                                             <ControlTemplate.Triggers>
+                                                                 <Trigger Property="IsChecked" Value="True">
+                                                                     <Setter TargetName="ToggleText" Property="Text" Value="축소"/>
+                                                                     <Setter TargetName="ToggleIcon" Property="Symbol" Value="ArrowMinimize16"/>
+                                                                 </Trigger>
+                                                                 <Trigger Property="IsMouseOver" Value="True">
+                                                                     <Setter Property="Background" Value="#20FFFFFF"/>
+                                                                 </Trigger>
+                                                             </ControlTemplate.Triggers>
+                                                         </ControlTemplate>
+                                                     </Setter.Value>
+                                                 </Setter>
+                                             </Style>
+                                         </ToggleButton.Style>
+                                     </ToggleButton>
+                                 </Grid>
+                             </Border>
+                             
+                             <!-- HEXA CORE -->
+                             <StackPanel Grid.Row="1" Grid.Column="0">
+                                 <ItemsControl x:Name="HexaCoreGroups">
+                                     <ItemsControl.ItemsPanel>
+                                         <ItemsPanelTemplate>
+                                             <UniformGrid Columns="2" VerticalAlignment="Top"/>
+                                         </ItemsPanelTemplate>
+                                     </ItemsControl.ItemsPanel>
+                                     <ItemsControl.ItemTemplate>
+                                         <DataTemplate>
+                                             <Grid Margin="6">
+                                                 <Grid.Style>
+                                                     <Style TargetType="Grid">
+                                                         <Setter Property="MinHeight" Value="54"/> <!-- 기본 축소 높이 -->
+                                                         <Style.Triggers>
+                                                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded}" Value="True">
+                                                                 <Setter Property="MinHeight" Value="100"/>
+                                                             </DataTrigger>
+                                                         </Style.Triggers>
+                                                     </Style>
+                                                 </Grid.Style>
+                                                 <Border CornerRadius="12" Background="{DynamicResource CardBackgroundAlt}" 
+                                                         BorderBrush="{DynamicResource BorderColor}" BorderThickness="1"
+                                                         Tag="{Binding}"
+                                                         Cursor="Hand"
+                                                         MouseEnter="HexaSkill_MouseEnter"
+                                                         MouseLeave="HexaSkill_MouseLeave"
+                                                         MouseMove="HexaSkill_MouseMove">
+                                                     <Grid>
+                                                         <!-- 게이지 배경 -->
+                                                         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="12">
+                                                             <Border.Background>
+                                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                     <GradientStop Color="#40A78BFA" Offset="{Binding ProgressFactor}"/>
+                                                                     <GradientStop Color="Transparent" Offset="{Binding ProgressFactor}"/>
+                                                                 </LinearGradientBrush>
+                                                             </Border.Background>
+                                                         </Border>
+                                                         
+                                                         <Grid Margin="8">
+                                                             <Grid.ColumnDefinitions>
+                                                                 <ColumnDefinition Width="Auto"/>
+                                                                 <ColumnDefinition Width="*"/>
+                                                             </Grid.ColumnDefinitions>
+                                                             
+                                                             <!-- 아이콘 -->
+                                                              <Grid Grid.Column="0" Width="44" Height="44" Margin="0,0,12,0" VerticalAlignment="Center">
+                                                                 <Border CornerRadius="8" Background="#20000000" IsHitTestVisible="False">
+                                                                     <Image Source="{Binding SkillIcon}" Stretch="Uniform" Margin="4" IsHitTestVisible="False"/>
+                                                                 </Border>
+                                                                 <Border Background="#CC000000" CornerRadius="4" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="4,1" Margin="-4,0,0,-4" IsHitTestVisible="False">
+                                                                     <TextBlock Text="{Binding CoreLevel, StringFormat='Lv.{0}'}" Foreground="White" FontSize="10" FontWeight="Bold" IsHitTestVisible="False"/>
+                                                                 </Border>
+                                                             </Grid>
+                                                             
+                                                             <!-- 텍스트 정보 -->
+                                                             <Grid Grid.Column="1" VerticalAlignment="Center">
+                                                                 <Grid.RowDefinitions>
+                                                                     <RowDefinition Height="Auto"/>
+                                                                     <RowDefinition Height="Auto"/>
+                                                                     <RowDefinition Height="Auto"/>
+                                                                 </Grid.RowDefinitions>
+                                                                 
+                                                                 <!-- 스킬명 & 진행도 -->
+                                                                 <Grid Grid.Row="0" Margin="0,0,0,6">
+                                                                     <Grid.ColumnDefinitions>
+                                                                         <ColumnDefinition Width="*"/>
+                                                                         <ColumnDefinition Width="Auto"/>
+                                                                     </Grid.ColumnDefinitions>
+                                                                     <TextBlock Text="{Binding SkillName}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
+                                                                     <TextBlock Grid.Column="1" Text="{Binding ProgressText}" Foreground="#A78BFA" FontWeight="Bold" FontSize="14"/>
+                                                                 </Grid>
+                                                                 
+                                                                 <!-- 상세 정보 패널 (애니메이션 적용) -->
+                                                                 <StackPanel x:Name="DetailsPanel" Grid.Row="1" Grid.RowSpan="2" ClipToBounds="True">
+                                                                     <StackPanel.Style>
+                                                                         <Style TargetType="StackPanel">
+                                                                             <Setter Property="MaxHeight" Value="0"/>
+                                                                             <Setter Property="Opacity" Value="0"/>
+                                                                             <Style.Triggers>
+                                                                                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded}" Value="True">
+                                                                                     <DataTrigger.EnterActions>
+                                                                                         <BeginStoryboard>
+                                                                                             <Storyboard>
+                                                                                                 <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="300" Duration="0:0:0.3" DecelerationRatio="0.5"/>
+                                                                                                 <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                                                                                             </Storyboard>
+                                                                                         </BeginStoryboard>
+                                                                                     </DataTrigger.EnterActions>
+                                                                                     <DataTrigger.ExitActions>
+                                                                                         <BeginStoryboard>
+                                                                                             <Storyboard>
+                                                                                                 <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="0" Duration="0:0:0.3" AccelerationRatio="0.5"/>
+                                                                                                 <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                                                                                             </Storyboard>
+                                                                                         </BeginStoryboard>
+                                                                                     </DataTrigger.ExitActions>
+                                                                                 </DataTrigger>
+                                                                             </Style.Triggers>
+                                                                         </Style>
+                                                                     </StackPanel.Style>
+                                                                 
+                                                                     <!-- 다음 레벨 비용 -->
+                                                                     <Grid Grid.Row="1" Margin="0,0,0,2">
+                                                                         <Grid.ColumnDefinitions>
+                                                                             <ColumnDefinition Width="65"/>
+                                                                             <ColumnDefinition Width="Auto"/>
+                                                                             <ColumnDefinition Width="Auto"/>
+                                                                         </Grid.ColumnDefinitions>
+                                                                         <TextBlock Text="다음 레벨" Foreground="{DynamicResource TextSecondary}" FontSize="11"/>
+                                                                         <StackPanel Grid.Column="1" Orientation="Horizontal" Width="55">
+                                                                             <Image Source="/Data/sol-erda.png" Width="14" Height="14" Margin="0,0,4,0"/>
+                                                                             <TextBlock Text="{Binding NextSolErdaText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
+                                                                         </StackPanel>
+                                                                         <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                                             <Image Source="/Data/sol-erda-fragment.png" Width="14" Height="14" Margin="0,0,4,0"/>
+                                                                             <TextBlock Text="{Binding NextFragmentText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
+                                                                         </StackPanel>
+                                                                     </Grid>
+                                                                 
+                                                                     <!-- 졸업까지 비용 -->
+                                                                     <Grid Grid.Row="2">
+                                                                         <Grid.ColumnDefinitions>
+                                                                             <ColumnDefinition Width="65"/>
+                                                                             <ColumnDefinition Width="Auto"/>
+                                                                             <ColumnDefinition Width="Auto"/>
+                                                                         </Grid.ColumnDefinitions>
+                                                                         <TextBlock Text="졸업까지" Foreground="{DynamicResource TextSecondary}" FontSize="11"/>
+                                                                         <StackPanel Grid.Column="1" Orientation="Horizontal" Width="55">
+                                                                             <Image Source="/Data/sol-erda.png" Width="14" Height="14" Margin="0,0,4,0"/>
+                                                                             <TextBlock Text="{Binding RemainingSolErdaText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
+                                                                         </StackPanel>
+                                                                         <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                                             <Image Source="/Data/sol-erda-fragment.png" Width="14" Height="14" Margin="0,0,4,0"/>
+                                                                             <TextBlock Text="{Binding RemainingFragmentText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
+                                                                         </StackPanel>
+                                                                     </Grid>
+                                                                 </StackPanel>
+                                                             </Grid>
+                                                         </Grid>
+                                                     </Grid>
+                                                 </Border>
+                                             </Grid>
+                                         </DataTemplate>
+                                     </ItemsControl.ItemTemplate>
+                                 </ItemsControl>
+                                 
+                                 <TextBlock x:Name="NoHexaText" Text="HEXA 코어 정보 없음" 
+                                            Foreground="{DynamicResource OnSurfaceVariant}" FontSize="15" Margin="0,16,0,0" Visibility="Collapsed"/>
+                             </StackPanel>
+                             
+                             <!-- HEXA STAT (Col 1) -->
+                             <ItemsControl x:Name="HexaStatCoreList" Grid.Row="1" Grid.Column="1" Margin="20,0,0,0">
+                                 <ItemsControl.ItemsPanel>
+                                     <ItemsPanelTemplate>
+                                         <StackPanel Orientation="Vertical"/>
+                                     </ItemsPanelTemplate>
+                                 </ItemsControl.ItemsPanel>
+                                 <ItemsControl.ItemTemplate>
+                                     <DataTemplate>
+                                         <Border CornerRadius="12" Margin="0,0,0,8" BorderThickness="1" BorderBrush="{DynamicResource BorderColor}"
+                                                 Background="{DynamicResource CardBackgroundAlt}">
+                                             <Grid Margin="10">
+                                                 <Grid.ColumnDefinitions>
+                                                     <ColumnDefinition Width="Auto"/> 
+                                                     <ColumnDefinition Width="*"/>    
+                                                     <ColumnDefinition Width="Auto"/> 
+                                                 </Grid.ColumnDefinitions>
+                                                 
+                                                 <!-- 슬롯 번호 -->
+                                                 <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8" Margin="0,0,16,0" VerticalAlignment="Center">
+                                                     <Border.Background>
+                                                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                             <GradientStop Color="#A78BFA" Offset="0"/>
+                                                             <GradientStop Color="#7C3AED" Offset="1"/>
+                                                         </LinearGradientBrush>
+                                                     </Border.Background>
+                                                     <TextBlock Text="{Binding SlotIndex}" Foreground="White" FontWeight="Bold" FontSize="16" 
+                                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                 </Border>
+                                                 
+                                                 <!-- 스탯 정보 -->
+                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                     <TextBlock Text="{Binding MainStat}" Foreground="#A78BFA" FontWeight="Bold" FontSize="15" Margin="0,0,0,4"/>
+                                                     
+                                                     <!-- 상세 스탯 (애니메이션 적용) -->
+                                                     <StackPanel x:Name="StatDetails" ClipToBounds="True">
+                                                         <StackPanel.Style>
+                                                             <Style TargetType="StackPanel">
+                                                                 <Setter Property="MaxHeight" Value="0"/>
+                                                                 <Setter Property="Opacity" Value="0"/>
+                                                                 <Style.Triggers>
+                                                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded}" Value="True">
+                                                                         <DataTrigger.EnterActions>
+                                                                             <BeginStoryboard>
+                                                                                 <Storyboard>
+                                                                                     <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="50" Duration="0:0:0.3" DecelerationRatio="0.5"/>
+                                                                                     <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                                                                                 </Storyboard>
+                                                                             </BeginStoryboard>
+                                                                         </DataTrigger.EnterActions>
+                                                                         <DataTrigger.ExitActions>
+                                                                             <BeginStoryboard>
+                                                                                 <Storyboard>
+                                                                                     <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="0" Duration="0:0:0.3" AccelerationRatio="0.5"/>
+                                                                                     <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                                                                                 </Storyboard>
+                                                                             </BeginStoryboard>
+                                                                         </DataTrigger.ExitActions>
+                                                                     </DataTrigger>
+                                                                 </Style.Triggers>
+                                                             </Style>
+                                                         </StackPanel.Style>
+                                                         
+                                                         <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                                             <TextBlock Text="{Binding SubStat1}" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="0,0,4,0"/>
+                                                             <TextBlock Text="Lv." Foreground="{DynamicResource TextSecondary}" FontSize="11" VerticalAlignment="Bottom" Margin="0,0,1,1"/>
+                                                             <TextBlock Text="{Binding SubLevel1}" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="12"/>
+                                                         </StackPanel>
+                                                         
+                                                         <StackPanel Orientation="Horizontal">
+                                                             <TextBlock Text="{Binding SubStat2}" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="0,0,4,0"/>
+                                                             <TextBlock Text="Lv." Foreground="{DynamicResource TextSecondary}" FontSize="11" VerticalAlignment="Bottom" Margin="0,0,1,1"/>
+                                                             <TextBlock Text="{Binding SubLevel2}" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="12"/>
+                                                         </StackPanel>
+                                                     </StackPanel>
+                                                 </StackPanel>
+                                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16,0,0,0">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,4">
+                                                        <TextBlock Text="Lv." Foreground="{DynamicResource TextSecondary}" FontSize="13" VerticalAlignment="Bottom" Margin="0,0,3,3"/>
+                                                        <TextBlock Text="{Binding MainLevel}" FontWeight="Bold" FontSize="20" Foreground="{DynamicResource TextPrimary}"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                         </Border>
+                                     </DataTemplate>
+                                 </ItemsControl.ItemTemplate>
+                             </ItemsControl>
+                             <TextBlock x:Name="NoHexaStatText" Text="HEXA 스탯 정보 없음" 
+                                        Foreground="{DynamicResource OnSurfaceVariant}" FontSize="15" Margin="20,16,0,0" Visibility="Collapsed" Grid.Row="1" Grid.Column="1"/>
+                         </Grid>
+                     </Border>
                         <Grid x:Name="EquipmentSection" Margin="0,0,0,16" MinHeight="650">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -1009,7 +1320,9 @@
                                                                 CornerRadius="14" Padding="14,10" Margin="2,2,2,8"
                                                                 BorderBrush="{DynamicResource ItemCardBorder}" BorderThickness="1"
                                                                 Cursor="Hand"
-                                                                MouseEnter="ItemSlot_MouseEnter" MouseLeave="ItemSlot_MouseLeave">
+                                                                MouseEnter="ItemSlot_MouseEnter"
+                                                                MouseLeave="ItemSlot_MouseLeave"
+                                                                MouseMove="ItemSlot_MouseMove">
                                                             <Border.Effect>
                                                                 <DropShadowEffect BlurRadius="8" ShadowDepth="0" Opacity="0.04" Color="#000000"/>
                                                             </Border.Effect>
@@ -1213,7 +1526,11 @@
                                                                                 <DataTemplate>
                                                                                     <Border Background="{DynamicResource CardBackground}" 
                                                                                             CornerRadius="10" Padding="12,10" Margin="0,0,0,6"
-                                                                                            BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                                                                                            BorderBrush="{DynamicResource BorderColor}" BorderThickness="1"
+                                                                                            Tag="{Binding}">
+                                                                                            <!-- MouseEnter="HexaSkill_MouseEnter"
+                                                                                            MouseLeave="HexaSkill_MouseLeave"
+                                                                                            MouseMove="HexaSkill_MouseMove" -->
                                                                                             <Grid>
                                                                                             <Grid.ColumnDefinitions>
                                                                                                 <ColumnDefinition Width="Auto"/>
@@ -1224,10 +1541,7 @@
                                                                                             
                                                                                             <Border Width="40" Height="40" CornerRadius="10">
                                                                                                 <Border.Background>
-                                                                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                                                                        <GradientStop Color="#20EC4899" Offset="0"/>
-                                                                                                        <GradientStop Color="#10F472B6" Offset="1"/>
-                                                                                                    </LinearGradientBrush>
+                                                                                                    <SolidColorBrush Color="Transparent"/>
                                                                                                 </Border.Background>
                                                                                                 <Image Source="{Binding SkillIcon}" Width="26" Height="26" 
                                                                                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -1272,312 +1586,6 @@
                                 </StackPanel>
                             </Grid>
 
-                    <!-- HEXA Core Status (New Row Ported) -->
-                     <Border x:Name="HexaCoreSection" Margin="0,20,0,0" CornerRadius="12" Padding="20"
-                             Background="{DynamicResource SurfaceContainer}" BorderBrush="{DynamicResource Outline}" BorderThickness="1">
-                         <Border.Effect>
-                             <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.08" Color="#000000"/>
-                         </Border.Effect>
-                         <Grid>
-                             <Grid.RowDefinitions>
-                                 <RowDefinition Height="Auto"/>
-                                 <RowDefinition Height="*"/>
-                             </Grid.RowDefinitions>
-                             <Grid.ColumnDefinitions>
-                                 <ColumnDefinition Width="7*"/>
-                                 <ColumnDefinition Width="3*"/>
-                             </Grid.ColumnDefinitions>
-                             
-                             <!-- Header (Spans both columns) -->
-                             <Border Grid.Row="0" Grid.ColumnSpan="2" CornerRadius="12,12,0,0" Margin="-21,-21,-21,20">
-                                 <Border.Background>
-                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                         <GradientStop Color="#A78BFA" Offset="0"/>
-                                         <GradientStop Color="#C084FC" Offset="0.5"/>
-                                         <GradientStop Color="#E879F9" Offset="1"/>
-                                     </LinearGradientBrush>
-                                 </Border.Background>
-                                 <Grid Margin="20,16">
-                                     <StackPanel Orientation="Horizontal">
-                                         <Border Background="#20FFFFFF" CornerRadius="8" Padding="8" Margin="0,0,14,0">
-                                             <Image Source="/Data/hexa.png" Width="20" Height="20"/>
-                                         </Border>
-                                         <StackPanel VerticalAlignment="Center">
-                                             <TextBlock Text="HEXA CORE" Foreground="White" FontSize="17" FontWeight="Bold"/>
-                                             <TextBlock Text="6차 스킬 코어 정보" Foreground="#C0FFFFFF" FontSize="11" Margin="0,2,0,0"/>
-                                         </StackPanel>
-                                     </StackPanel>
-                                     
-                                     <!-- 확대/축소 토글 버튼 -->
-                                     <ToggleButton HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   IsChecked="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded, Mode=TwoWay}"
-                                                   Cursor="Hand" Background="Transparent" BorderThickness="0" Padding="8">
-                                         <ToggleButton.Style>
-                                             <Style TargetType="ToggleButton">
-                                                 <Setter Property="Template">
-                                                     <Setter.Value>
-                                                         <ControlTemplate TargetType="ToggleButton">
-                                                             <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
-                                                                 <StackPanel Orientation="Horizontal">
-                                                                     <TextBlock x:Name="ToggleText" Text="확대" Foreground="#E0E0E0" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                                                     <ui:SymbolIcon x:Name="ToggleIcon" Symbol="ArrowMaximize16" FontSize="16" Foreground="White" />
-                                                                 </StackPanel>
-                                                             </Border>
-                                                             <ControlTemplate.Triggers>
-                                                                 <Trigger Property="IsChecked" Value="True">
-                                                                     <Setter TargetName="ToggleText" Property="Text" Value="축소"/>
-                                                                     <Setter TargetName="ToggleIcon" Property="Symbol" Value="ArrowMinimize16"/>
-                                                                 </Trigger>
-                                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                                     <Setter Property="Background" Value="#20FFFFFF"/>
-                                                                 </Trigger>
-                                                             </ControlTemplate.Triggers>
-                                                         </ControlTemplate>
-                                                     </Setter.Value>
-                                                 </Setter>
-                                             </Style>
-                                         </ToggleButton.Style>
-                                     </ToggleButton>
-                                 </Grid>
-                             </Border>
-                             
-                             <!-- HEXA CORE -->
-                             <StackPanel Grid.Row="1" Grid.Column="0">
-                                 <ItemsControl x:Name="HexaCoreGroups">
-                                     <ItemsControl.ItemsPanel>
-                                         <ItemsPanelTemplate>
-                                             <UniformGrid Columns="2" VerticalAlignment="Top"/>
-                                         </ItemsPanelTemplate>
-                                     </ItemsControl.ItemsPanel>
-                                     <ItemsControl.ItemTemplate>
-                                         <DataTemplate>
-                                             <Grid Margin="6">
-                                                 <Grid.Style>
-                                                     <Style TargetType="Grid">
-                                                         <Setter Property="MinHeight" Value="54"/> <!-- 기본 축소 높이 -->
-                                                         <Style.Triggers>
-                                                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded}" Value="True">
-                                                                 <Setter Property="MinHeight" Value="100"/>
-                                                             </DataTrigger>
-                                                         </Style.Triggers>
-                                                     </Style>
-                                                 </Grid.Style>
-                                                 <Border CornerRadius="12" Background="{DynamicResource CardBackgroundAlt}" 
-                                                         BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
-                                                     <Grid>
-                                                         <!-- 게이지 배경 -->
-                                                         <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="12">
-                                                             <Border.Background>
-                                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                                     <GradientStop Color="#40A78BFA" Offset="{Binding ProgressFactor}"/>
-                                                                     <GradientStop Color="Transparent" Offset="{Binding ProgressFactor}"/>
-                                                                 </LinearGradientBrush>
-                                                             </Border.Background>
-                                                         </Border>
-                                                         
-                                                         <Grid Margin="8">
-                                                             <Grid.ColumnDefinitions>
-                                                                 <ColumnDefinition Width="Auto"/>
-                                                                 <ColumnDefinition Width="*"/>
-                                                             </Grid.ColumnDefinitions>
-                                                             
-                                                             <!-- 아이콘 -->
-                                                             <Grid Grid.Column="0" Width="44" Height="44" Margin="0,0,12,0" VerticalAlignment="Center">
-                                                                 <Border CornerRadius="8" Background="#20000000">
-                                                                     <Image Source="{Binding SkillIcon}" Stretch="Uniform" Margin="4"/>
-                                                                 </Border>
-                                                                 <Border Background="#CC000000" CornerRadius="4" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="4,1" Margin="-4,0,0,-4">
-                                                                     <TextBlock Text="{Binding CoreLevel, StringFormat='Lv.{0}'}" Foreground="White" FontSize="10" FontWeight="Bold"/>
-                                                                 </Border>
-                                                             </Grid>
-                                                             
-                                                             <!-- 텍스트 정보 -->
-                                                             <Grid Grid.Column="1" VerticalAlignment="Center">
-                                                                 <Grid.RowDefinitions>
-                                                                     <RowDefinition Height="Auto"/>
-                                                                     <RowDefinition Height="Auto"/>
-                                                                     <RowDefinition Height="Auto"/>
-                                                                 </Grid.RowDefinitions>
-                                                                 
-                                                                 <!-- 스킬명 & 진행도 -->
-                                                                 <Grid Grid.Row="0" Margin="0,0,0,6">
-                                                                     <Grid.ColumnDefinitions>
-                                                                         <ColumnDefinition Width="*"/>
-                                                                         <ColumnDefinition Width="Auto"/>
-                                                                     </Grid.ColumnDefinitions>
-                                                                     <TextBlock Text="{Binding SkillName}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
-                                                                     <TextBlock Grid.Column="1" Text="{Binding ProgressText}" Foreground="#A78BFA" FontWeight="Bold" FontSize="14"/>
-                                                                 </Grid>
-                                                                 
-                                                                 <!-- 상세 정보 패널 (애니메이션 적용) -->
-                                                                 <StackPanel x:Name="DetailsPanel" Grid.Row="1" Grid.RowSpan="2" ClipToBounds="True">
-                                                                     <StackPanel.Style>
-                                                                         <Style TargetType="StackPanel">
-                                                                             <Setter Property="MaxHeight" Value="0"/>
-                                                                             <Setter Property="Opacity" Value="0"/>
-                                                                             <Style.Triggers>
-                                                                                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded}" Value="True">
-                                                                                     <DataTrigger.EnterActions>
-                                                                                         <BeginStoryboard>
-                                                                                             <Storyboard>
-                                                                                                 <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="300" Duration="0:0:0.3" DecelerationRatio="0.5"/>
-                                                                                                 <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-                                                                                             </Storyboard>
-                                                                                         </BeginStoryboard>
-                                                                                     </DataTrigger.EnterActions>
-                                                                                     <DataTrigger.ExitActions>
-                                                                                         <BeginStoryboard>
-                                                                                             <Storyboard>
-                                                                                                 <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="0" Duration="0:0:0.3" AccelerationRatio="0.5"/>
-                                                                                                 <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
-                                                                                             </Storyboard>
-                                                                                         </BeginStoryboard>
-                                                                                     </DataTrigger.ExitActions>
-                                                                                 </DataTrigger>
-                                                                             </Style.Triggers>
-                                                                         </Style>
-                                                                     </StackPanel.Style>
-                                                                 
-                                                                     <!-- 다음 레벨 비용 -->
-                                                                     <Grid Grid.Row="1" Margin="0,0,0,2">
-                                                                         <Grid.ColumnDefinitions>
-                                                                             <ColumnDefinition Width="65"/>
-                                                                             <ColumnDefinition Width="Auto"/>
-                                                                             <ColumnDefinition Width="Auto"/>
-                                                                         </Grid.ColumnDefinitions>
-                                                                         <TextBlock Text="다음 레벨" Foreground="{DynamicResource TextSecondary}" FontSize="11"/>
-                                                                         <StackPanel Grid.Column="1" Orientation="Horizontal" Width="55">
-                                                                             <Image Source="/Data/sol-erda.png" Width="14" Height="14" Margin="0,0,4,0"/>
-                                                                             <TextBlock Text="{Binding NextSolErdaText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
-                                                                         </StackPanel>
-                                                                         <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                                                             <Image Source="/Data/sol-erda-fragment.png" Width="14" Height="14" Margin="0,0,4,0"/>
-                                                                             <TextBlock Text="{Binding NextFragmentText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
-                                                                         </StackPanel>
-                                                                     </Grid>
-                                                                 
-                                                                     <!-- 졸업까지 비용 -->
-                                                                     <Grid Grid.Row="2">
-                                                                         <Grid.ColumnDefinitions>
-                                                                             <ColumnDefinition Width="65"/>
-                                                                             <ColumnDefinition Width="Auto"/>
-                                                                             <ColumnDefinition Width="Auto"/>
-                                                                         </Grid.ColumnDefinitions>
-                                                                         <TextBlock Text="졸업까지" Foreground="{DynamicResource TextSecondary}" FontSize="11"/>
-                                                                         <StackPanel Grid.Column="1" Orientation="Horizontal" Width="55">
-                                                                             <Image Source="/Data/sol-erda.png" Width="14" Height="14" Margin="0,0,4,0"/>
-                                                                             <TextBlock Text="{Binding RemainingSolErdaText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
-                                                                         </StackPanel>
-                                                                         <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                                                             <Image Source="/Data/sol-erda-fragment.png" Width="14" Height="14" Margin="0,0,4,0"/>
-                                                                             <TextBlock Text="{Binding RemainingFragmentText}" FontSize="11" Foreground="{DynamicResource TextPrimary}"/>
-                                                                         </StackPanel>
-                                                                     </Grid>
-                                                                 </StackPanel>
-                                                             </Grid>
-                                                         </Grid>
-                                                     </Grid>
-                                                 </Border>
-                                             </Grid>
-                                         </DataTemplate>
-                                     </ItemsControl.ItemTemplate>
-                                 </ItemsControl>
-                                 
-                                 <TextBlock x:Name="NoHexaText" Text="HEXA 코어 정보 없음" 
-                                            Foreground="{DynamicResource OnSurfaceVariant}" FontSize="15" Margin="0,16,0,0" Visibility="Collapsed"/>
-                             </StackPanel>
-                             
-                             <!-- HEXA STAT (Col 1) -->
-                             <ItemsControl x:Name="HexaStatCoreList" Grid.Row="1" Grid.Column="1" Margin="20,0,0,0">
-                                 <ItemsControl.ItemsPanel>
-                                     <ItemsPanelTemplate>
-                                         <StackPanel Orientation="Vertical"/>
-                                     </ItemsPanelTemplate>
-                                 </ItemsControl.ItemsPanel>
-                                 <ItemsControl.ItemTemplate>
-                                     <DataTemplate>
-                                         <Border CornerRadius="12" Margin="0,0,0,8" BorderThickness="1" BorderBrush="{DynamicResource BorderColor}"
-                                                 Background="{DynamicResource CardBackgroundAlt}">
-                                             <Grid Margin="10">
-                                                 <Grid.ColumnDefinitions>
-                                                     <ColumnDefinition Width="Auto"/> 
-                                                     <ColumnDefinition Width="*"/>    
-                                                     <ColumnDefinition Width="Auto"/> 
-                                                 </Grid.ColumnDefinitions>
-                                                 
-                                                 <!-- 슬롯 번호 -->
-                                                 <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8" Margin="0,0,16,0" VerticalAlignment="Center">
-                                                     <Border.Background>
-                                                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                             <GradientStop Color="#A78BFA" Offset="0"/>
-                                                             <GradientStop Color="#7C3AED" Offset="1"/>
-                                                         </LinearGradientBrush>
-                                                     </Border.Background>
-                                                     <TextBlock Text="{Binding SlotIndex}" Foreground="White" FontWeight="Bold" FontSize="16" 
-                                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                 </Border>
-                                                 
-                                                 <!-- 스탯 정보 -->
-                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                     <TextBlock Text="{Binding MainStat}" Foreground="#A78BFA" FontWeight="Bold" FontSize="15" Margin="0,0,0,4"/>
-                                                     
-                                                     <!-- 상세 스탯 (애니메이션 적용) -->
-                                                     <StackPanel x:Name="StatDetails" ClipToBounds="True">
-                                                         <StackPanel.Style>
-                                                             <Style TargetType="StackPanel">
-                                                                 <Setter Property="MaxHeight" Value="0"/>
-                                                                 <Setter Property="Opacity" Value="0"/>
-                                                                 <Style.Triggers>
-                                                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IsHexaExpanded}" Value="True">
-                                                                         <DataTrigger.EnterActions>
-                                                                             <BeginStoryboard>
-                                                                                 <Storyboard>
-                                                                                     <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="50" Duration="0:0:0.3" DecelerationRatio="0.5"/>
-                                                                                     <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
-                                                                                 </Storyboard>
-                                                                             </BeginStoryboard>
-                                                                         </DataTrigger.EnterActions>
-                                                                         <DataTrigger.ExitActions>
-                                                                             <BeginStoryboard>
-                                                                                 <Storyboard>
-                                                                                     <DoubleAnimation Storyboard.TargetProperty="MaxHeight" To="0" Duration="0:0:0.3" AccelerationRatio="0.5"/>
-                                                                                     <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
-                                                                                 </Storyboard>
-                                                                             </BeginStoryboard>
-                                                                         </DataTrigger.ExitActions>
-                                                                     </DataTrigger>
-                                                                 </Style.Triggers>
-                                                             </Style>
-                                                         </StackPanel.Style>
-                                                         
-                                                         <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                                                             <TextBlock Text="{Binding SubStat1}" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="0,0,4,0"/>
-                                                             <TextBlock Text="Lv." Foreground="{DynamicResource TextSecondary}" FontSize="11" VerticalAlignment="Bottom" Margin="0,0,1,1"/>
-                                                             <TextBlock Text="{Binding SubLevel1}" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="12"/>
-                                                         </StackPanel>
-                                                         
-                                                         <StackPanel Orientation="Horizontal">
-                                                             <TextBlock Text="{Binding SubStat2}" Foreground="{DynamicResource TextSecondary}" FontSize="12" Margin="0,0,4,0"/>
-                                                             <TextBlock Text="Lv." Foreground="{DynamicResource TextSecondary}" FontSize="11" VerticalAlignment="Bottom" Margin="0,0,1,1"/>
-                                                             <TextBlock Text="{Binding SubLevel2}" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="12"/>
-                                                         </StackPanel>
-                                                     </StackPanel>
-                                                 </StackPanel>
-                                                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16,0,0,0">
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,4">
-                                                        <TextBlock Text="Lv." Foreground="{DynamicResource TextSecondary}" FontSize="13" VerticalAlignment="Bottom" Margin="0,0,3,3"/>
-                                                        <TextBlock Text="{Binding MainLevel}" FontWeight="Bold" FontSize="20" Foreground="{DynamicResource TextPrimary}"/>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </Grid>
-                                         </Border>
-                                     </DataTemplate>
-                                 </ItemsControl.ItemTemplate>
-                             </ItemsControl>
-                             <TextBlock x:Name="NoHexaStatText" Text="HEXA 스탯 정보 없음" 
-                                        Foreground="{DynamicResource OnSurfaceVariant}" FontSize="15" Margin="20,16,0,0" Visibility="Collapsed" Grid.Row="1" Grid.Column="1"/>
-                         </Grid>
-                     </Border>
 
                     <Popup x:Name="ItemTooltipPopup"
                            DataContext="{x:Null}"
@@ -1586,7 +1594,7 @@
                            StaysOpen="True"
                            PopupAnimation="None"
                            Focusable="False">
-                        <Border Background="#E0222A31" BorderThickness="0" Padding="4" CornerRadius="6">
+                        <Border Background="Transparent" BorderThickness="0" Padding="4">
                             <Grid MinWidth="10" MinHeight="10"
                                   RenderOptions.BitmapScalingMode="NearestNeighbor">
                                 <Image x:Name="PopupTooltipImage"
@@ -1621,6 +1629,20 @@
                                     </ContentControl.Style>
                                 </ContentControl>
                             </Grid>
+                        </Border>
+                    </Popup>
+
+                    <Popup x:Name="SkillTooltipPopup"
+                           Placement="MousePoint"
+                           AllowsTransparency="True"
+                           StaysOpen="True"
+                           PopupAnimation="None"
+                           Focusable="False">
+                        <Border Background="Transparent" BorderThickness="0" Padding="0" IsHitTestVisible="False">
+                            <Image x:Name="SkillTooltipImage" 
+                                   Stretch="None" 
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                   IsHitTestVisible="False"/>
                         </Border>
                     </Popup>
 

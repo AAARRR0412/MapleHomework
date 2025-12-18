@@ -18,9 +18,6 @@ namespace MapleHomework.Rendering
         private const int DefaultPicHeight = 1000;
         private const int Padding = 15; // 좌우 여백
 
-        // 최종 이미지 업스케일 팩터 (1.2배 = 20% 확대 후 축소 시 더 선명)
-        private const float UpscaleFactor = 1.2f;
-
         // 리소스 캐시
         private static readonly Dictionary<string, Bitmap> _resourceCache = new Dictionary<string, Bitmap>();
         private static readonly Dictionary<string, Bitmap> _iconCache = new Dictionary<string, Bitmap>(); // 아이템 아이콘 캐시
@@ -65,6 +62,18 @@ namespace MapleHomework.Rendering
             LoadTextureBrushes();
         }
 
+        public static TextureBrush? GetFlexBrush(string key)
+        {
+            if (!_flexBrushCache.ContainsKey(key)) return null;
+            return _flexBrushCache[key];
+        }
+
+        public static TextureBrush? GetFixedBrush(string key)
+        {
+            if (!_fixedBrushCache.ContainsKey(key)) return null;
+            return _fixedBrushCache[key];
+        }
+
         private static void LoadTextureBrushes()
         {
             string[] directions = { "n", "ne", "e", "se", "s", "sw", "w", "nw", "c" };
@@ -75,6 +84,31 @@ namespace MapleHomework.Rendering
                 {
                     WrapMode mode = (dir == "n" || dir == "s" || dir == "e" || dir == "w" || dir == "c") ? WrapMode.Tile : WrapMode.Clamp;
                     _flexBrushCache[dir] = new TextureBrush(bmp, mode);
+                }
+            }
+
+            // Fallback: 누락된 코너 리소스 생성 (nw 기반 회전)
+            if (_flexBrushCache.ContainsKey("nw"))
+            {
+                var nwBmp = (Bitmap)_flexBrushCache["nw"].Image;
+
+                if (!_flexBrushCache.ContainsKey("ne"))
+                {
+                    var ne = (Bitmap)nwBmp.Clone();
+                    ne.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                    _flexBrushCache["ne"] = new TextureBrush(ne, WrapMode.Clamp);
+                }
+                if (!_flexBrushCache.ContainsKey("sw"))
+                {
+                    var sw = (Bitmap)nwBmp.Clone();
+                    sw.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                    _flexBrushCache["sw"] = new TextureBrush(sw, WrapMode.Clamp);
+                }
+                if (!_flexBrushCache.ContainsKey("se"))
+                {
+                    var se = (Bitmap)nwBmp.Clone();
+                    se.RotateFlip(RotateFlipType.RotateNoneFlipXY);
+                    _flexBrushCache["se"] = new TextureBrush(se, WrapMode.Clamp);
                 }
             }
 
@@ -298,39 +332,81 @@ namespace MapleHomework.Rendering
 
                 picH += 10; // Bottom Padding
 
-                // 2. 최종 비트맵 생성 (배경 합성 + 내용 복사)
+                // 최종 비트맵 생성 (배경 합성 + 내용 복사)
                 var finalBitmap = new Bitmap(TooltipWidth, picH);
                 using (var fg = Graphics.FromImage(finalBitmap))
                 {
-                    // 고정 프레임 배경
-                    DrawFixedTooltipBack(fg, 0, 0, TooltipWidth, picH);
-
-                    // 내용 복사
+                    // 9-slice 배경 그리기
+                    DrawNewTooltipBack(fg, 0, 0, TooltipWidth, picH);
                     fg.DrawImage(contentBitmap, 0, 0, new Rectangle(0, 0, TooltipWidth, picH), GraphicsUnit.Pixel);
                 }
 
-                // 3. 최종 이미지를 1.2배 업스케일 (축소 시 더 선명하게 보이도록)
-                int upWidth = (int)(TooltipWidth * UpscaleFactor);
-                int upHeight = (int)(picH * UpscaleFactor);
-
-                var upscaledBitmap = new Bitmap(upWidth, upHeight);
-                using (var ug = Graphics.FromImage(upscaledBitmap))
-                {
-                    ug.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    ug.SmoothingMode = SmoothingMode.HighQuality;
-                    ug.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    ug.DrawImage(finalBitmap, 0, 0, upWidth, upHeight);
-                }
-
-                finalBitmap.Dispose();
-                return upscaledBitmap;
+                contentBitmap.Dispose();
+                return finalBitmap;
             }
         }
 
-        // 고정 프레임 배경 (UIToolTipNew.img.Item.Common.frame.fixed.*)
+
+
+        // 9-slice 배경 그리기 (WzComparerR2 스타일)
+        private static void DrawNewTooltipBack(Graphics g, int x, int y, int width, int height)
+        {
+            var res = _flexBrushCache;
+
+            // 필수 리소스 체크 (없으면 Fixed Frame으로 폴백)
+            if (!res.ContainsKey("nw") || !res.ContainsKey("n") || !res.ContainsKey("c"))
+            {
+                DrawFixedTooltipBack(g, x, y, width, height);
+                return;
+            }
+
+            // 가이드라인 계산
+            int[] guideX = new int[4] { 0, res["w"].Image.Width, width - res["e"].Image.Width, width };
+            int[] guideY = new int[4] { 0, res["n"].Image.Height, height - res["s"].Image.Height, height };
+            for (int i = 0; i < guideX.Length; i++) guideX[i] += x;
+            for (int i = 0; i < guideY.Length; i++) guideY[i] += y;
+
+            // 4개 모서리
+            FillRect(g, res["nw"], guideX, guideY, 0, 0, 1, 1);
+            FillRect(g, res["ne"], guideX, guideY, 2, 0, 3, 1);
+            FillRect(g, res["sw"], guideX, guideY, 0, 2, 1, 3);
+            FillRect(g, res["se"], guideX, guideY, 2, 2, 3, 3);
+
+            // 상단/하단 변
+            if (guideX[2] > guideX[1])
+            {
+                FillRect(g, res["n"], guideX, guideY, 1, 0, 2, 1);
+                FillRect(g, res["s"], guideX, guideY, 1, 2, 2, 3);
+            }
+
+            // 좌측/우측 변
+            if (guideY[2] > guideY[1])
+            {
+                FillRect(g, res["w"], guideX, guideY, 0, 1, 1, 2);
+                FillRect(g, res["e"], guideX, guideY, 2, 1, 3, 2);
+            }
+
+            // 중앙
+            if (guideX[2] > guideX[1] && guideY[2] > guideY[1])
+            {
+                FillRect(g, res["c"], guideX, guideY, 1, 1, 2, 2);
+            }
+        }
+
+        private static void FillRect(Graphics g, TextureBrush? brush, int[] guideX, int[] guideY, int x0, int y0, int x1, int y1)
+        {
+            if (brush == null) return;
+            brush.ResetTransform();
+            brush.TranslateTransform(guideX[x0], guideY[y0]);
+            g.FillRectangle(brush, guideX[x0], guideY[y0], guideX[x1] - guideX[x0], guideY[y1] - guideY[y0]);
+        }
+
+        // 고정 프레임 배경 (Fallback용)
         private static void DrawFixedTooltipBack(Graphics g, int x, int y, int width, int height)
         {
-            // 리소스가 없으면 폴백
+            // [DEBUG] 중복 렌더링 확인을 위해 비워둠
+            /*
+            // 리소스가 없으면 검정색
             if (!_fixedBrushCache.ContainsKey("top") || !_fixedBrushCache.ContainsKey("mid") || !_fixedBrushCache.ContainsKey("btm"))
             {
                 using (var b = new SolidBrush(Color.FromArgb(220, 0, 0, 0)))
@@ -357,6 +433,31 @@ namespace MapleHomework.Rendering
 
             // 하단
             g.DrawImage(btm.Image, x, y + height - btmH, width, btmH);
+            */
+        }
+
+        // 9-slice 스타일 구분선 (dotline)
+        private static void DrawSeparator(Graphics g, int y)
+        {
+            // flexible dotline 먼저 확인
+            if (LoadResource("UIToolTipNew.img.Item.Common.frame.flexible.dotline.png") is Bitmap dotline)
+            {
+                using (var brush = new TextureBrush(dotline, WrapMode.Tile))
+                {
+                    brush.TranslateTransform(Padding, y);
+                    g.FillRectangle(brush, Padding, y, TooltipWidth - Padding * 2, dotline.Height);
+                }
+            }
+            // 없으면 fixed line 확인
+            else if (_fixedBrushCache.TryGetValue("line", out var lineBrush))
+            {
+                g.DrawImage(lineBrush.Image, 0, y, TooltipWidth, lineBrush.Image.Height);
+            }
+            else
+            {
+                using (var p = new Pen(Color.Gray) { DashStyle = DashStyle.Dot })
+                    g.DrawLine(p, Padding, y, TooltipWidth - Padding, y);
+            }
         }
 
         private static void FillRect(Graphics g, TextureBrush brush, int x, int y, int w, int h)
@@ -366,25 +467,7 @@ namespace MapleHomework.Rendering
             g.FillRectangle(brush, x, y, w, h);
         }
 
-        private static void DrawSeparator(Graphics g, int y)
-        {
-            var lineBrush = _fixedBrushCache.ContainsKey("line") ? _fixedBrushCache["line"] : null;
-            if (lineBrush != null)
-            {
-                g.DrawImage(lineBrush.Image, 0, y, TooltipWidth, lineBrush.Image.Height);
-            }
-            else
-            {
-                var line = LoadResource("UIToolTipNew.img.Item.Common.frame.fixed.line.png");
-                if (line != null)
-                    g.DrawImage(line, 0, y, TooltipWidth, line.Height);
-                else
-                {
-                    using (var p = new Pen(Color.Gray) { DashStyle = DashStyle.Dot })
-                        g.DrawLine(p, 10, y, TooltipWidth - 10, y);
-                }
-            }
-        }
+
 
         private static void DrawStarforce(Graphics g, int stars, int max, ref int picH)
         {

@@ -113,6 +113,18 @@ namespace MapleHomework.Rendering
         public static Bitmap UIToolTip_img_Item_Frame_cover => GetResource("UIToolTip.img.Item.Frame.cover");
         #endregion
 
+        #region Skill Tooltip Resources (Mapped to Item Resources)
+        // WzComparerR2 포팅을 위한 리소스 매핑 (아이템 리소스 재사용)
+        public static Bitmap UIToolTip_img_Skill_Frame_cover => UIToolTip_img_Item_Frame_cover; // 커버 재사용
+        public static Bitmap UIToolTip_img_Skill_Frame_iconBackgrnd => UIToolTipNew_img_Item_Common_ItemIcon_base; // 아이콘 배경 재사용
+        public static Bitmap UIToolTipNew_img_Skill_Frame_dotline_c => UIToolTipNew_img_Item_Common_frame_flexible_dotline; // 점선 재사용
+        public static Bitmap UIToolTip_img_Skill_Frame_dotline_c => UIToolTip_img_Item_Frame_dotline; // 구 버전 점선
+
+        // 스킬 타입 아이콘 (일단 빈 비트맵 또는 대체)
+        public static Bitmap UIWindow2_img_Skill_skillTypeIcon_origin => new Bitmap(1, 1); // 6차 아이콘 (리소스 없음)
+        public static Bitmap UIWindow2_img_Skill_skillTypeIcon_ascent => new Bitmap(1, 1); // 5차 아이콘 (리소스 없음)
+        #endregion
+
         #region Font Resources
         public static byte[] NanumGothicExtraBold => GetResourceBytes("NanumGothicExtraBold.ttf");
         #endregion

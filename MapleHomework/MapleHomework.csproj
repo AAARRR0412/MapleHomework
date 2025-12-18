@@ -50,7 +50,10 @@
 		<EmbeddedResource Include="Rendering\Resources\**\*.png" />
 		<EmbeddedResource Include="Rendering\Resources\**\*.bmp" />
 		<EmbeddedResource Include="Rendering\Resources\**\*.ttf" />
-  <Resource Include="Data\*.png" />
+  <Resource Include="Data\*.png" Exclude="Data\background.png" />
+  <Content Include="Data\background.png">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
       <Resource Include="icon.ico" />
 	</ItemGroup>
 
